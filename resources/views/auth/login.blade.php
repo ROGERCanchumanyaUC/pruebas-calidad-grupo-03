@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Formulario de Inscripción')
+@section('title', 'Iniciar sesión')
 
 @push('styles')
 <style>
-    .signup-page {
+    .login-page {
         min-height: calc(100vh - 76px);
         padding: 148px clamp(18px, 5vw, 76px) 78px;
         display: grid;
         place-items: start center;
         background:
-            linear-gradient(100deg, rgba(234, 247, 255, 0.28), rgba(223, 243, 255, 0.14)),
+            linear-gradient(100deg, rgba(234, 247, 255, 0.3), rgba(223, 243, 255, 0.16)),
             url("{{ asset('img/login.png') }}") center / cover no-repeat;
         font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    .signup-card {
-        width: min(520px, 100%);
+    .login-card {
+        width: min(480px, 100%);
         padding: 34px;
         border: 1px solid rgba(21, 101, 142, 0.16);
         border-radius: 8px;
@@ -25,7 +25,7 @@
         backdrop-filter: blur(4px);
     }
 
-    .signup-title {
+    .login-title {
         margin: 0 0 8px;
         color: #0b2538;
         font-size: 34px;
@@ -33,18 +33,18 @@
         line-height: 1.1;
     }
 
-    .signup-copy {
+    .login-copy {
         margin: 0 0 28px;
         color: #587082;
         font-size: 15px;
         line-height: 1.65;
     }
 
-    .signup-field {
+    .login-field {
         margin-bottom: 17px;
     }
 
-    .signup-label {
+    .login-label {
         display: block;
         margin-bottom: 7px;
         color: #343833;
@@ -52,7 +52,7 @@
         font-weight: 800;
     }
 
-    .signup-control {
+    .login-control {
         width: 100%;
         min-height: 48px;
         padding: 13px 14px;
@@ -65,43 +65,16 @@
         transition: border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .signup-control::placeholder {
-        color: #6b7280;
-    }
-
-    .signup-control:focus {
+    .login-control:focus {
         border-color: #0284c7;
         box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
     }
 
-    .signup-control.is-invalid {
-        padding-right: 38px;
+    .login-control.is-invalid {
         border-color: #ef4444;
     }
 
-    .signup-input-wrap {
-        position: relative;
-    }
-
-    .signup-error-icon {
-        position: absolute;
-        top: 50%;
-        right: 12px;
-        width: 18px;
-        height: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid #ef4444;
-        border-radius: 50%;
-        color: #ef4444;
-        font-size: 12px;
-        font-weight: 600;
-        line-height: 1;
-        transform: translateY(-50%);
-    }
-
-    .signup-error {
+    .login-error {
         display: block;
         margin-top: 6px;
         color: #ef4444;
@@ -109,15 +82,33 @@
         line-height: 1.2;
     }
 
-    .signup-actions {
-        margin-top: 26px;
+    .login-options {
+        margin: 4px 0 24px;
+        color: #587082;
+        font-size: 13px;
+    }
+
+    .login-check {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .login-check input {
+        width: 16px;
+        height: 16px;
+        accent-color: #0284c7;
+    }
+
+    .login-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
     }
 
-    .signup-button,
-    .signup-back {
+    .login-button,
+    .login-back {
         min-height: 48px;
         padding: 12px 20px;
         display: inline-flex;
@@ -131,7 +122,7 @@
         text-decoration: none;
     }
 
-    .signup-button {
+    .login-button {
         flex: 1 1 210px;
         border: 1px solid transparent;
         color: #fff;
@@ -140,26 +131,26 @@
         transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .signup-button:hover {
+    .login-button:hover {
         color: #fff;
         background: #075985;
         transform: translateY(-2px);
         box-shadow: 0 20px 42px rgba(2, 132, 199, 0.24);
     }
 
-    .signup-back {
+    .login-back {
         flex: 0 1 140px;
         border: 1px solid rgba(2, 132, 199, 0.28);
         color: #075985;
         background: rgba(255, 255, 255, 0.58);
     }
 
-    .signup-back:hover {
+    .login-back:hover {
         color: #075985;
         background: #dff3ff;
     }
 
-    .signup-status {
+    .login-status {
         margin-bottom: 18px;
         padding: 12px 14px;
         border: 1px solid rgba(2, 132, 199, 0.18);
@@ -170,24 +161,25 @@
     }
 
     @media (max-width: 700px) {
-        .signup-page {
+        .login-page {
             padding-top: 244px;
         }
 
-        .signup-card {
+        .login-card {
             padding: 26px;
         }
 
-        .signup-title {
+        .login-title {
             font-size: 28px;
         }
 
-        .signup-actions {
+        .login-actions {
+            align-items: stretch;
             flex-direction: column;
         }
 
-        .signup-button,
-        .signup-back {
+        .login-button,
+        .login-back {
             width: 100%;
             flex-basis: auto;
         }
@@ -196,67 +188,67 @@
 @endpush
 
 @section('content')
-<main class="signup-page">
-    <section class="signup-card" aria-labelledby="signup-title">
-        <h1 class="signup-title" id="signup-title">Formulario de Inscripción</h1>
-        <p class="signup-copy">Complete los datos para asegurar su cupo.</p>
+<main class="login-page">
+    <section class="login-card" aria-labelledby="login-title">
+        <h1 class="login-title" id="login-title">Iniciar sesión</h1>
+        <p class="login-copy">Ingresa con tu cuenta para acceder al panel o continuar navegando.</p>
 
         @if (session('status'))
-            <div class="signup-status">{{ session('status') }}</div>
+            <div class="login-status">{{ session('status') }}</div>
         @endif
 
-        <form method="GET" action="{{ route('checkout') }}" novalidate>
-            <input type="hidden" name="password" value="password">
+        <form method="POST" action="{{ route('login.store') }}" novalidate>
+            @csrf
 
-            <div class="signup-field">
-                <label class="signup-label" for="name">Nombre Completo</label>
+            <div class="login-field">
+                <label class="login-label" for="email">Correo electrónico</label>
                 <input
-                    class="signup-control"
-                    id="name"
-                    type="text"
-                    name="name"
-                    value="{{ old('name', 'Carlos Ruiz') }}"
-                    autocomplete="name">
+                    class="login-control @error('email') is-invalid @enderror"
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    autocomplete="email"
+                    required
+                    autofocus>
+                @error('email')
+                    <span class="login-error">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="signup-field">
-                <label class="signup-label" for="email">Correo Electrónico</label>
-                <div class="signup-input-wrap">
-                    <input
-                        class="signup-control {{ $errors->has('email') || old('email') === null ? 'is-invalid' : '' }}"
-                        id="email"
-                        type="email"
-                        name="email"
-                        value="{{ old('email', 'carlos.ruiz@') }}"
-                        autocomplete="email"
-                        required>
-                    @if ($errors->has('email') || old('email') === null)
-                        <span class="signup-error-icon" aria-hidden="true">!</span>
-                    @endif
-                </div>
-                @if ($errors->has('email') || old('email') === null)
-                    <span class="signup-error">Campo obligatorio</span>
-                @endif
-            </div>
-
-            <div class="signup-field">
-                <label class="signup-label" for="document">DNI/RUC</label>
+            <div class="login-field">
+                <label class="login-label" for="password">Contraseña</label>
                 <input
-                    class="signup-control"
-                    id="document"
-                    type="text"
-                    name="document"
-                    value="{{ old('document') }}"
-                    placeholder="Ingrese su documento"
-                    inputmode="numeric"
-                    autocomplete="off">
+                    class="login-control @error('password') is-invalid @enderror"
+                    id="password"
+                    type="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required>
+                @error('password')
+                    <span class="login-error">{{ $message }}</span>
+                @enderror
             </div>
 
-            <div class="signup-actions">
-                <button class="signup-button" type="submit">Continuar al Pago</button>
-                <a class="signup-back" href="{{ route('inicio') }}">Volver</a>
+            <div class="login-options">
+                <label class="login-check">
+                    <input type="checkbox" name="remember" value="1">
+                    Recordarme
+                </label>
+            </div>
+
+            <div class="login-actions">
+                <button class="login-button" type="submit">Iniciar sesión</button>
+                <a class="login-back" href="{{ route('inicio') }}">Volver</a>
             </div>
         </form>
+
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid rgba(21,101,142,.12);text-align:center;font-size:13.5px;color:#587082;">
+            ¿No tienes cuenta?
+            <a href="{{ route('register') }}" style="color:#0284c7;font-weight:700;text-decoration:none;margin-left:4px;">
+                Regístrate gratis →
+            </a>
+        </div>
     </section>
 </main>
 @endsection

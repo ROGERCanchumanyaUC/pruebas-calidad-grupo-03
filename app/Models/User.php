@@ -21,8 +21,16 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'dni',
+        'phone',
         'password',
+        'is_admin',
     ];
+
+    public function enrollments()
+    {
+        return $this->hasMany(\App\Models\Enrollment::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,6 +52,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 }
