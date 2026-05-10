@@ -39,12 +39,15 @@
     <a href="{{ route('contacto') }}#contacto-formulario" class="{{ request()->routeIs('contacto') ? 'is-active' : '' }}">Contacto</a>
     @php $cartCount = count(session()->get('cart', [])); @endphp
     @if ($cartCount > 0 || auth()->check())
-      <a href="{{ route('checkout') }}" class="nav-cart" title="Carrito">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-          </svg>
-          <span class="cart-count" style="{{ $cartCount > 0 ? '' : 'display:none' }}">{{ $cartCount > 0 ? $cartCount : '' }}</span>
+      <a href="{{ route('checkout') }}" class="nav-cart {{ request()->routeIs('checkout') ? 'is-active' : '' }}" title="Ver carrito">
+          <span class="nav-cart-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+          </span>
+          <span class="nav-cart-label">Carrito</span>
+          <span class="cart-count" id="nav-cart-count" style="{{ $cartCount > 0 ? '' : 'display:none' }}">{{ $cartCount ?: '' }}</span>
       </a>
     @endif
     @auth
@@ -102,7 +105,24 @@
   </div>
 </footer>
 
-<div class="toast" id="toast"><span id="toast-msg"></span></div>
+<div class="toast" id="toast" role="alert" aria-live="polite">
+    <div class="toast-accent"></div>
+    <div class="toast-body">
+        <div class="toast-icon" id="toast-icon"></div>
+        <div class="toast-content">
+            <div class="toast-title" id="toast-title"></div>
+            <div class="toast-msg"   id="toast-msg"></div>
+        </div>
+        <button class="toast-close" id="toast-close" aria-label="Cerrar">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+    <div class="toast-progress">
+        <div class="toast-progress-fill" id="toast-fill"></div>
+    </div>
+</div>
 
 <script>
 window.addEventListener('scroll', () => {
@@ -171,15 +191,57 @@ document.addEventListener('DOMContentLoaded', () => {
     applyCurtainText('.page > section:first-child .eyebrow, .page > section:first-child h1, .page > section:first-child .lead, .curtain-text');
 });
 
-function showToast(msg){
-    const t = document.getElementById('toast');
-    const m = document.getElementById('toast-msg');
-    if(!t || !m) return;
-    m.textContent = msg;
+function showToast(msg, duration = 3800) {
+    const t     = document.getElementById('toast');
+    const icon  = document.getElementById('toast-icon');
+    const title = document.getElementById('toast-title');
+    const body  = document.getElementById('toast-msg');
+    const fill  = document.getElementById('toast-fill');
+    if (!t) return;
+
+    // Detectar tipo por prefijo del mensaje
+    let type = 'info', titleText = 'Aviso', iconHtml = '💬', clean = msg;
+
+    if (msg.startsWith('✅') || msg.startsWith('🎉')) {
+        type = 'success'; titleText = '¡Listo!';
+        iconHtml = '<svg width="18" height="18" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+        clean = msg.replace(/^[✅🎉]\s*/, '');
+    } else if (msg.startsWith('❌')) {
+        type = 'error'; titleText = 'Error';
+        iconHtml = '<svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        clean = msg.replace(/^❌\s*/, '');
+    } else if (msg.startsWith('🛒')) {
+        type = 'cart'; titleText = 'Agregado al carrito';
+        iconHtml = '<svg width="18" height="18" fill="none" stroke="#0284c7" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+        clean = msg.replace(/^🛒\s*/, '');
+    } else if (msg.startsWith('ℹ️') || msg.startsWith('ℹ')) {
+        type = 'info'; titleText = 'Información';
+        iconHtml = '<svg width="18" height="18" fill="none" stroke="#0284c7" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        clean = msg.replace(/^ℹ️?\s*/, '');
+    }
+
+    // Aplicar tipo
+    t.className = 'toast toast-' + type;
+    icon.innerHTML  = iconHtml;
+    title.textContent = titleText;
+    body.innerHTML  = clean;   // innerHTML para soportar links
+
+    // Barra de progreso
+    fill.style.animation = 'none';
+    void fill.offsetWidth; // reflow
+    fill.style.animation = `toast-drain ${duration}ms linear forwards`;
+
+    // Mostrar
     t.classList.add('show');
     clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(()=>t.classList.remove('show'),3200);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), duration);
 }
+
+// Cerrar con botón
+document.getElementById('toast-close')?.addEventListener('click', () => {
+    document.getElementById('toast')?.classList.remove('show');
+    clearTimeout(window._toastTimer);
+});
 </script>
 
 @stack('scripts')

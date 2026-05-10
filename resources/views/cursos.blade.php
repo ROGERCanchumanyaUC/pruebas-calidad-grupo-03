@@ -909,10 +909,13 @@ async function inscribir(btn) {
             btn.textContent      = '✓ En el carrito';
             btn.style.background = '#0284c7';
             // actualizar badge navbar
-            document.querySelectorAll('.cart-count').forEach(el => {
-                el.textContent = data.count;
-                el.style.display = 'flex';
-            });
+            const badge = document.getElementById('nav-cart-count');
+            if (badge) {
+                badge.textContent = data.count;
+                badge.style.display = 'inline-flex';
+                badge.style.transform = 'scale(1.3)';
+                setTimeout(() => badge.style.transform = '', 300);
+            }
             showToast('🛒 ' + data.msg + ' — <a href="{{ route("checkout") }}" style="color:#fff;font-weight:700;">Ir al carrito →</a>');
         } else {
             btn.disabled    = false;
