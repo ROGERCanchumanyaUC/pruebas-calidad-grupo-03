@@ -18,15 +18,15 @@
             <div class="ch-left">
                 <span class="ch-eyebrow">
                     <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    Capacitaciones · Sector Lácteo
+                    Capacitaciones · Sector Alimentario
                 </span>
 
                 <h1 class="ch-title">
-                    Fórmate con los <em>mejores expertos</em> en calidad láctea del Perú.
+                    Fórmate con los <em>mejores expertos</em> en calidad alimentaria del Perú.
                 </h1>
 
                 <p class="ch-lead">
-                    9 programas certificados en BPM, HACCP e ISO. Diseñados para técnicos, jefes de planta y emprendedores del sector lácteo. Aprende a tu ritmo, aplica desde el primer módulo.
+                    9 programas certificados en BPM, HACCP e ISO. Diseñados para técnicos, jefes de planta y emprendedores del sector alimentario. Aprende a tu ritmo, aplica desde el primer módulo.
                 </p>
 
                 {{-- Stats pills --}}
@@ -69,7 +69,7 @@
                     </div>
                     <div class="ch-card-body">
                         <div class="ch-card-cat">Calidad · Certificación</div>
-                        <div class="ch-card-title">BPM en Industria Láctea</div>
+                        <div class="ch-card-title">BPM en Industria Alimentaria</div>
                         <div class="ch-card-meta">
                             <span>
                                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -89,7 +89,7 @@
                                 <div class="ch-card-price-lbl">Precio</div>
                                 <div class="ch-card-price">S/ 350</div>
                             </div>
-                            <button class="ch-card-btn" onclick="inscribir(this)" data-course="BPM en Industria Láctea" data-level="basico" data-price="350">
+                            <button class="ch-card-btn" onclick="inscribir(this)" data-course="BPM en Industria Alimentaria" data-level="basico" data-price="350">
                                 Inscribirme
                             </button>
                         </div>
@@ -120,7 +120,7 @@
     <section id="catalogo" class="section" style="padding-bottom:0">
         <div class="section-header">
             <p class="eyebrow">Catálogo</p>
-            <h2 class="section-title">Programas especializados en lácteos.</h2>
+            <h2 class="section-title">Programas especializados en alimentos.</h2>
             <p class="section-subtitle">Cada curso incluye materiales, certificado y acompañamiento técnico.</p>
         </div>
 
@@ -140,13 +140,13 @@
             <article class="curso-card reveal" data-level="basico">
                 <div class="curso-img">
                     <img src="https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=480&h=260&fit=crop&auto=format"
-                         alt="BPM en Industria Láctea" loading="lazy">
+                         alt="BPM en Industria Alimentaria" loading="lazy">
                     <span class="nivel-badge basico">Básico</span>
                 </div>
                 <div class="curso-body">
                     <div class="curso-cat-tag">Calidad · Certificación</div>
-                    <h3 class="curso-nombre">BPM en Industria Láctea</h3>
-                    <p class="curso-resena">Domina las Buenas Prácticas de Manufactura aplicadas al procesamiento de leche y derivados. Aprenderás a identificar puntos críticos, documentar procesos y cumplir con la normativa sanitaria peruana.</p>
+                    <h3 class="curso-nombre">BPM en Industria Alimentaria</h3>
+                    <p class="curso-resena">Domina las Buenas Prácticas de Manufactura aplicadas al procesamiento de alimentos. Aprenderás a identificar puntos críticos, documentar procesos y cumplir con la normativa sanitaria peruana.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -215,8 +215,8 @@
                 </div>
                 <div class="curso-body">
                     <div class="curso-cat-tag">Laboratorio</div>
-                    <h3 class="curso-nombre">Control Microbiológico en Lácteos</h3>
-                    <p class="curso-resena">Técnicas y protocolos actualizados para el control microbiológico en plantas lácteas. Análisis de coliformes, listeria, salmonella y criterios microbiológicos del MINSA/SENASA para derivados lácteos.</p>
+                    <h3 class="curso-nombre">Control Microbiológico en Alimentos</h3>
+                    <p class="curso-resena">Técnicas y protocolos actualizados para el control microbiológico en plantas de alimentos. Análisis de coliformes, listeria, salmonella y criterios microbiológicos del MINSA/SENASA para alimentos procesados.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -245,13 +245,13 @@
             <article class="curso-card reveal" data-level="basico">
                 <div class="curso-img">
                     <img src="https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=260&fit=crop&auto=format"
-                         alt="Elaboración de Quesos Artesanales" loading="lazy">
+                         alt="Procesamiento de Alimentos Artesanales" loading="lazy">
                     <span class="nivel-badge basico">Básico</span>
                 </div>
                 <div class="curso-body">
-                    <div class="curso-cat-tag">Producción · Quesos</div>
-                    <h3 class="curso-nombre">Elaboración de Quesos Artesanales</h3>
-                    <p class="curso-resena">Aprende a elaborar queso fresco, andino, mozzarella y ricotta con estándares de inocuidad. Desde la selección de leche cruda hasta el envasado final, con técnicas aplicables a pequeña y mediana escala.</p>
+                    <div class="curso-cat-tag">Producción · Alimentos</div>
+                    <h3 class="curso-nombre">Procesamiento de Alimentos Artesanales</h3>
+                    <p class="curso-resena">Aprende técnicas de procesamiento artesanal de alimentos, desde la selección de materias primas hasta el envasado final, con estándares de inocuidad para pequeña y mediana escala.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -280,13 +280,13 @@
             <article class="curso-card reveal" data-level="intermedio">
                 <div class="curso-img">
                     <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=480&h=260&fit=crop&auto=format"
-                         alt="Elaboración de Yogur y Fermentados" loading="lazy">
+                         alt="Elaboración de Alimentos Fermentados" loading="lazy">
                     <span class="nivel-badge intermedio">Intermedio</span>
                 </div>
                 <div class="curso-body">
                     <div class="curso-cat-tag">Producción · Fermentados</div>
-                    <h3 class="curso-nombre">Elaboración de Yogur y Lácteos Fermentados</h3>
-                    <p class="curso-resena">Producción de yogur natural, griego, bebible y kéfir con control de cultivos iniciadores, parámetros de fermentación y vida útil. Incluye formulación, análisis sensorial y envasado correcto.</p>
+                    <h3 class="curso-nombre">Elaboración de Alimentos Fermentados</h3>
+                    <p class="curso-resena">Producción de alimentos fermentados con control de cultivos iniciadores, parámetros de fermentación y vida útil. Incluye formulación, análisis sensorial y envasado correcto.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -315,13 +315,13 @@
             <article class="curso-card reveal" data-level="avanzado">
                 <div class="curso-img">
                     <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=480&h=260&fit=crop&auto=format"
-                         alt="HACCP en Plantas Lácteas" loading="lazy">
+                         alt="HACCP en Plantas de Alimentos" loading="lazy">
                     <span class="nivel-badge avanzado">Avanzado</span>
                 </div>
                 <div class="curso-body">
                     <div class="curso-cat-tag">Inocuidad · HACCP</div>
-                    <h3 class="curso-nombre">HACCP en Plantas Lácteas</h3>
-                    <p class="curso-resena">Diseño e implementación del sistema HACCP adaptado a la industria láctea peruana. Identificación de peligros físicos, químicos y biológicos, determinación de PCC y elaboración del plan HACCP completo.</p>
+                    <h3 class="curso-nombre">HACCP en Plantas de Alimentos</h3>
+                    <p class="curso-resena">Diseño e implementación del sistema HACCP adaptado a la industria alimentaria peruana. Identificación de peligros físicos, químicos y biológicos, determinación de PCC y elaboración del plan HACCP completo.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -356,7 +356,7 @@
                 <div class="curso-body">
                     <div class="curso-cat-tag">Proceso · Térmica</div>
                     <h3 class="curso-nombre">Pasteurización y Tratamiento Térmico</h3>
-                    <p class="curso-resena">Fundamentos y operación de equipos de pasteurización HTST, LTLT y UHT en líneas de leche y derivados. Control de temperatura, validación de procesos y mantenimiento preventivo de intercambiadores de calor.</p>
+                    <p class="curso-resena">Fundamentos y operación de tratamientos térmicos en líneas de alimentos procesados. Control de temperatura, validación de procesos y mantenimiento preventivo de equipos.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -385,13 +385,13 @@
             <article class="curso-card reveal" data-level="intermedio">
                 <div class="curso-img">
                     <img src="https://images.unsplash.com/photo-1576867757603-05b134ebc379?w=480&h=260&fit=crop&auto=format"
-                         alt="Análisis Fisicoquímico de Lácteos" loading="lazy">
+                         alt="Análisis Fisicoquímico de Alimentos" loading="lazy">
                     <span class="nivel-badge intermedio">Intermedio</span>
                 </div>
                 <div class="curso-body">
                     <div class="curso-cat-tag">Laboratorio · Fisicoquímica</div>
-                    <h3 class="curso-nombre">Análisis Fisicoquímico de Lácteos</h3>
-                    <p class="curso-resena">Determinación de grasa, proteína, densidad, acidez, pH y sólidos totales en leche y derivados. Manejo de equipos como lactodensímetro, butirometro y equipo Gerber, con interpretación de resultados según normas NTP.</p>
+                    <h3 class="curso-nombre">Análisis Fisicoquímico de Alimentos</h3>
+                    <p class="curso-resena">Determinación de grasa, proteína, densidad, acidez, pH y sólidos totales en alimentos. Manejo de equipos de laboratorio e interpretación de resultados según normas NTP.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -426,7 +426,7 @@
                 <div class="curso-body">
                     <div class="curso-cat-tag">Gestión · Inocuidad</div>
                     <h3 class="curso-nombre">Gestión de Inocuidad Alimentaria ISO 22000</h3>
-                    <p class="curso-resena">Implementación integral de la norma ISO 22000:2018 en empresas lácteas. Integra BPM, HACCP y gestión de riesgos en un sistema robusto alineado a estándares internacionales. Ideal para responsables de calidad e inocuidad.</p>
+                    <p class="curso-resena">Implementación integral de la norma ISO 22000:2018 en empresas alimentarias. Integra BPM, HACCP y gestión de riesgos en un sistema robusto alineado a estándares internacionales. Ideal para responsables de calidad e inocuidad.</p>
                     <div class="curso-detalles">
                         <span>
                             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -465,7 +465,7 @@
             <div class="feature-panel reveal">
                 <ul class="list-clean">
                     <li>Sesiones breves con objetivos por módulo.</li>
-                    <li>Casos aplicados a plantas y negocios lácteos.</li>
+                    <li>Casos aplicados a plantas y negocios alimentarios.</li>
                     <li>Materiales descargables para el equipo.</li>
                     <li>Orientación final para aplicar lo aprendido.</li>
                 </ul>

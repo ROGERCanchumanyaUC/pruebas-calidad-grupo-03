@@ -436,9 +436,9 @@
         <div>
             <span class="hp-hero-eyebrow">
                 <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                Especialistas en calidad láctea
+                Especialistas en calidad alimentaria
             </span>
-            <h1>Capacítate con los <span>mejores expertos</span> del sector lácteo peruano.</h1>
+            <h1>Capacítate con los <span>mejores expertos</span> del sector alimentario peruano.</h1>
             <p class="hp-hero-lead">Cursos certificados, asesorías técnicas y diagnóstico de plantas. Formación especializada en BPM, HACCP e ISO adaptada al contexto real de Huancayo y el Perú.</p>
             <div class="hp-hero-actions">
                 <a href="{{ route('cursos') }}" class="hp-btn-primary">
@@ -453,7 +453,7 @@
 
         <div class="hp-hero-card">
             <div class="hp-hero-img-wrap">
-                <img src="{{ asset('img/planta-jmjs.png') }}" alt="Planta JM y JS Alimentos Lácteos">
+                <img src="{{ asset('img/planta-jmjs.png') }}" alt="Planta JM y JS Alimentos">
             </div>
             <div class="hp-hero-stats-row">
                 <div class="hp-hero-stat">
@@ -509,7 +509,7 @@
 <div class="hp-section-inner">
     <div class="hp-head">
         <span class="hp-head-tag">Catálogo</span>
-        <h2>Cursos especializados en lácteos</h2>
+        <h2>Cursos especializados en alimentos</h2>
         <p>Todos los programas incluyen materiales descargables, acompañamiento técnico y certificado al finalizar.</p>
     </div>
 
@@ -529,8 +529,8 @@
             </div>
             <div class="hp-curso-body">
                 <div class="hp-curso-cat">Calidad · Certificación</div>
-                <h3 class="hp-curso-nombre">BPM en Industria Láctea</h3>
-                <p class="hp-curso-desc">Domina las Buenas Prácticas de Manufactura aplicadas al procesamiento de leche y derivados. Aprenderás a identificar puntos críticos y cumplir con la normativa sanitaria peruana.</p>
+                <h3 class="hp-curso-nombre">BPM en Industria Alimentaria</h3>
+                <p class="hp-curso-desc">Domina las Buenas Prácticas de Manufactura aplicadas al procesamiento de alimentos. Aprenderás a identificar puntos críticos y cumplir con la normativa sanitaria peruana.</p>
                 <div class="hp-curso-footer">
                     <div><div class="hp-precio-lbl">Precio</div><div class="hp-precio-val">S/ 350</div></div>
                     <a href="{{ route('cursos') }}" class="hp-inscribir">Ver curso</a>
@@ -556,13 +556,13 @@
 
         <article class="hp-curso-card reveal" data-hplevel="basico">
             <div class="hp-curso-img">
-                <img src="https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=260&fit=crop&auto=format" alt="Quesos" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=260&fit=crop&auto=format" alt="Alimentos artesanales" loading="lazy">
                 <span class="hp-nivel-badge basico">Básico</span>
             </div>
             <div class="hp-curso-body">
-                <div class="hp-curso-cat">Producción · Quesos</div>
-                <h3 class="hp-curso-nombre">Elaboración de Quesos Artesanales</h3>
-                <p class="hp-curso-desc">Aprende a elaborar queso fresco, andino, mozzarella y ricotta con estándares de inocuidad. Técnicas aplicables a pequeña y mediana escala.</p>
+                <div class="hp-curso-cat">Producción · Alimentos</div>
+                <h3 class="hp-curso-nombre">Procesamiento de Alimentos Artesanales</h3>
+                <p class="hp-curso-desc">Aprende técnicas de procesamiento artesanal de alimentos con estándares de inocuidad aplicables a pequeña y mediana escala.</p>
                 <div class="hp-curso-footer">
                     <div><div class="hp-precio-lbl">Precio</div><div class="hp-precio-val">S/ 280</div></div>
                     <a href="{{ route('cursos') }}" class="hp-inscribir">Ver curso</a>
@@ -577,8 +577,8 @@
             </div>
             <div class="hp-curso-body">
                 <div class="hp-curso-cat">Inocuidad · HACCP</div>
-                <h3 class="hp-curso-nombre">HACCP en Plantas Lácteas</h3>
-                <p class="hp-curso-desc">Diseño e implementación del sistema HACCP adaptado a la industria láctea peruana. Identificación de peligros y elaboración del plan HACCP completo.</p>
+                <h3 class="hp-curso-nombre">HACCP en Plantas de Alimentos</h3>
+                <p class="hp-curso-desc">Diseño e implementación del sistema HACCP adaptado a la industria alimentaria peruana. Identificación de peligros y elaboración del plan HACCP completo.</p>
                 <div class="hp-curso-footer">
                     <div><div class="hp-precio-lbl">Precio</div><div class="hp-precio-val">S/ 420</div></div>
                     <a href="{{ route('cursos') }}" class="hp-inscribir">Ver curso</a>
@@ -602,8 +602,8 @@
 <section class="hp-section">
     <div class="hp-head">
         <span class="hp-head-tag">Nuestras ventajas</span>
-        <h2>¿Por qué elegir JM y JS Alimentos Lácteos?</h2>
-        <p>Somos especialistas en el sector lácteo peruano con más de 10 años de experiencia técnica y formativa.</p>
+        <h2>¿Por qué elegir JM y JS Alimentos?</h2>
+        <p>Somos especialistas en el sector alimentario peruano con más de 10 años de experiencia técnica y formativa.</p>
     </div>
     <div class="hp-features-grid">
         <div class="hp-feature reveal">
@@ -611,7 +611,7 @@
                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h3>Contenido técnico real</h3>
-            <p>Casos aplicados a plantas lácteas peruanas. Nada genérico — todo adaptado a la normativa MINSA, SENASA y DIGESA.</p>
+            <p>Casos aplicados a plantas alimentarias peruanas. Nada genérico — todo adaptado a la normativa MINSA, SENASA y DIGESA.</p>
         </div>
         <div class="hp-feature reveal">
             <div class="hp-feature-icon">
@@ -672,7 +672,7 @@
     <div class="hp-head">
         <span class="hp-head-tag">Testimonios</span>
         <h2>Lo que dicen nuestros estudiantes</h2>
-        <p>Profesionales del sector lácteo que han mejorado sus procesos con nuestros programas.</p>
+        <p>Profesionales del sector alimentario que han mejorado sus procesos con nuestros programas.</p>
     </div>
     <div class="hp-testi-grid">
         <div class="hp-testi reveal">
@@ -680,12 +680,12 @@
             <div class="hp-testi-stars">
                 @for ($i = 0; $i < 5; $i++)<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>@endfor
             </div>
-            <p class="hp-testi-text">El curso de BPM fue exactamente lo que necesitaba. Los casos prácticos con plantas lácteas de la sierra me ayudaron a implementar mejoras concretas en nuestra quesería familiar.</p>
+            <p class="hp-testi-text">El curso de BPM fue exactamente lo que necesitaba. Los casos prácticos con plantas de alimentos de la sierra me ayudaron a implementar mejoras concretas en nuestro negocio familiar.</p>
             <div class="hp-testi-user">
                 <div class="hp-testi-avatar">M</div>
                 <div>
                     <div class="hp-testi-name">María Quispe Huanca</div>
-                    <div class="hp-testi-role">Responsable de Calidad · Quesería Andina, Junín</div>
+                    <div class="hp-testi-role">Responsable de Calidad · Agroindustria Andina, Junín</div>
                 </div>
             </div>
         </div>
@@ -694,12 +694,12 @@
             <div class="hp-testi-stars">
                 @for ($i = 0; $i < 5; $i++)<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>@endfor
             </div>
-            <p class="hp-testi-text">Tomé el HACCP para plantas lácteas y en 3 meses ya teníamos el plan implementado en nuestra empresa. El acompañamiento post-curso marcó la diferencia.</p>
+            <p class="hp-testi-text">Tomé el HACCP para plantas de alimentos y en 3 meses ya teníamos el plan implementado en nuestra empresa. El acompañamiento post-curso marcó la diferencia.</p>
             <div class="hp-testi-user">
                 <div class="hp-testi-avatar">C</div>
                 <div>
                     <div class="hp-testi-name">Carlos Mendoza Rivera</div>
-                    <div class="hp-testi-role">Jefe de Planta · Lácteos del Centro, Huancayo</div>
+                    <div class="hp-testi-role">Jefe de Planta · Alimentos del Centro, Huancayo</div>
                 </div>
             </div>
         </div>
@@ -713,7 +713,7 @@
                 <div class="hp-testi-avatar">L</div>
                 <div>
                     <div class="hp-testi-name">Lucía Flores Paredes</div>
-                    <div class="hp-testi-role">Gerente General · Productora Láctea San Isidro</div>
+                    <div class="hp-testi-role">Gerente General · Productora Alimentaria San Isidro</div>
                 </div>
             </div>
         </div>
@@ -725,7 +725,7 @@
     <div class="hp-cta-box">
         <div class="hp-cta-text">
             <h2>¿Listo para mejorar la calidad de tu planta?</h2>
-            <p>Únete a los profesionales del sector lácteo que ya trabajan con estándares más altos. Tu primera consulta es gratis.</p>
+            <p>Únete a los profesionales del sector alimentario que ya trabajan con estándares más altos. Tu primera consulta es gratis.</p>
         </div>
         <div class="hp-cta-actions">
             <a href="{{ route('register') }}" class="hp-cta-btn-w">

@@ -91,7 +91,7 @@
 <main class="login-page">
     <section class="login-card">
         <h1 class="login-title">Crear cuenta</h1>
-        <p class="login-copy">Regístrate gratis y accede a todos los cursos de JM y JS Alimentos Lácteos.</p>
+        <p class="login-copy">Regístrate gratis y accede a todos los cursos de JM y JS Alimentos.</p>
 
         @if ($errors->any())
             <div style="background:#fee2e2;border:1px solid #fecaca;border-radius:8px;padding:12px 14px;margin-bottom:18px;color:#dc2626;font-size:13px;">

@@ -423,12 +423,12 @@
     <section class="ns-hero">
         <img class="ns-hero-img"
              src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=1600&q=85"
-             alt="Campos lácteos JM y JS">
+             alt="Producción alimentaria JM y JS">
         <div class="ns-hero-overlay"></div>
         <div class="ns-hero-content">
             <span class="ns-hero-tag">Nuestra empresa</span>
             <h1>Conocimiento técnico con atención cercana.</h1>
-            <p>JM y JS Alimentos Lácteos acompaña a empresas y profesionales que quieren mejorar su calidad sin perder claridad en el proceso.</p>
+            <p>JM y JS Alimentos acompaña a empresas y profesionales que quieren mejorar su calidad sin perder claridad en el proceso.</p>
             <div class="ns-hero-btns">
                 <a href="{{ route('cursos') }}" class="ns-btn-primary">Ver cursos</a>
                 <a href="{{ route('contacto') }}#contacto-formulario" class="ns-btn-outline">Hablar con nosotros</a>
@@ -441,16 +441,16 @@
         <div class="ns-historia-grid">
             <div>
                 <span class="ns-tag">Nuestra Historia</span>
-                <h2>Desde Huancayo para el sector lácteo peruano.</h2>
-                <p>JM y JS Alimentos Lácteos nació de la convicción de que las empresas del sector lácteo merecen asesoría técnica de calidad y accesible. Desde Huancayo, hemos acompañado a decenas de plantas y productores a mejorar sus procesos.</p>
+                <h2>Desde Huancayo para el sector alimentario peruano.</h2>
+                <p>JM y JS Alimentos nació de la convicción de que las empresas del sector alimentario merecen asesoría técnica de calidad y accesible. Desde Huancayo, hemos acompañado a decenas de plantas y productores a mejorar sus procesos.</p>
                 <p>Nuestra experiencia en BPM, HACCP e ISO nos permite ofrecer soluciones adaptadas al contexto real del productor peruano, sin fórmulas genéricas y con resultados medibles.</p>
             </div>
             <div class="ns-historia-img-wrap">
                 <img src="https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&w=800&q=85"
-                     alt="Planta láctea JM y JS">
+                     alt="Planta de alimentos JM y JS">
                 <div class="ns-img-badge">
                     <strong>+10 años</strong>
-                    Experiencia en el sector lácteo peruano
+                    Experiencia en el sector alimentario peruano
                 </div>
             </div>
         </div>
@@ -531,12 +531,12 @@
         <div class="ns-mv-inner">
             <div class="ns-mv-card">
                 <div class="mv-kicker">Misión</div>
-                <h3>Elevar la calidad productiva del sector lácteo.</h3>
+                <h3>Elevar la calidad productiva del sector alimentario.</h3>
                 <p>Ayudamos a que empresas y profesionales trabajen con procesos más ordenados, seguros y sostenibles, aplicando estándares técnicos al contexto real peruano.</p>
             </div>
             <div class="ns-mv-card">
                 <div class="mv-kicker">Visión</div>
-                <h3>Ser referentes en calidad láctea en el Perú.</h3>
+                <h3>Ser referentes en calidad alimentaria en el Perú.</h3>
                 <p>Acercar herramientas técnicas de clase mundial a más negocios del sector alimentario, desde Huancayo hacia todo el país.</p>
             </div>
         </div>
@@ -548,7 +548,7 @@
             <div class="ns-cta-blob1"></div>
             <div class="ns-cta-blob2"></div>
             <div style="position:relative;z-index:1;">
-                <h2>¿Listo para mejorar tu proceso lácteo?</h2>
+                <h2>¿Listo para mejorar tu proceso alimentario?</h2>
                 <p>Únete a las empresas y profesionales que ya trabajan con estándares más altos. Contáctanos y cuéntanos en qué podemos ayudarte.</p>
                 <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
                     <a href="{{ route('contacto') }}#contacto-formulario" class="ns-btn-primary">Hablar con nosotros</a>

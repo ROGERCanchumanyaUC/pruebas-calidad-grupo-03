@@ -1,11 +1,11 @@
-# Documentación Funcional — JM y JS Alimentos Lácteos
+# Documentación Funcional — JM y JS Alimentos
 ## Plataforma de Capacitación en Línea
 
 ---
 
 ## 1. Descripción General del Sistema
 
-La plataforma **JM y JS Alimentos Lácteos** es un sistema de e-learning especializado en la industria láctea peruana. Permite a profesionales del sector inscribirse en cursos de certificación (BPM, HACCP, ISO), gestionar sus pagos y acceder a su historial académico. La empresa está ubicada en Huancayo, Junín, Perú.
+La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en la industria alimentaria peruana. Permite a profesionales del sector inscribirse en cursos de certificación (BPM, HACCP, ISO), gestionar sus pagos y acceder a su historial académico. La empresa está ubicada en Huancayo, Junín, Perú.
 
 **Stack tecnológico:**
 - Backend: Laravel (PHP) con base de datos SQLite
@@ -128,14 +128,14 @@ La plataforma **JM y JS Alimentos Lácteos** es un sistema de e-learning especia
 
 | Curso | Nivel | Precio (S/) |
 |---|---|---|
-| BPM en Industria Láctea | Básico | 350 |
-| Elaboración de Quesos Artesanales | Básico | 280 |
+| BPM en Industria Alimentaria | Básico | 350 |
+| Procesamiento de Alimentos Artesanales | Básico | 280 |
 | Pasteurización y Tratamiento Térmico | Básico | 290 |
 | Gestión de Calidad ISO 9001 | Intermedio | 450 |
-| Elaboración de Yogur y Lácteos Fermentados | Intermedio | 320 |
-| Análisis Fisicoquímico de Lácteos | Intermedio | 360 |
-| Control Microbiológico en Lácteos | Avanzado | 380 |
-| HACCP en Plantas Lácteas | Avanzado | 420 |
+| Elaboración de Alimentos Fermentados | Intermedio | 320 |
+| Análisis Fisicoquímico de Alimentos | Intermedio | 360 |
+| Control Microbiológico en Alimentos | Avanzado | 380 |
+| HACCP en Plantas de Alimentos | Avanzado | 420 |
 | Gestión de Inocuidad Alimentaria ISO 22000 | Avanzado | 480 |
 
 Cada tarjeta muestra: imagen representativa, badge de nivel con color (verde/amarillo/rojo), duración, formato (virtual), si incluye certificado, precio y botón de agregar al carrito.
@@ -309,7 +309,7 @@ Lista de mensajes del formulario de contacto con:
 
 **Justificación:**
 - Con 9 cursos, mostrarlos todos simultáneamente crea **sobrecarga cognitiva**.
-- Los profesionales de la industria láctea tienen distintos niveles de experiencia; el filtro les permite ir directo a lo relevante.
+- Los profesionales de la industria alimentaria tienen distintos niveles de experiencia; el filtro les permite ir directo a lo relevante.
 - Los tabs son más rápidos que un dropdown y visualmente más claros que un sidebar de filtros para un catálogo de este tamaño.
 
 ---
@@ -527,4 +527,4 @@ Si alguna condición falla, redirige automáticamente al inicio con un mensaje d
 
 ---
 
-*Documentación generada para el proyecto JM y JS Alimentos Lácteos — Mayo 2026*
+*Documentación generada para el proyecto JM y JS Alimentos — Mayo 2026*

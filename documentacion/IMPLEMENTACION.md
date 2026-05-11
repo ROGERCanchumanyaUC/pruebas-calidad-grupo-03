@@ -1,4 +1,4 @@
-# Implementación — JM y JS Alimentos Lácteos
+# Implementación — JM y JS Alimentos
 ## Plataforma de Capacitación en Línea
 
 ---
@@ -57,7 +57,7 @@ Navegador del usuario
 El sistema opera en un entorno local sobre **XAMPP**. Las variables de entorno se definen en el archivo `.env` (nunca en el código fuente):
 
 ```env
-APP_NAME="JM y JS Alimentos Lácteos"
+APP_NAME="JM y JS Alimentos"
 APP_ENV=local
 APP_KEY=base64:...          # generado con php artisan key:generate
 APP_DEBUG=true
@@ -401,7 +401,7 @@ Paso 8: Compilar los assets del frontend
 ```
 Editar .env:
 
-APP_NAME="JM y JS Alimentos Lácteos"
+APP_NAME="JM y JS Alimentos"
 APP_URL=http://localhost/boceto/public
 APP_LOCALE=es
 
@@ -602,4 +602,4 @@ php artisan route:list --path=admin  # Filtrar por prefijo
 
 ---
 
-*Documentación de implementación — JM y JS Alimentos Lácteos — Mayo 2026*
+*Documentación de implementación — JM y JS Alimentos — Mayo 2026*

@@ -1,4 +1,4 @@
-# Documentación General — JM y JS Alimentos Lácteos
+# Documentación General — JM y JS Alimentos
 ## Plataforma de Capacitación en Línea
 
 ---
@@ -7,7 +7,7 @@
 
 ### 1.1 Objetivo General
 
-Desarrollar una plataforma web de e-learning para la empresa **JM y JS Alimentos Lácteos**, con sede en Huancayo, Junín, que permita a profesionales de la industria láctea peruana acceder a cursos de certificación en línea, gestionar sus inscripciones y pagos, y recibir asistencia mediante inteligencia artificial; centralizando además la administración de usuarios y comunicaciones en un panel de control.
+Desarrollar una plataforma web de e-learning para la empresa **JM y JS Alimentos**, con sede en Huancayo, Junín, que permita a profesionales de la industria alimentaria peruana acceder a cursos de certificación en línea, gestionar sus inscripciones y pagos, y recibir asistencia mediante inteligencia artificial; centralizando además la administración de usuarios y comunicaciones en un panel de control.
 
 ---
 
@@ -192,7 +192,7 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 └────────────────────────────────────────────────────────┘
 ```
 
-**Ejemplo de usuario real:** Un técnico en producción láctea de Huancayo que llega al sitio buscando capacitación en HACCP, navega los cursos, los agrega al carrito y luego se registra para completar la compra.
+**Ejemplo de usuario real:** Un técnico en producción alimentaria de Huancayo que llega al sitio buscando capacitación en HACCP, navega los cursos, los agrega al carrito y luego se registra para completar la compra.
 
 ---
 
@@ -202,8 +202,8 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 ┌────────────────────────────────────────────────────────┐
 │  ESTUDIANTE                                            │
 │  Perfil: Usuario registrado que ha iniciado sesión.    │
-│          Puede ser profesional de la industria láctea, │
-│          técnico, ingeniero o emprendedor del sector.  │
+│          Puede ser profesional del sector alimentario, │
+│          técnico, ingeniero o emprendedor.             │
 │                                                        │
 │  Puede hacer (todo lo del Visitante, más):             │
 │  ✓ Acceder al checkout y completar el pago             │
@@ -222,7 +222,7 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 └────────────────────────────────────────────────────────┘
 ```
 
-**Ejemplo de usuario real:** Una supervisora de calidad de una planta quesera que ya pagó el curso de BPM y quiere revisar cuántos cursos lleva y cuánto ha invertido en su formación.
+**Ejemplo de usuario real:** Una supervisora de calidad de una planta de alimentos que ya pagó el curso de BPM y quiere revisar cuántos cursos lleva y cuánto ha invertido en su formación.
 
 ---
 
@@ -233,7 +233,7 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 │  ADMINISTRADOR                                         │
 │  Perfil: Usuario con is_admin = true. Generalmente     │
 │          el equipo interno de JM y JS Alimentos        │
-│          Lácteos encargado de la operación del sitio.  │
+│          encargado de la operación del sitio.            │
 │                                                        │
 │  Puede hacer (todo lo del Estudiante, más):            │
 │  ✓ Acceder al panel de administración (/admin)         │
@@ -329,10 +329,10 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 ### 4.4 Supuestos del proyecto
 
 - Los usuarios tienen acceso a un navegador web moderno (Chrome 90+, Firefox 90+, Edge 90+).
-- La empresa JM y JS Alimentos Lácteos proporcionará su propia clave de API de Google AI Studio para el chatbot.
+- La empresa JM y JS Alimentos proporcionará su propia clave de API de Google AI Studio para el chatbot.
 - El contenido de los cursos (videos, materiales) se entregará por canales externos; la plataforma solo gestiona las inscripciones.
 - Un único administrador técnico será responsable de mantener la aplicación en el servidor XAMPP local.
 
 ---
 
-*Documentación general — JM y JS Alimentos Lácteos — Mayo 2026*
+*Documentación general — JM y JS Alimentos — Mayo 2026*

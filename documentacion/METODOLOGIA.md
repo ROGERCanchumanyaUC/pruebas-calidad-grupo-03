@@ -1,4 +1,4 @@
-# Metodología de Desarrollo — JM y JS Alimentos Lácteos
+# Metodología de Desarrollo — JM y JS Alimentos
 ## Plataforma de Capacitación en Línea
 
 ---
@@ -300,4 +300,4 @@ Mayo 2026
 
 ---
 
-*Metodología de Desarrollo — JM y JS Alimentos Lácteos — Mayo 2026*
+*Metodología de Desarrollo — JM y JS Alimentos — Mayo 2026*

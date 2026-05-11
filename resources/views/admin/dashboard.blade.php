@@ -9,7 +9,7 @@
 <div class="welcome-banner">
     <div class="welcome-text">
         <h2>Bienvenido, {{ \Illuminate\Support\Str::words(auth()->user()->name, 2, '') }} 👋</h2>
-        <p>Panel de administración · JM y JS Alimentos Lácteos</p>
+        <p>Panel de administración · JM y JS Alimentos</p>
     </div>
     <div class="welcome-logo">
         @if (file_exists(public_path('img/logo-jmjs.png')))

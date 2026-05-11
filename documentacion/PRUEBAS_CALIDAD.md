@@ -1,4 +1,4 @@
-# Pruebas de Calidad — JM y JS Alimentos Lácteos
+# Pruebas de Calidad — JM y JS Alimentos
 ## Plataforma de Capacitación en Línea
 
 ---
@@ -141,7 +141,7 @@ Las pruebas de caja negra validan el comportamiento del sistema desde la perspec
 | Campo | Detalle |
 |---|---|
 | **Precondición** | Ninguna (no requiere autenticación) |
-| **Entrada** | `course_name: "BPM en Industria Láctea"`, `level: "Básico"`, `price: 350` |
+| **Entrada** | `course_name: "BPM en Industria Alimentaria"`, `level: "Básico"`, `price: 350` |
 | **Acción** | `POST /cart/add` (AJAX) |
 | **Salida esperada** | JSON: `{"ok": true, "msg": "...", "count": 1}` |
 | **Código HTTP** | 200 |
@@ -151,8 +151,8 @@ Las pruebas de caja negra validan el comportamiento del sistema desde la perspec
 
 | Campo | Detalle |
 |---|---|
-| **Precondición** | El curso `"BPM en Industria Láctea"` ya está en el carrito |
-| **Entrada** | `course_name: "BPM en Industria Láctea"`, `level: "Básico"`, `price: 350` |
+| **Precondición** | El curso `"BPM en Industria Alimentaria"` ya está en el carrito |
+| **Entrada** | `course_name: "BPM en Industria Alimentaria"`, `level: "Básico"`, `price: 350` |
 | **Acción** | `POST /cart/add` (AJAX) |
 | **Salida esperada** | JSON: `{"ok": false, "msg": "Este curso ya está en tu carrito."}` |
 | **Código HTTP** | 422 |
@@ -163,7 +163,7 @@ Las pruebas de caja negra validan el comportamiento del sistema desde la perspec
 | Campo | Detalle |
 |---|---|
 | **Precondición** | El carrito tiene al menos un curso |
-| **Entrada** | `course_name: "BPM en Industria Láctea"` |
+| **Entrada** | `course_name: "BPM en Industria Alimentaria"` |
 | **Acción** | `POST /cart/remove` (AJAX) |
 | **Salida esperada** | JSON con `count` decrementado en 1 |
 | **Código HTTP** | 200 |
@@ -243,7 +243,7 @@ Las pruebas de caja negra validan el comportamiento del sistema desde la perspec
 
 | Campo | Detalle |
 |---|---|
-| **Precondición** | Usuario ya tiene inscripción en `"BPM en Industria Láctea"`, mismo curso en carrito |
+| **Precondición** | Usuario ya tiene inscripción en `"BPM en Industria Alimentaria"`, mismo curso en carrito |
 | **Entrada** | Datos de tarjeta válidos |
 | **Acción** | `POST /pago` |
 | **Salida esperada** | El curso duplicado se omite; solo se crean inscripciones nuevas |
@@ -648,7 +648,7 @@ La siguiente tabla relaciona los nombres de las funcionalidades según la docume
 
 ### 6.1 ¿Qué es y para qué sirve?
 
-La plataforma integra un **chatbot de inteligencia artificial** basado en **Google Gemini** (modelo `gemini-2.5-flash`) que actúa como asistente virtual de JM y JS Alimentos Lácteos. Su propósito es:
+La plataforma integra un **chatbot de inteligencia artificial** basado en **Google Gemini** (modelo `gemini-2.5-flash`) que actúa como asistente virtual de JM y JS Alimentos. Su propósito es:
 
 - Responder consultas frecuentes sobre los cursos disponibles
 - Orientar al usuario en el proceso de inscripción y pago
@@ -683,7 +683,7 @@ HTTP POST → googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
 Respuesta JSON de Gemini
     │
     ▼
-{ "reply": "Tenemos el curso HACCP en Plantas Lácteas a S/420..." }
+{ "reply": "Tenemos el curso HACCP en Plantas de Alimentos a S/420..." }
     │
     ▼
 Frontend (componente React) muestra la respuesta
@@ -759,4 +759,4 @@ La prueba PCN-CHAT-01 es la más crítica: valida que el ciclo completo frontend
 
 ---
 
-*Documentación de pruebas de calidad — JM y JS Alimentos Lácteos — Mayo 2026*
+*Documentación de pruebas de calidad — JM y JS Alimentos — Mayo 2026*

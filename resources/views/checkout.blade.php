@@ -199,7 +199,7 @@
                 @if (file_exists(public_path('img/logo-jmjs.png')))
                     <img src="{{ asset('img/logo-jmjs.png') }}" alt="JM y JS">
                 @endif
-                JM y JS Alimentos Lácteos
+                JM y JS Alimentos
             </a>
             <div class="checkout-secure">
                 <span class="material-symbols-outlined">lock</span>

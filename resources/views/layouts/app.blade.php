@@ -4,7 +4,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'JM y JS Alimentos Lácteos') | JM y JS</title>
+    <title>@yield('title', 'JM y JS Alimentos') | JM y JS</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
@@ -22,12 +22,12 @@
     @endphp
 
     @if ($brandLogo)
-      <img class="logo-image" src="{{ $brandLogo }}" alt="JM y JS Alimentos Lacteos">
+      <img class="logo-image" src="{{ $brandLogo }}" alt="JM y JS Alimentos">
     @else
       <div class="logo-icon">JM</div>
       <div>
       <div class="logo-text">JM y JS</div>
-      <div class="logo-sub">Alimentos Lácteos</div>
+      <div class="logo-sub">Alimentos</div>
       </div>
     @endif
   </a>
@@ -84,8 +84,8 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <strong>JM y JS Alimentos Lácteos</strong>
-      <p>Expertos en calidad alimentaria, BPM e ISO para el sector lácteo peruano.</p>
+      <strong>JM y JS Alimentos</strong>
+      <p>Expertos en calidad alimentaria, BPM e ISO para el sector alimentario peruano.</p>
     </div>
 
     <div class="footer-col">
@@ -101,7 +101,7 @@
   </div>
 
   <div class="footer-bottom">
-    <span>© 2026 JM y JS Alimentos Lácteos. Huancayo, Perú.</span>
+    <span>© 2026 JM y JS Alimentos. Huancayo, Perú.</span>
   </div>
 </footer>
 

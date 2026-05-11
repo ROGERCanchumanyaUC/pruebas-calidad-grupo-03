@@ -338,8 +338,8 @@ $courseImages = [
     'bpm'          => 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=480&h=200&fit=crop',
     'iso'          => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=480&h=200&fit=crop',
     'microbiolog'  => 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=480&h=200&fit=crop',
-    'queso'        => 'https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=200&fit=crop',
-    'yogur'        => 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=480&h=200&fit=crop',
+    'artesanal'        => 'https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=200&fit=crop',
+    'fermentado'        => 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=480&h=200&fit=crop',
     'haccp'        => 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=480&h=200&fit=crop',
     'pasteur'      => 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=480&h=200&fit=crop',
     'fisicoquim'   => 'https://images.unsplash.com/photo-1576867757603-05b134ebc379?w=480&h=200&fit=crop',
@@ -445,7 +445,7 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                                 <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                             </div>
                             <h3>Aún no tienes cursos inscritos</h3>
-                            <p>Explora nuestro catálogo de 9 programas especializados en el sector lácteo peruano.</p>
+                            <p>Explora nuestro catálogo de 9 programas especializados en el sector alimentario peruano.</p>
                             <a href="{{ route('cursos') }}" class="mcu-empty-btn">
                                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
                                 Explorar catálogo

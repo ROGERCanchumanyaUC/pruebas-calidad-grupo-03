@@ -47,7 +47,7 @@
                 </div>
                 <div class="contact-item">
                     <strong>Correo</strong>
-                    contacto@jmjslacteos.pe
+                    contacto@jmjsalimentos.pe
                 </div>
                 <div class="contact-item">
                     <strong>Horario</strong>
@@ -101,18 +101,18 @@
                         <select id="curso">
                             <option value="" disabled selected>Selecciona el curso…</option>
                             <optgroup label="— Básico">
-                                <option>BPM en Industria Láctea — S/ 350</option>
-                                <option>Elaboración de Quesos Artesanales — S/ 280</option>
+                                <option>BPM en Industria Alimentaria — S/ 350</option>
+                                <option>Procesamiento de Alimentos Artesanales — S/ 280</option>
                                 <option>Pasteurización y Tratamiento Térmico — S/ 290</option>
                             </optgroup>
                             <optgroup label="— Intermedio">
                                 <option>Gestión de Calidad ISO 9001 — S/ 450</option>
-                                <option>Elaboración de Yogur y Lácteos Fermentados — S/ 320</option>
-                                <option>Análisis Fisicoquímico de Lácteos — S/ 360</option>
+                                <option>Elaboración de Alimentos Fermentados — S/ 320</option>
+                                <option>Análisis Fisicoquímico de Alimentos — S/ 360</option>
                             </optgroup>
                             <optgroup label="— Avanzado">
-                                <option>Control Microbiológico en Lácteos — S/ 380</option>
-                                <option>HACCP en Plantas Lácteas — S/ 420</option>
+                                <option>Control Microbiológico en Alimentos — S/ 380</option>
+                                <option>HACCP en Plantas de Alimentos — S/ 420</option>
                                 <option>Gestión de Inocuidad Alimentaria ISO 22000 — S/ 480</option>
                             </optgroup>
                         </select>

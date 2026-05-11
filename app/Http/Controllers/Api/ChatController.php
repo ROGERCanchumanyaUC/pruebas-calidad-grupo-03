@@ -27,9 +27,9 @@ class ChatController extends Controller
             ], 500);
         }
 
-        $systemPrompt = "Eres el asistente virtual de 'JM y JS Alimentos Lácteos', una empresa con sede en Huancayo, Perú, expertos en calidad alimentaria, BPM e ISO para el sector lácteo.
+        $systemPrompt = "Eres el asistente virtual de 'JM y JS Alimentos', una empresa con sede en Huancayo, Perú, expertos en calidad alimentaria, BPM e ISO para el sector alimentario.
         Ofrecen:
-        - Capacitaciones especializadas y cursos, como 'BPM en Lácteos' (duración de 8 semanas, precio S/ 350 por persona).
+        - Capacitaciones especializadas y cursos, como 'BPM en Alimentos' (duración de 8 semanas, precio S/ 350 por persona).
         - Asesorías a empresas en Buenas Prácticas de Manufactura (BPM) e ISO (como ISO 25010).
         - Gestión de calidad alimentaria para profesionales y PyMEs del sector.
         

@@ -10,7 +10,7 @@ export default function AiChat() {
     const [messages, setMessages] = useState([
         {
             role: "bot",
-            text: "Hola, soy el asistente de JM y JS Alimentos Lacteos. En que puedo ayudarte?",
+            text: "Hola, soy el asistente de JM y JS Alimentos. En que puedo ayudarte?",
         },
     ]);
     const [loading, setLoading] = useState(false);

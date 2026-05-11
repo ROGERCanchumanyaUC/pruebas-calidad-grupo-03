@@ -1,11 +1,11 @@
-# Estado del Arte — JM y JS Alimentos Lácteos
-## Plataforma de Capacitación en Línea para la Industria Láctea
+# Estado del Arte — JM y JS Alimentos
+## Plataforma de Capacitación en Línea para la Industria Alimentaria
 
 ---
 
 ## 1. Introducción
 
-El presente Estado del Arte analiza el contexto tecnológico, educativo e industrial en el que se enmarca el desarrollo de la plataforma de e-learning de **JM y JS Alimentos Lácteos**. Se revisan las tendencias actuales en plataformas de aprendizaje en línea, el uso de inteligencia artificial en la educación, la situación de la capacitación en la industria alimentaria peruana y las tecnologías utilizadas en sistemas similares, con el propósito de justificar las decisiones de diseño e implementación del proyecto.
+El presente Estado del Arte analiza el contexto tecnológico, educativo e industrial en el que se enmarca el desarrollo de la plataforma de e-learning de **JM y JS Alimentos**. Se revisan las tendencias actuales en plataformas de aprendizaje en línea, el uso de inteligencia artificial en la educación, la situación de la capacitación en la industria alimentaria peruana y las tecnologías utilizadas en sistemas similares, con el propósito de justificar las decisiones de diseño e implementación del proyecto.
 
 ---
 
@@ -33,7 +33,7 @@ Las principales plataformas de e-learning que dominan el mercado global son:
 | **Moodle** | Open Source / LMS | Plataforma de gestión de aprendizaje autoalojada |
 | **Platzi** | B2C (LATAM) | Especializado en tecnología, orientado al mercado latinoamericano |
 
-**Diferencia con el proyecto JM y JS:** Ninguna de estas plataformas ofrece contenido especializado en **normativas de la industria láctea peruana** (BPM, HACCP, ISO 22000 en contexto local). El proyecto cubre un nicho de mercado que las grandes plataformas no atienden.
+**Diferencia con el proyecto JM y JS:** Ninguna de estas plataformas ofrece contenido especializado en **normativas de la industria alimentaria peruana** (BPM, HACCP, ISO 22000 en contexto local). El proyecto cubre un nicho de mercado que las grandes plataformas no atienden.
 
 ---
 
@@ -45,7 +45,7 @@ El Perú ha registrado un crecimiento significativo en la adopción de plataform
 
 - **Brecha geográfica:** Las regiones del interior del país (como Junín, donde opera JM y JS) tienen menor acceso a capacitación presencial especializada.
 - **Brecha de oferta:** La capacitación en inocuidad alimentaria y normativas BPM/HACCP es escasa en formato digital y en español técnico peruano.
-- **Informalidad del sector:** Muchas empresas lácteas artesanales no tienen acceso a formación formal en calidad y normativa.
+- **Informalidad del sector:** Muchas empresas alimentarias artesanales no tienen acceso a formación formal en calidad y normativa.
 
 ### 3.2 Plataformas relevantes en Perú
 
@@ -54,9 +54,9 @@ El Perú ha registrado un crecimiento significativo en la adopción de plataform
 | **Perú Capacita (MTPE)** | Capacitación laboral gratuita, enfocada en empleabilidad general |
 | **SENATI Virtual** | Formación técnica industrial, incluye algunos módulos de alimentos |
 | **INACAL Capacitación** | Normalización y metrología, talleres en ISO pero presenciales |
-| **Cámara de Comercio de Lima** | Cursos empresariales, poco enfoque en industria láctea específica |
+| **Cámara de Comercio de Lima** | Cursos empresariales, poco enfoque en industria alimentaria específica |
 
-**Oportunidad identificada:** Ninguna plataforma digital en Perú ofrece un catálogo dedicado exclusivamente a la **industria láctea**, combinando certificación, accesibilidad en línea y contenido técnico especializado.
+**Oportunidad identificada:** Ninguna plataforma digital en Perú ofrece un catálogo dedicado exclusivamente a la **industria alimentaria**, combinando certificación, accesibilidad en línea y contenido técnico especializado.
 
 ---
 
@@ -68,19 +68,19 @@ La industria alimentaria peruana está regulada por organismos como **DIGESA**, 
 
 | Norma | Descripción | Relevancia para el proyecto |
 |---|---|---|
-| **BPM (Buenas Prácticas de Manufactura)** | RM 449-2006/MINSA — obligatoria para plantas procesadoras | Curso BPM en Industria Láctea (S/350) |
-| **HACCP** | DS 007-98-SA — análisis de peligros y puntos críticos de control | Curso HACCP en Plantas Lácteas (S/420) |
+| **BPM (Buenas Prácticas de Manufactura)** | RM 449-2006/MINSA — obligatoria para plantas procesadoras | Curso BPM en Industria Alimentaria (S/350) |
+| **HACCP** | DS 007-98-SA — análisis de peligros y puntos críticos de control | Curso HACCP en Plantas de Alimentos (S/420) |
 | **ISO 9001:2015** | Sistema de gestión de calidad — certificación voluntaria | Curso Gestión de Calidad ISO 9001 (S/450) |
 | **ISO 22000:2018** | Sistema de gestión de inocuidad alimentaria | Curso Gestión de Inocuidad ISO 22000 (S/480) |
 
 La obligatoriedad de estas normativas genera una **demanda constante y estructural** de capacitación, haciendo viable el modelo de negocio de la plataforma.
 
-### 4.2 Situación de la industria láctea en Junín
+### 4.2 Situación de la industria alimentaria en Junín
 
-La región Junín es uno de los principales corredores lácteos del Perú, con producción concentrada en:
+La región Junín es uno de los principales corredores alimentarios del Perú, con producción concentrada en:
 - Valle del Mantaro (Huancayo, Chupaca, Concepción)
-- Industrias queseras artesanales y semi-industriales
-- Plantas de pasteurización y acopio
+- Agroindustrias artesanales y semi-industriales
+- Plantas de procesamiento y acopio de alimentos
 
 Esta densidad industrial local crea una **audiencia objetivo concentrada geográficamente** que demanda capacitación técnica accesible sin necesidad de trasladarse a Lima.
 
@@ -119,7 +119,7 @@ Los **Large Language Models (LLMs)** han transformado la interacción entre usua
 
 ### 5.3 Chatbots en plataformas educativas latinoamericanas
 
-La adopción de chatbots con IA en plataformas educativas de LATAM es aún incipiente. Plataformas como **Platzi** han implementado asistentes de IA para orientar a sus estudiantes, demostrando que el modelo es viable para audiencias hispanohablantes. El proyecto JM y JS replica este enfoque adaptado a la industria láctea.
+La adopción de chatbots con IA en plataformas educativas de LATAM es aún incipiente. Plataformas como **Platzi** han implementado asistentes de IA para orientar a sus estudiantes, demostrando que el modelo es viable para audiencias hispanohablantes. El proyecto JM y JS replica este enfoque adaptado a la industria alimentaria.
 
 ---
 
@@ -213,7 +213,7 @@ Las plataformas de e-learning manejan datos personales y financieros, lo que las
 
 El análisis del estado del arte evidencia que:
 
-1. **Existe un nicho no atendido:** No hay plataformas digitales especializadas en capacitación láctea en el Perú, lo que posiciona a JM y JS Alimentos Lácteos como pioneros en este segmento.
+1. **Existe un nicho no atendido:** No hay plataformas digitales especializadas en capacitación alimentaria en el Perú, lo que posiciona a JM y JS Alimentos como pioneros en este segmento.
 
 2. **Las tecnologías elegidas son las adecuadas:** Laravel, React, Vite y SQLite son las herramientas estándar de la industria para proyectos de esta escala, con amplio soporte, documentación y comunidad.
 
@@ -225,4 +225,4 @@ El análisis del estado del arte evidencia que:
 
 ---
 
-*Estado del Arte — JM y JS Alimentos Lácteos — Mayo 2026*
+*Estado del Arte — JM y JS Alimentos — Mayo 2026*

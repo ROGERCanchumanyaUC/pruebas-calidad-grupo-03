@@ -1,4 +1,4 @@
-# Arquitectura del Proyecto — JM y JS Alimentos Lácteos
+# Arquitectura del Proyecto — JM y JS Alimentos
 
 ---
 
@@ -437,4 +437,4 @@ Servicios externos:
 
 ---
 
-*Documentación de arquitectura — JM y JS Alimentos Lácteos — Mayo 2026*
+*Documentación de arquitectura — JM y JS Alimentos — Mayo 2026*
