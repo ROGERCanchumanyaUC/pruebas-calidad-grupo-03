@@ -437,4 +437,17 @@ Servicios externos:
 
 ---
 
+## 5. Convención de Almacenamiento (Storage)
+
+Para garantizar la seguridad de los materiales educativos del LMS, los archivos de cursos (videos, documentos, presentaciones y recursos descargables) no se almacenan en el disco público expuesto mediante enlaces simbólicos.
+
+### 5.1 Estructura de Rutas
+Los materiales se guardan en el disco local privado bajo el patrón:
+`private/materials/{course_id}/{module_id}/`
+
+### 5.2 Control de Acceso
+El acceso a estos materiales se gestionará a través de un controlador específico que validará la inscripción activa del usuario (o el rol de administrador/instructor) antes de iniciar la descarga o transmisión del archivo, impidiendo el acceso directo y no autorizado.
+
+---
+
 *Documentación de arquitectura — JM y JS Alimentos — Mayo 2026*
