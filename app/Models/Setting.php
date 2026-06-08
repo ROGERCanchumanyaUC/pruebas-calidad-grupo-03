@@ -35,5 +35,7 @@ class Setting extends Model
             ['key' => $key],
             ['value' => $storeValue, 'type' => $type, 'group' => $group]
         );
+
+        \Illuminate\Support\Facades\Cache::forget("setting.{$key}");
     }
 }

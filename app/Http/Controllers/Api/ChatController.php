@@ -12,10 +12,10 @@ class ChatController extends Controller
     public function handleChat(Request $request)
     {
         $validated = $request->validate([
-            'message' => ['required', 'string', 'max:2000'],
+            'message' => ['required', 'string', 'max:1000'],
         ]);
 
-        $message = $validated['message'];
+        $message = strip_tags($validated['message']);
         $apiKey = config('services.gemini.key');
         $model = config('services.gemini.model', 'gemini-2.5-flash');
 

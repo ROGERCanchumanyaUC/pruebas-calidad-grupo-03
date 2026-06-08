@@ -30,7 +30,7 @@ Route::post('/contacto/enviar', [ContactController::class, 'store'])->name('cont
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.store');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 });
@@ -79,6 +79,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/students/{student}/courses/{course}/suspend', [StudentController::class, 'suspend'])->name('students.suspend');
     Route::post('/students/{student}/courses/{course}/reactivate', [StudentController::class, 'reactivate'])->name('students.reactivate');
     Route::post('/students/{student}/courses/{course}/reset', [StudentController::class, 'resetProgress'])->name('students.reset');
+
+    // Admin User Edit Routes
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+
+    // Admin Roles & Permissions
+    Route::resource('roles', \App\Http\Controllers\Admin\RoleController::class)->only(['index', 'show']);
+
+    // Admin Settings
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+    // Admin Audit Logs
+    Route::get('/audit', [\App\Http\Controllers\Admin\AuditController::class, 'index'])->name('audit.index');
 
     // Admin Sales Management
     Route::resource('sales', SaleController::class)->only(['index', 'show']);
