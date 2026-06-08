@@ -399,7 +399,7 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                     <span>Inscritos</span>
                 </div>
                 <div class="mcu-hero-stat">
-                    <strong>{{ $enrollments->where('status','pagado')->count() }}</strong>
+                    <strong>{{ $enrollments->whereIn('status', ['activo', 'completado'])->count() }}</strong>
                     <span>Pagados</span>
                 </div>
                 <div class="mcu-hero-stat">
@@ -407,7 +407,7 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                     <span>Completados</span>
                 </div>
                 <div class="mcu-hero-stat">
-                    <strong>S/ {{ number_format($enrollments->where('status','pagado')->sum('price'), 0) }}</strong>
+                    <strong>S/ {{ number_format($enrollments->whereIn('status', ['activo', 'completado'])->sum(function($e) { return $e->course->price ?? 0; }), 0) }}</strong>
                     <span>Invertido</span>
                 </div>
             </div>
@@ -456,17 +456,17 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                     <div class="mcu-courses-grid">
                         @foreach ($enrollments as $e)
                         @php
-                            $img  = getCourseImg($e->course_name, $courseImages);
-                            $pct  = $progreso[$e->status] ?? 10;
+                            $img  = getCourseImg($e->course->name, $courseImages);
+                            $pct  = (int) ($e->progress ?? 0);
                         @endphp
                         <div class="mcu-course-card">
                             <div class="mcu-course-img">
-                                <img src="{{ $img }}" alt="{{ $e->course_name }}" loading="lazy">
+                                <img src="{{ $img }}" alt="{{ $e->course->name }}" loading="lazy">
                                 <span class="mcu-course-status-badge {{ $e->status }}">{{ ucfirst($e->status) }}</span>
                             </div>
                             <div class="mcu-course-body">
-                                <span class="mcu-course-level {{ strtolower($e->level) }}">{{ ucfirst($e->level) }}</span>
-                                <div class="mcu-course-name">{{ $e->course_name }}</div>
+                                <span class="mcu-course-level {{ strtolower($e->course->level) }}">{{ ucfirst($e->course->level) }}</span>
+                                <div class="mcu-course-name">{{ $e->course->name }}</div>
                                 <div class="mcu-progress-wrap">
                                     <div class="mcu-progress-label">
                                         <span>Progreso</span>
@@ -476,9 +476,24 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                                         <div class="mcu-progress-fill" style="width:{{ $pct }}%"></div>
                                     </div>
                                 </div>
-                                <div class="mcu-course-footer">
-                                    <span class="mcu-course-price">S/ {{ number_format($e->price, 0) }}</span>
+                                <div class="mcu-course-footer" style="margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
+                                    <span class="mcu-course-price">S/ {{ number_format($e->course->price, 0) }}</span>
                                     <span class="mcu-course-date">{{ $e->created_at->format('d/m/Y') }}</span>
+                                </div>
+                                <div style="margin-top: auto;">
+                                    @if(in_array($e->status, ['activo', 'completado']))
+                                        <a href="{{ route('mi-cuenta.cursos.show', $e->course->slug) }}" class="mcu-empty-btn" style="display: block; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; text-decoration: none;">
+                                            Continuar Aprendiendo
+                                        </a>
+                                    @elseif($e->status === 'pendiente')
+                                        <a href="{{ route('checkout') }}" class="mcu-empty-btn" style="display: block; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; background: #d97706; text-decoration: none;">
+                                            Proceder al Pago
+                                        </a>
+                                    @elseif($e->status === 'suspendido')
+                                        <button disabled class="mcu-empty-btn" style="display: block; width: 100%; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; background: #64748b; cursor: not-allowed; opacity: 0.75;">
+                                            Acceso Suspendido
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -654,7 +669,7 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                     Tu progreso
                 </div>
                 <div class="mcu-card-body">
-                    @php $total = $enrollments->count(); $paid = $enrollments->where('status','pagado')->count(); $done = $enrollments->where('status','completado')->count(); @endphp
+                    @php $total = $enrollments->count(); $paid = $enrollments->whereIn('status', ['activo', 'completado'])->count(); $done = $enrollments->where('status','completado')->count(); @endphp
                     @if ($total === 0)
                         <p style="font-size:13px;color:#94a3b8;text-align:center;padding:8px 0;">Sin cursos inscritos aún.</p>
                     @else

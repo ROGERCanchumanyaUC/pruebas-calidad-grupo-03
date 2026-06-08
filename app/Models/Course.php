@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 
 class Course extends Model
@@ -44,6 +45,11 @@ class Course extends Model
     public function modules(): HasMany
     {
         return $this->hasMany(CourseModule::class)->orderBy('order');
+    }
+
+    public function materials(): HasManyThrough
+    {
+        return $this->hasManyThrough(CourseMaterial::class, CourseModule::class, 'course_id', 'module_id');
     }
 
     public function enrollments(): HasMany

@@ -50,6 +50,11 @@ class User extends Authenticatable
         return $this->hasMany(AuditLog::class);
     }
 
+    public function completedMaterials(): BelongsToMany
+    {
+        return $this->belongsToMany(CourseMaterial::class, 'course_material_user')->withTimestamps();
+    }
+
     // ── Role helpers ──
 
     /**

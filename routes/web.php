@@ -13,6 +13,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\MiCuentaController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\StudentCourseController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'inicio')->name('inicio');
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/mi-cuenta',  [MiCuentaController::class, 'index'])->name('mi-cuenta');
     Route::post('/pago',      [PaymentController::class, 'process'])->name('pago.procesar');
     Route::get('/pago/exito', fn () => view('pago-exito'))->name('pago.exito');
+
+    // Student Classroom & Private File Access
+    Route::get('/mi-cuenta/cursos/{course:slug}', [StudentCourseController::class, 'show'])->name('mi-cuenta.cursos.show');
+    Route::post('/mi-cuenta/cursos/{course}/materials/{material}/toggle', [StudentCourseController::class, 'completeMaterial'])->name('mi-cuenta.cursos.complete-material');
+    Route::get('/mi-cuenta/cursos/{course}/materials/{material}/file', [StudentCourseController::class, 'serveFile'])->name('mi-cuenta.cursos.file');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
