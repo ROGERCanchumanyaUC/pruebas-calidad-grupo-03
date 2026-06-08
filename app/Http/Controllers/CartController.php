@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -10,22 +11,23 @@ class CartController extends Controller
     public function add(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'course_name' => ['required', 'string', 'max:200'],
-            'level'       => ['required', 'string', 'max:40'],
-            'price'       => ['required', 'numeric', 'min:0'],
+            'course_id' => ['required', 'exists:courses,id'],
         ]);
+
+        $course = Course::findOrFail($data['course_id']);
 
         $cart = session()->get('cart', []);
 
-        $exists = collect($cart)->contains('course_name', $data['course_name']);
+        $exists = collect($cart)->contains('course_id', $course->id);
         if ($exists) {
             return response()->json(['ok' => false, 'msg' => 'Este curso ya está en tu carrito.'], 422);
         }
 
         $cart[] = [
-            'course_name' => $data['course_name'],
-            'level'       => $data['level'],
-            'price'       => (float) $data['price'],
+            'course_id'   => $course->id,
+            'course_name' => $course->name,
+            'level'       => $course->level,
+            'price'       => (float) $course->effective_price,
         ];
 
         session()->put('cart', $cart);
@@ -39,9 +41,13 @@ class CartController extends Controller
 
     public function remove(Request $request): JsonResponse
     {
-        $name = $request->input('course_name');
+        $request->validate([
+            'course_id' => ['required', 'integer']
+        ]);
+
+        $courseId = (int) $request->input('course_id');
         $cart = collect(session()->get('cart', []))
-            ->reject(fn ($item) => $item['course_name'] === $name)
+            ->reject(fn ($item) => (int)$item['course_id'] === $courseId)
             ->values()
             ->all();
 

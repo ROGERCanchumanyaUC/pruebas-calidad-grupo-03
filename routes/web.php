@@ -9,11 +9,13 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\MiCuentaController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'inicio')->name('inicio');
 Route::view('/nosotros', 'nosotros')->name('nosotros');
-Route::view('/cursos', 'cursos')->name('cursos');
+Route::get('/cursos', [CourseController::class, 'index'])->name('cursos');
+Route::get('/cursos/{slug}', [CourseController::class, 'show'])->name('cursos.show');
 Route::view('/contacto', 'contacto')->name('contacto');
 Route::get('/checkout', [CartController::class, 'index'])->name('checkout');
 

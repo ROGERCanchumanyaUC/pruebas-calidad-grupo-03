@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Cursos')
+@section('title', 'Cursos de Calidad e Inocuidad Alimentaria')
+@section('meta_description', 'Explora nuestro catálogo de capacitaciones especializadas en Buenas Prácticas de Manufactura (BPM), HACCP, e ISO para el sector de alimentos.')
 
 @section('content')
 <main class="page">
 
     {{-- ── Hero ── --}}
     <section class="ch-hero">
-        {{-- Fondo animado --}}
         <div class="ch-bg"></div>
         <div class="ch-overlay"></div>
         <div class="ch-blob ch-blob-1"></div>
@@ -26,26 +26,22 @@
                 </h1>
 
                 <p class="ch-lead">
-                    9 programas certificados en BPM, HACCP e ISO. Diseñados para técnicos, jefes de planta y emprendedores del sector alimentario. Aprende a tu ritmo, aplica desde el primer módulo.
+                    Programas certificados en BPM, HACCP e ISO. Diseñados para técnicos, jefes de planta y emprendedores del sector alimentario. Aprende a tu ritmo, aplica desde el primer módulo.
                 </p>
 
                 {{-- Stats pills --}}
                 <div class="ch-pills">
                     <span class="ch-pill">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                        9 cursos certificados
+                        Programas Certificados
                     </span>
                     <span class="ch-pill">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        4 a 12 semanas
+                        A tu propio ritmo
                     </span>
                     <span class="ch-pill">
                         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         100% online
-                    </span>
-                    <span class="ch-pill">
-                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Desde S/ 280
                     </span>
                 </div>
 
@@ -60,20 +56,37 @@
                 </div>
             </div>
 
-            {{-- Columna derecha: tarjeta destacada --}}
+            {{-- Columna derecha: tarjeta destacada dinámicamente --}}
+            @php
+                $featuredCourse = $courses->where('is_featured', true)->first() ?? $courses->first();
+            @endphp
+            @if($featuredCourse)
             <div class="ch-right">
                 <div class="ch-card">
                     <div class="ch-card-img">
-                        <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=700&q=88" alt="Curso destacado">
+                        @php
+                            $featCover = $featuredCourse->cover_image;
+                            if ($featCover && !str_starts_with($featCover, 'http')) {
+                                $featCover = asset('storage/' . $featCover);
+                            }
+                            $featCover = $featCover ?: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=700&q=88';
+                        @endphp
+                        <a href="{{ route('cursos.show', $featuredCourse->slug) }}">
+                            <img src="{{ $featCover }}" alt="{{ $featuredCourse->name }}">
+                        </a>
                         <span class="ch-card-badge">Más popular</span>
                     </div>
                     <div class="ch-card-body">
-                        <div class="ch-card-cat">Calidad · Certificación</div>
-                        <div class="ch-card-title">BPM en Industria Alimentaria</div>
+                        <div class="ch-card-cat">{{ $featuredCourse->category?->name }}</div>
+                        <div class="ch-card-title">
+                            <a href="{{ route('cursos.show', $featuredCourse->slug) }}" style="color: inherit; text-decoration: none;">
+                                {{ $featuredCourse->name }}
+                            </a>
+                        </div>
                         <div class="ch-card-meta">
                             <span>
                                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                8 semanas
+                                {{ $featuredCourse->duration_weeks }} semanas
                             </span>
                             <span>
                                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -81,15 +94,20 @@
                             </span>
                             <span>
                                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                Nivel básico
+                                Nivel {{ ucfirst($featuredCourse->level) }}
                             </span>
                         </div>
                         <div class="ch-card-footer">
                             <div>
                                 <div class="ch-card-price-lbl">Precio</div>
-                                <div class="ch-card-price">S/ 350</div>
+                                @if($featuredCourse->has_active_offer)
+                                    <div class="ch-card-price" style="text-decoration: line-through; color: #9ca3af; font-size: 13px;">S/ {{ number_format($featuredCourse->price, 0) }}</div>
+                                    <div class="ch-card-price" style="color: #ef4444;">S/ {{ number_format($featuredCourse->effective_price, 0) }}</div>
+                                @else
+                                    <div class="ch-card-price">S/ {{ number_format($featuredCourse->price, 0) }}</div>
+                                @endif
                             </div>
-                            <button class="ch-card-btn" onclick="inscribir(this)" data-course="BPM en Industria Alimentaria" data-level="basico" data-price="350">
+                            <button class="ch-card-btn" onclick="inscribir(this)" data-course-id="{{ $featuredCourse->id }}">
                                 Inscribirme
                             </button>
                         </div>
@@ -106,6 +124,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
 
         {{-- Scroll indicator --}}
@@ -124,334 +143,108 @@
             <p class="section-subtitle">Cada curso incluye materiales, certificado y acompañamiento técnico.</p>
         </div>
 
-        <div class="curso-filters">
-            <button class="filter-btn active" data-filter="all">Todos</button>
-            <button class="filter-btn" data-filter="basico">Básico</button>
-            <button class="filter-btn" data-filter="intermedio">Intermedio</button>
-            <button class="filter-btn" data-filter="avanzado">Avanzado</button>
-        </div>
+        <form action="{{ route('cursos') }}#catalogo" method="GET" class="catalog-filter-form">
+            <div class="filters-row" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 24px; align-items: center;">
+                <div class="search-wrap" style="flex: 1; min-width: 250px;">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar cursos (ej. BPM, ISO, HACCP)..." 
+                           style="width: 100%; padding: 10px 20px; border-radius: 30px; border: 1.5px solid #d1d5db; font-family: inherit; font-size: 13.5px; outline: none; transition: border-color 0.2s;">
+                </div>
+                
+                <div class="select-wrap" style="min-width: 180px;">
+                    <select name="category_id" onchange="this.form.submit()" 
+                            style="width: 100%; padding: 10px 20px; border-radius: 30px; border: 1.5px solid #d1d5db; font-family: inherit; font-size: 13.5px; background: white; cursor: pointer; outline: none;">
+                        <option value="">Todas las Categorías</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="level-filters" style="display: flex; gap: 8px;">
+                    <input type="hidden" name="level" id="filter-level-input" value="{{ request('level') }}">
+                    <button type="button" class="filter-btn {{ !request('level') ? 'active' : '' }}" onclick="filterLevel('')">Todos</button>
+                    <button type="button" class="filter-btn {{ request('level') === 'basico' ? 'active' : '' }}" onclick="filterLevel('basico')">Básico</button>
+                    <button type="button" class="filter-btn {{ request('level') === 'intermedio' ? 'active' : '' }}" onclick="filterLevel('intermedio')">Intermedio</button>
+                    <button type="button" class="filter-btn {{ request('level') === 'avanzado' ? 'active' : '' }}" onclick="filterLevel('avanzado')">Avanzado</button>
+                </div>
+
+                <button type="submit" class="btn-inscribir" style="border: none; cursor: pointer; border-radius: 30px; padding: 10px 25px;">Buscar</button>
+                
+                @if(request()->anyFilled(['search', 'category_id', 'level']))
+                    <a href="{{ route('cursos') }}#catalogo" class="filter-btn" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; height: 38px;">Limpiar Filtros</a>
+                @endif
+            </div>
+        </form>
     </section>
 
     {{-- ── Catálogo ── --}}
     <section class="section" style="padding-top:24px">
-        <div class="cursos-grid">
-
-            {{-- 1 --}}
-            <article class="curso-card reveal" data-level="basico">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=480&h=260&fit=crop&auto=format"
-                         alt="BPM en Industria Alimentaria" loading="lazy">
-                    <span class="nivel-badge basico">Básico</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Calidad · Certificación</div>
-                    <h3 class="curso-nombre">BPM en Industria Alimentaria</h3>
-                    <p class="curso-resena">Domina las Buenas Prácticas de Manufactura aplicadas al procesamiento de alimentos. Aprenderás a identificar puntos críticos, documentar procesos y cumplir con la normativa sanitaria peruana.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            8 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 350</span>
+        @if($courses->isEmpty())
+            <div style="text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 16px; border: 1.5px dashed #d1d5db; max-width: 600px; margin: 0 auto;">
+                <p style="font-size: 16px; color: #6b7280; font-weight: 600; margin-bottom: 15px;">No se encontraron cursos con los filtros seleccionados.</p>
+                <a href="{{ route('cursos') }}#catalogo" class="btn-inscribir" style="text-decoration: none; display: inline-block;">Ver todos los cursos</a>
+            </div>
+        @else
+            <div class="cursos-grid">
+                @foreach($courses as $course)
+                    @php
+                        $cover = $course->cover_image;
+                        if ($cover && !str_starts_with($cover, 'http')) {
+                            $cover = asset('storage/' . $cover);
+                        }
+                        $cover = $cover ?: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=480&h=260&fit=crop&auto=format';
+                    @endphp
+                    <article class="curso-card reveal" data-level="{{ $course->level }}">
+                        <div class="curso-img">
+                            <a href="{{ route('cursos.show', $course->slug) }}">
+                                <img src="{{ $cover }}" alt="{{ $course->name }}" loading="lazy">
+                            </a>
+                            <span class="nivel-badge {{ $course->level }}">
+                                @if($course->level === 'basico') Básico
+                                @elseif($course->level === 'intermedio') Intermedio
+                                @else Avanzado
+                                @endif
+                            </span>
                         </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 2 --}}
-            <article class="curso-card reveal" data-level="intermedio">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=480&h=260&fit=crop&auto=format"
-                         alt="Gestión de Calidad ISO 9001" loading="lazy">
-                    <span class="nivel-badge intermedio">Intermedio</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Normas · ISO</div>
-                    <h3 class="curso-nombre">Gestión de Calidad ISO 9001</h3>
-                    <p class="curso-resena">Implementa sistemas de gestión de calidad en empresas del rubro alimentario. Incluye plantillas listas para usar, auditorías internas y cómo preparar tu empresa para una certificación real.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            10 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 450</span>
+                        <div class="curso-body">
+                            <div class="curso-cat-tag">{{ $course->category?->name }}</div>
+                            <h3 class="curso-nombre">
+                                <a href="{{ route('cursos.show', $course->slug) }}" style="color: inherit; text-decoration: none;">
+                                    {{ $course->name }}
+                                </a>
+                            </h3>
+                            <p class="curso-resena">{{ $course->short_description }}</p>
+                            <div class="curso-detalles">
+                                <span>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    {{ $course->duration_weeks }} semanas
+                                </span>
+                                <span>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                    Online
+                                </span>
+                                <span>
+                                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                    Certificado
+                                </span>
+                            </div>
+                            <div class="curso-footer">
+                                <div class="curso-precio">
+                                    @if($course->has_active_offer)
+                                        <span class="precio-label" style="text-decoration: line-through; color: #9ca3af; font-size: 11px;">S/ {{ number_format($course->price, 0) }}</span>
+                                        <span class="precio-valor" style="color: #ef4444;">S/ {{ number_format($course->effective_price, 0) }}</span>
+                                    @else
+                                        <span class="precio-label">Precio</span>
+                                        <span class="precio-valor">S/ {{ number_format($course->price, 0) }}</span>
+                                    @endif
+                                </div>
+                                <button class="btn-inscribir" onclick="inscribir(this)" data-course-id="{{ $course->id }}">Inscribirme</button>
+                            </div>
                         </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 3 --}}
-            <article class="curso-card reveal" data-level="avanzado">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=480&h=260&fit=crop&auto=format"
-                         alt="Control Microbiológico" loading="lazy">
-                    <span class="nivel-badge avanzado">Avanzado</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Laboratorio</div>
-                    <h3 class="curso-nombre">Control Microbiológico en Alimentos</h3>
-                    <p class="curso-resena">Técnicas y protocolos actualizados para el control microbiológico en plantas de alimentos. Análisis de coliformes, listeria, salmonella y criterios microbiológicos del MINSA/SENASA para alimentos procesados.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            6 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 380</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 4 --}}
-            <article class="curso-card reveal" data-level="basico">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1559598467-f8b76c8155d0?w=480&h=260&fit=crop&auto=format"
-                         alt="Procesamiento de Alimentos Artesanales" loading="lazy">
-                    <span class="nivel-badge basico">Básico</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Producción · Alimentos</div>
-                    <h3 class="curso-nombre">Procesamiento de Alimentos Artesanales</h3>
-                    <p class="curso-resena">Aprende técnicas de procesamiento artesanal de alimentos, desde la selección de materias primas hasta el envasado final, con estándares de inocuidad para pequeña y mediana escala.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            5 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 280</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 5 --}}
-            <article class="curso-card reveal" data-level="intermedio">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=480&h=260&fit=crop&auto=format"
-                         alt="Elaboración de Alimentos Fermentados" loading="lazy">
-                    <span class="nivel-badge intermedio">Intermedio</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Producción · Fermentados</div>
-                    <h3 class="curso-nombre">Elaboración de Alimentos Fermentados</h3>
-                    <p class="curso-resena">Producción de alimentos fermentados con control de cultivos iniciadores, parámetros de fermentación y vida útil. Incluye formulación, análisis sensorial y envasado correcto.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            6 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 320</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 6 --}}
-            <article class="curso-card reveal" data-level="avanzado">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=480&h=260&fit=crop&auto=format"
-                         alt="HACCP en Plantas de Alimentos" loading="lazy">
-                    <span class="nivel-badge avanzado">Avanzado</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Inocuidad · HACCP</div>
-                    <h3 class="curso-nombre">HACCP en Plantas de Alimentos</h3>
-                    <p class="curso-resena">Diseño e implementación del sistema HACCP adaptado a la industria alimentaria peruana. Identificación de peligros físicos, químicos y biológicos, determinación de PCC y elaboración del plan HACCP completo.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            9 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 420</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 7 --}}
-            <article class="curso-card reveal" data-level="basico">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=480&h=260&fit=crop&auto=format"
-                         alt="Pasteurización y Tratamiento Térmico" loading="lazy">
-                    <span class="nivel-badge basico">Básico</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Proceso · Térmica</div>
-                    <h3 class="curso-nombre">Pasteurización y Tratamiento Térmico</h3>
-                    <p class="curso-resena">Fundamentos y operación de tratamientos térmicos en líneas de alimentos procesados. Control de temperatura, validación de procesos y mantenimiento preventivo de equipos.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            4 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 290</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 8 --}}
-            <article class="curso-card reveal" data-level="intermedio">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1576867757603-05b134ebc379?w=480&h=260&fit=crop&auto=format"
-                         alt="Análisis Fisicoquímico de Alimentos" loading="lazy">
-                    <span class="nivel-badge intermedio">Intermedio</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Laboratorio · Fisicoquímica</div>
-                    <h3 class="curso-nombre">Análisis Fisicoquímico de Alimentos</h3>
-                    <p class="curso-resena">Determinación de grasa, proteína, densidad, acidez, pH y sólidos totales en alimentos. Manejo de equipos de laboratorio e interpretación de resultados según normas NTP.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            7 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 360</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-            {{-- 9 --}}
-            <article class="curso-card reveal" data-level="avanzado">
-                <div class="curso-img">
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=480&h=260&fit=crop&auto=format"
-                         alt="Gestión de Inocuidad Alimentaria" loading="lazy">
-                    <span class="nivel-badge avanzado">Avanzado</span>
-                </div>
-                <div class="curso-body">
-                    <div class="curso-cat-tag">Gestión · Inocuidad</div>
-                    <h3 class="curso-nombre">Gestión de Inocuidad Alimentaria ISO 22000</h3>
-                    <p class="curso-resena">Implementación integral de la norma ISO 22000:2018 en empresas alimentarias. Integra BPM, HACCP y gestión de riesgos en un sistema robusto alineado a estándares internacionales. Ideal para responsables de calidad e inocuidad.</p>
-                    <div class="curso-detalles">
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            12 semanas
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                            Online
-                        </span>
-                        <span>
-                            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            Certificado
-                        </span>
-                    </div>
-                    <div class="curso-footer">
-                        <div class="curso-precio">
-                            <span class="precio-label">Precio</span>
-                            <span class="precio-valor">S/ 480</span>
-                        </div>
-                        <button class="btn-inscribir" onclick="inscribir(this)">Inscribirme</button>
-                    </div>
-                </div>
-            </article>
-
-        </div>
+                    </article>
+                @endforeach
+            </div>
+        @endif
     </section>
 
     {{-- ── Metodología ── --}}
@@ -523,7 +316,6 @@
     width: 100%;
 }
 
-/* Eyebrow */
 .ch-eyebrow {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(37,99,235,.25);
@@ -535,7 +327,6 @@
     margin-bottom: 22px;
 }
 
-/* Título */
 .ch-title {
     font-family: 'Noto Serif', serif;
     font-size: clamp(32px, 4vw, 54px);
@@ -551,7 +342,6 @@
     max-width: 520px;
 }
 
-/* Pills stats */
 .ch-pills {
     display: flex; flex-wrap: wrap; gap: 10px;
     margin-bottom: 32px;
@@ -567,7 +357,6 @@
 }
 .ch-pill svg { color: #7dd3fc; flex-shrink: 0; }
 
-/* Botones */
 .ch-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .ch-btn-primary {
     display: inline-flex; align-items: center; gap: 8px;
@@ -588,7 +377,6 @@
 }
 .ch-btn-outline:hover { background: rgba(255,255,255,.1); border-color: #fff; }
 
-/* Card derecha */
 .ch-card {
     background: rgba(255,255,255,.07);
     border: 1px solid rgba(255,255,255,.13);
@@ -640,7 +428,6 @@
 }
 .ch-card-btn:hover { background: #1d4ed8; transform: scale(1.04); }
 
-/* Stat flotantes */
 .ch-float-stat {
     position: absolute;
     display: flex; align-items: center; gap: 7px;
@@ -659,7 +446,6 @@
     to   { transform: translateY(-6px); }
 }
 
-/* Scroll indicator */
 .ch-scroll {
     position: absolute; bottom: 28px; left: 50%;
     transform: translateX(-50%);
@@ -679,7 +465,6 @@
     50%       { transform: translateY(5px); }
 }
 
-/* Responsive */
 @media (max-width: 960px) {
     .ch-inner { grid-template-columns: 1fr; padding: 60px 32px 80px; gap: 48px; }
     .ch-right { display: none; }
@@ -690,7 +475,6 @@
     .ch-pills { gap: 8px; }
 }
 
-/* ── Filtros ── */
 .curso-filters {
     display: flex;
     gap: 10px;
@@ -712,14 +496,12 @@
 .filter-btn:hover   { border-color: #38bdf8; color: #0284c7; background: #e0f2fe; }
 .filter-btn.active  { background: #0284c7; border-color: #0284c7; color: #fff; font-weight: 600; }
 
-/* ── Grid de cursos ── */
 .cursos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
     gap: 26px;
 }
 
-/* ── Tarjeta de curso ── */
 .curso-card {
     background: #fff;
     border-radius: 16px;
@@ -734,9 +516,7 @@
     transform: translateY(-5px);
     box-shadow: 0 12px 32px rgba(0,0,0,.12);
 }
-.curso-card.hidden { display: none; }
 
-/* Imagen */
 .curso-img {
     position: relative;
     height: 190px;
@@ -750,7 +530,6 @@
 }
 .curso-card:hover .curso-img img { transform: scale(1.05); }
 
-/* Badge de nivel */
 .nivel-badge {
     position: absolute;
     top: 12px;
@@ -766,7 +545,6 @@
 .nivel-badge.intermedio { background: #fef3c7; color: #92400e; }
 .nivel-badge.avanzado   { background: #fee2e2; color: #991b1b; }
 
-/* Body */
 .curso-body {
     padding: 18px 20px 20px;
     display: flex;
@@ -799,6 +577,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
 .curso-detalles {
     display: flex;
     flex-wrap: wrap;
@@ -817,7 +596,6 @@
 }
 .curso-detalles span svg { flex-shrink: 0; }
 
-/* Footer precio + botón */
 .curso-footer {
     display: flex;
     align-items: center;
@@ -858,36 +636,23 @@
 
 @push('scripts')
 <script>
-// Filtros
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.curso-card').forEach(card => {
-            card.classList.toggle('hidden', filter !== 'all' && card.dataset.level !== filter);
-        });
-    });
-});
+// Manejo de nivel
+function filterLevel(level) {
+    document.getElementById('filter-level-input').value = level;
+    document.querySelector('.catalog-filter-form').submit();
+}
 
-// Agregar al carrito
+// Agregar al carrito (Usando únicamente ID del curso para máxima seguridad)
 async function inscribir(btn) {
     @guest
         window.location.href = '{{ route("login") }}';
         return;
     @endguest
 
-    // Soporte para tarjeta del catálogo (DOM) y tarjeta del hero (data attrs)
-    let name, level, price;
-    if (btn.dataset.course) {
-        name  = btn.dataset.course;
-        level = btn.dataset.level;
-        price = btn.dataset.price;
-    } else {
-        const card = btn.closest('.curso-card');
-        name  = card.querySelector('.curso-nombre').textContent.trim();
-        level = card.dataset.level;
-        price = card.querySelector('.precio-valor').textContent.replace('S/ ', '').trim();
+    const courseId = btn.dataset.courseId;
+    if (!courseId) {
+        showToast('❌ ID de curso no especificado.');
+        return;
     }
 
     btn.disabled    = true;
@@ -901,7 +666,7 @@ async function inscribir(btn) {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 'Accept':       'application/json',
             },
-            body: JSON.stringify({ course_name: name, level, price }),
+            body: JSON.stringify({ course_id: courseId }),
         });
         const data = await res.json();
 
@@ -922,7 +687,7 @@ async function inscribir(btn) {
             btn.textContent = 'Inscribirme';
             showToast('ℹ️ ' + (data.msg || 'No se pudo agregar.'));
         }
-    } catch {
+    } catch (e) {
         btn.disabled    = false;
         btn.textContent = 'Inscribirme';
         showToast('❌ Error de conexión.');

@@ -311,7 +311,7 @@
                 @else
                     <div class="cart-items" id="cart-items">
                         @foreach ($cart as $item)
-                        <div class="cart-item" id="item-{{ md5($item['course_name']) }}">
+                        <div class="cart-item" id="item-{{ $item['course_id'] }}">
                             <div class="cart-thumb">
                                 <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=120&h=120&fit=crop" alt="">
                             </div>
@@ -322,7 +322,7 @@
                             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
                                 <span class="cart-price">S/ {{ number_format($item['price'], 0) }}</span>
                                 <button class="cart-remove" title="Quitar"
-                                        onclick="removeItem('{{ addslashes($item['course_name']) }}', '{{ md5($item['course_name']) }}')">
+                                        onclick="removeItem({{ $item['course_id'] }})">
                                     ✕
                                 </button>
                             </div>
@@ -398,15 +398,15 @@ document.getElementById('card_cvc')?.addEventListener('input', function () {
 });
 
 // Quitar item del carrito
-async function removeItem(name, hash) {
+async function removeItem(courseId) {
     const res  = await fetch('{{ route("cart.remove") }}', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-        body: JSON.stringify({ course_name: name }),
+        body: JSON.stringify({ course_id: courseId }),
     });
     const data = await res.json();
     if (data.ok) {
-        document.getElementById('item-' + hash)?.remove();
+        document.getElementById('item-' + courseId)?.remove();
         if (data.count === 0) location.reload();
         // Actualiza badge del navbar
         document.querySelectorAll('.cart-count').forEach(el => el.textContent = data.count > 0 ? data.count : '');
