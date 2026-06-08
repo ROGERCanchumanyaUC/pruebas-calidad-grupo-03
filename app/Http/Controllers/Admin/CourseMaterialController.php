@@ -72,9 +72,6 @@ class CourseMaterialController extends Controller
         return back()->with('success', 'Material creado exitosamente.');
     }
 
-    /**
-     * Update the specified material in storage.
-     */
     public function update(UpdateCourseMaterialRequest $request, CourseMaterial $material)
     {
         $data = $request->validated();
@@ -82,6 +79,8 @@ class CourseMaterialController extends Controller
 
         $module = $material->module;
         $courseId = $module->course_id;
+
+        $type = $data['type'] ?? $material->type;
 
         // Handle File Upload replacement
         if ($request->hasFile('file')) {
@@ -101,17 +100,37 @@ class CourseMaterialController extends Controller
             $data['file_type'] = $file->getMimeType();
         }
 
-        // Handle Video type transition (if changing from upload to YouTube/Vimeo, delete file)
-        if (isset($data['type']) && $data['type'] === 'video' && isset($data['video_source'])) {
-            if ($data['video_source'] !== 'upload' && $material->file_path) {
-                Storage::disk('local')->delete($material->file_path);
+        // Perform cleanups based on the resolved type
+        if ($type === 'video') {
+            $source = $data['video_source'] ?? $material->video_source;
+            if ($source === 'youtube' || $source === 'vimeo') {
+                if ($material->file_path) {
+                    Storage::disk('local')->delete($material->file_path);
+                }
                 $data['file_path'] = null;
                 $data['file_type'] = null;
+            } else {
+                $data['video_url'] = null;
             }
+            $data['content'] = null;
+        } elseif (in_array($type, ['documento', 'presentacion', 'recurso'])) {
+            $data['video_url'] = null;
+            $data['video_source'] = null;
+            $data['duration_minutes'] = null;
+            $data['content'] = null;
+        } elseif ($type === 'texto') {
+            if ($material->file_path) {
+                Storage::disk('local')->delete($material->file_path);
+            }
+            $data['file_path'] = null;
+            $data['file_type'] = null;
+            $data['video_url'] = null;
+            $data['video_source'] = null;
+            $data['duration_minutes'] = null;
         }
 
         // Handle Rich Text formatting & sanitization
-        if (($data['type'] ?? $material->type) === 'texto' && isset($data['content'])) {
+        if ($type === 'texto' && isset($data['content'])) {
             $data['content'] = $this->sanitizeHtml($data['content']);
         }
 

@@ -84,6 +84,11 @@ class CourseController extends Controller
     {
         $data = $request->validated();
 
+        // Sanitize course description
+        if (isset($data['description'])) {
+            $data['description'] = $this->sanitizeHtml($data['description']);
+        }
+
         // Handle cover image file upload
         if ($request->hasFile('cover_image')) {
             $path = $request->file('cover_image')->store('covers', 'public');
@@ -111,6 +116,14 @@ class CourseController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Course $course)
+    {
+        return redirect()->route('admin.courses.edit', $course);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Course $course)
@@ -133,6 +146,11 @@ class CourseController extends Controller
     {
         $data = $request->validated();
         $oldValues = $course->toArray();
+
+        // Sanitize course description
+        if (isset($data['description'])) {
+            $data['description'] = $this->sanitizeHtml($data['description']);
+        }
 
         // Handle cover image replacement
         if ($request->hasFile('cover_image')) {
@@ -328,5 +346,21 @@ class CourseController extends Controller
 
         return redirect()->route('admin.courses.index')
             ->with('success', 'Curso duplicado exitosamente como Borrador.');
+    }
+
+    /**
+     * Sanitize HTML to prevent XSS attacks in course descriptions.
+     */
+    protected function sanitizeHtml(string $html): string
+    {
+        $allowedTags = '<p><h2><h3><h4><h5><h6><strong><em><u><s><ul><ol><li><a><pre><code><br><blockquote><img><iframe>';
+        $clean = strip_tags($html, $allowedTags);
+
+        // Prevent JS injection in href attributes
+        $clean = preg_replace('/href="javascript:[^"]*"/i', 'href="#"', $clean);
+        // Remove on-event attributes
+        $clean = preg_replace('/(onload|onerror|onclick|onmouseover|onfocus|onblur|onchange)="[^"]*"/i', '', $clean);
+
+        return $clean;
     }
 }

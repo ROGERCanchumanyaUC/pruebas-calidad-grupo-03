@@ -34,16 +34,15 @@ class PaymentController extends Controller
         foreach ($cart as $item) {
             // Evitar duplicados si ya tiene la inscripción
             $exists = Enrollment::where('user_id', auth()->id())
-                ->where('course_name', $item['course_name'])
+                ->where('course_id', $item['course_id'])
                 ->exists();
 
             if (! $exists) {
                 Enrollment::create([
                     'user_id'     => auth()->id(),
-                    'course_name' => $item['course_name'],
-                    'level'       => $item['level'],
-                    'price'       => $item['price'],
-                    'status'      => 'pagado',
+                    'course_id'   => $item['course_id'],
+                    'status'      => 'activo',
+                    'enrolled_at' => now(),
                 ]);
             }
         }

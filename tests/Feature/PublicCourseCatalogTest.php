@@ -157,4 +157,39 @@ class PublicCourseCatalogTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(['ok' => true, 'count' => 0]);
     }
+
+    public function test_cannot_add_unpublished_course_to_cart()
+    {
+        $response = $this->postJson('/cart/add', ['course_id' => $this->draftCourse->id]);
+        $response->assertStatus(422);
+        $response->assertJson(['ok' => false]);
+    }
+
+    public function test_checkout_processes_correct_enrollments()
+    {
+        $user = User::factory()->create();
+
+        // Add published course to cart
+        $this->actingAs($user)->postJson('/cart/add', ['course_id' => $this->publishedCourse->id]);
+
+        // Process payment
+        $response = $this->actingAs($user)->post(route('pago.procesar'), [
+            'card_name' => 'John Doe',
+            'card_number' => '1111222233334444',
+            'card_exp' => '12/28',
+            'card_cvc' => '123',
+        ]);
+
+        $response->assertRedirect(route('pago.exito'));
+        
+        // Assert enrollment is active and correct
+        $this->assertDatabaseHas('enrollments', [
+            'user_id' => $user->id,
+            'course_id' => $this->publishedCourse->id,
+            'status' => 'activo',
+        ]);
+        
+        // Assert cart was cleared
+        $this->assertEmpty(session()->get('cart'));
+    }
 }

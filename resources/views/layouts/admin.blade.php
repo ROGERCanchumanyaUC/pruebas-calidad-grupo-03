@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Panel Admin') | JM y JS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    @vite('resources/js/app.jsx')
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

@@ -3,7 +3,6 @@
 @section('page-title', 'Editar Curso')
 
 @push('admin-styles')
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
 <style>
     .tabs {
         display: flex;
@@ -714,8 +713,6 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 <script>
 // Global instances for Quill
 let quillCreateInstance = null;

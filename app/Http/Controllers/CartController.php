@@ -16,6 +16,11 @@ class CartController extends Controller
 
         $course = Course::findOrFail($data['course_id']);
 
+        // Check if the course is published
+        if ($course->status !== 'publicado') {
+            return response()->json(['ok' => false, 'msg' => 'Este curso no está disponible para inscripción.'], 422);
+        }
+
         $cart = session()->get('cart', []);
 
         $exists = collect($cart)->contains('course_id', $course->id);

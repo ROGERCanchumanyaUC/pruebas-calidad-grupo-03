@@ -18,8 +18,8 @@
 
 <div class="page-header" style="margin-bottom:20px;">
     <div>
-        <h1>Gestión de Cursos</h1>
-        <p>Crea, edita, publica, duplica y gestiona el catálogo de cursos de la plataforma.</p>
+        <h1>Gesti&oacute;n de Cursos</h1>
+        <p>Crea, edita, publica, duplica y gestiona el cat&aacute;logo de cursos de la plataforma.</p>
     </div>
     <div>
         <a href="{{ route('admin.courses.create') }}" class="btn-primary" style="text-decoration:none;">
@@ -41,7 +41,7 @@
             </div>
             
             <div style="width:160px;">
-                <label for="category_id" style="font-size:11.5px;margin-bottom:4px;">Categoría</label>
+                <label for="category_id" style="font-size:11.5px;margin-bottom:4px;">Categor&iacute;a</label>
                 <select id="category_id" name="category_id" style="padding:8px 12px;font-size:13px;">
                     <option value="">Todas</option>
                     @foreach ($categories as $cat)
@@ -54,7 +54,7 @@
                 <label for="level" style="font-size:11.5px;margin-bottom:4px;">Nivel</label>
                 <select id="level" name="level" style="padding:8px 12px;font-size:13px;">
                     <option value="">Todos</option>
-                    <option value="basico" {{ request('level') == 'basico' ? 'selected' : '' }}>Básico</option>
+                    <option value="basico" {{ request('level') == 'basico' ? 'selected' : '' }}>B&aacute;sico</option>
                     <option value="intermedio" {{ request('level') == 'intermedio' ? 'selected' : '' }}>Intermedio</option>
                     <option value="avanzado" {{ request('level') == 'avanzado' ? 'selected' : '' }}>Avanzado</option>
                 </select>
@@ -89,7 +89,7 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
             </svg>
-            Catálogo General ({{ $courses->total() }} cursos)
+            Cat&aacute;logo General ({{ $courses->total() }} cursos)
         </div>
     </div>
     <div class="card-body" style="padding:0;">
@@ -101,10 +101,10 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Portada</th>
+                        <th>Portada</th>
                         <th>Nombre / Detalle</th>
-                        <th>Categoría / Nivel</th>
-                        <th>Módulos</th>
+                        <th>Categor&iacute;a / Nivel</th>
+                        <th>M&oacute;dulos</th>
                         <th>Estudiantes</th>
                         <th>Precio</th>
                         <th>Estado</th>
@@ -191,7 +191,7 @@
                                     </a>
 
                                     {{-- Eliminar --}}
-                                    <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" style="display:inline;" onsubmit="return confirm('¿Está completamente seguro de eliminar este curso? Esta acción no se puede deshacer.')">
+                                    <form method="POST" action="{{ route('admin.courses.destroy', $course) }}" style="display:inline;" onsubmit="return confirm('¿Est&aacute; completamente seguro de eliminar este curso? Esta acci&oacute;n no se puede deshacer.')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" title="Eliminar curso" style="background:none;border:1px solid var(--danger);padding:5px 8px;border-radius:6px;cursor:pointer;color:var(--danger);transition:all .15s;">
