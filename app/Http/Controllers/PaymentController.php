@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
+use App\Models\Sale;
+use App\Models\SaleItem;
+use App\Models\Coupon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -31,23 +34,70 @@ class PaymentController extends Controller
                 ->with('status', 'Tu carrito estaba vacío.');
         }
 
-        foreach ($cart as $item) {
-            // Evitar duplicados si ya tiene la inscripción
-            $exists = Enrollment::where('user_id', auth()->id())
-                ->where('course_id', $item['course_id'])
-                ->exists();
+        $subtotal = collect($cart)->sum('price');
+        $discount = 0;
+        $couponId = null;
 
-            if (! $exists) {
+        // Apply coupon if code is stored in session and valid
+        if (session()->has('coupon_code')) {
+            $couponCode = session()->get('coupon_code');
+            $coupon = Coupon::where('code', $couponCode)->first();
+            if ($coupon && $coupon->is_valid) {
+                $discount = $coupon->calculateDiscount($subtotal);
+                $couponId = $coupon->id;
+                $coupon->increment('times_used');
+            }
+        }
+
+        $total = max(0.00, $subtotal - $discount);
+
+        // 1. Create Sale record
+        $sale = Sale::create([
+            'user_id' => auth()->id(),
+            'coupon_id' => $couponId,
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'total' => $total,
+            'payment_method' => 'tarjeta',
+            'payment_status' => 'pagado',
+            'notes' => 'Compra realizada en checkout simulado.',
+            'paid_at' => now(),
+        ]);
+
+        // 2. Create Sale items and Enrollments
+        foreach ($cart as $item) {
+            // Create Sale Item
+            SaleItem::create([
+                'sale_id' => $sale->id,
+                'course_id' => $item['course_id'],
+                'price' => $item['price'],
+            ]);
+
+            // Avoid duplicate enrollments
+            $enrollment = Enrollment::where('user_id', auth()->id())
+                ->where('course_id', $item['course_id'])
+                ->first();
+
+            if (!$enrollment) {
                 Enrollment::create([
                     'user_id'     => auth()->id(),
                     'course_id'   => $item['course_id'],
                     'status'      => 'activo',
                     'enrolled_at' => now(),
                 ]);
+            } else {
+                // Reactivate enrollment if it was pending or suspended
+                if (in_array($enrollment->status, ['pendiente', 'suspendido'])) {
+                    $enrollment->update([
+                        'status' => 'activo',
+                        'enrolled_at' => now(),
+                    ]);
+                }
             }
         }
 
         session()->forget('cart');
+        session()->forget('coupon_code');
 
         return redirect()->route('pago.exito')
             ->with('paid_count', count($cart));

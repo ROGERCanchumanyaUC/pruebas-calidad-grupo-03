@@ -14,6 +14,9 @@ use App\Http\Controllers\MiCuentaController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\StudentCourseController;
+use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\SaleController;
+use App\Http\Controllers\Admin\CouponController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'inicio')->name('inicio');
@@ -34,6 +37,8 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/cart/add',    [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/coupon/apply',  [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
+Route::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 
 Route::middleware('auth')->group(function () {
     Route::get('/mi-cuenta',  [MiCuentaController::class, 'index'])->name('mi-cuenta');
@@ -68,5 +73,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::patch('/modules/reorder', [CourseModuleController::class, 'reorder'])->name('modules.reorder');
     Route::resource('modules', CourseModuleController::class)->only(['store', 'update', 'destroy']);
     Route::resource('materials', CourseMaterialController::class)->only(['store', 'update', 'destroy']);
+
+    // Admin Student Management
+    Route::resource('students', StudentController::class)->only(['index', 'show']);
+    Route::post('/students/{student}/courses/{course}/suspend', [StudentController::class, 'suspend'])->name('students.suspend');
+    Route::post('/students/{student}/courses/{course}/reactivate', [StudentController::class, 'reactivate'])->name('students.reactivate');
+    Route::post('/students/{student}/courses/{course}/reset', [StudentController::class, 'resetProgress'])->name('students.reset');
+
+    // Admin Sales Management
+    Route::resource('sales', SaleController::class)->only(['index', 'show']);
+
+    // Admin Coupons CRUD
+    Route::resource('coupons', CouponController::class);
 });
 

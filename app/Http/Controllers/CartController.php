@@ -67,9 +67,76 @@ class CartController extends Controller
             return redirect()->route('login')->with('status', 'Inicia sesión para ver tu carrito.');
         }
 
-        $cart  = session()->get('cart', []);
-        $total = collect($cart)->sum('price');
+        $cart = session()->get('cart', []);
+        $subtotal = collect($cart)->sum('price');
+        $discount = 0;
+        $coupon = null;
 
-        return view('checkout', compact('cart', 'total'));
+        if (session()->has('coupon_code')) {
+            $couponCode = session()->get('coupon_code');
+            $coupon = \App\Models\Coupon::where('code', $couponCode)->first();
+            if ($coupon && $coupon->is_valid) {
+                $discount = $coupon->calculateDiscount($subtotal);
+            } else {
+                session()->forget('coupon_code');
+            }
+        }
+
+        $total = $subtotal - $discount;
+
+        return view('checkout', compact('cart', 'subtotal', 'discount', 'total', 'coupon'));
+    }
+
+    public function applyCoupon(Request $request): JsonResponse
+    {
+        $request->validate([
+            'code' => ['required', 'string'],
+        ]);
+
+        $code = trim($request->input('code'));
+        $coupon = \App\Models\Coupon::where('code', $code)->first();
+
+        if (!$coupon) {
+            return response()->json([
+                'ok' => false,
+                'msg' => 'El cupón ingresado no existe.'
+            ], 422);
+        }
+
+        if (!$coupon->is_valid) {
+            return response()->json([
+                'ok' => false,
+                'msg' => 'El cupón no es válido, expiró o superó su límite de uso.'
+            ], 422);
+        }
+
+        session()->put('coupon_code', $coupon->code);
+
+        $cart = session()->get('cart', []);
+        $subtotal = collect($cart)->sum('price');
+        $discount = $coupon->calculateDiscount($subtotal);
+        $total = $subtotal - $discount;
+
+        return response()->json([
+            'ok' => true,
+            'msg' => '¡Cupón aplicado con éxito!',
+            'code' => $coupon->code,
+            'discount' => $discount,
+            'total' => $total,
+        ]);
+    }
+
+    public function removeCoupon(): JsonResponse
+    {
+        session()->forget('coupon_code');
+
+        $cart = session()->get('cart', []);
+        $subtotal = collect($cart)->sum('price');
+
+        return response()->json([
+            'ok' => true,
+            'msg' => 'Cupón removido.',
+            'total' => $subtotal,
+        ]);
     }
 }

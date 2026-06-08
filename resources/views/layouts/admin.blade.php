@@ -566,6 +566,14 @@
             <span class="nav-badge" id="sidebar-user-count">—</span>
         </a>
 
+        <a href="{{ route('admin.students.index') }}" class="nav-item {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M12 14c4 0 8 2 8 6v2H4v-2c0-4 4-6 8-6z"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Estudiantes
+        </a>
+
         <a href="{{ route('admin.contacts') }}" class="nav-item {{ request()->routeIs('admin.contacts') ? 'active' : '' }}">
             <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -575,6 +583,21 @@
             @if ($unread > 0)
                 <span class="nav-badge">{{ $unread }}</span>
             @endif
+        </a>
+
+        <a href="{{ route('admin.sales.index') }}" class="nav-item {{ request()->routeIs('admin.sales.*') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Ventas
+        </a>
+
+        <a href="{{ route('admin.coupons.index') }}" class="nav-item {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01"/>
+            </svg>
+            Cupones
         </a>
 
         <a href="{{ route('admin.courses.index') }}" class="nav-item {{ request()->routeIs('admin.courses.*') ? 'active' : '' }}">

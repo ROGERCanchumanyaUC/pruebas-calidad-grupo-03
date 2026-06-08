@@ -331,31 +331,53 @@
                     </div>
 
                     @php
-                        $subtotal = collect($cart)->sum('price');
-                        $igv      = $subtotal * 0.18;
-                        $total    = $subtotal;
-                        $sinIgv   = $subtotal / 1.18;
-                        $soloIgv  = $subtotal - $sinIgv;
+                        $subtotalPrice = collect($cart)->sum('price');
+                        $discountPrice = $discount ?? 0;
+                        $totalPrice    = max(0.00, $subtotalPrice - $discountPrice);
+                        $sinIgv        = $totalPrice / 1.18;
+                        $soloIgv       = $totalPrice - $sinIgv;
                     @endphp
 
                     <div class="summary-totals">
                         <div class="summary-row">
-                            <span>Subtotal (sin IGV)</span>
-                            <span>S/ {{ number_format($sinIgv, 2) }}</span>
+                            <span>Subtotal (original)</span>
+                            <span>S/ {{ number_format($subtotalPrice, 2) }}</span>
+                        </div>
+                        
+                        <div id="coupon-row" class="summary-row" style="{{ $discountPrice > 0 ? '' : 'display:none;' }}">
+                            <span id="coupon-label">Descuento (Cupón: {{ $coupon->code ?? '' }})</span>
+                            <span id="coupon-value" style="color:#16a34a;">-S/ {{ number_format($discountPrice, 2) }}</span>
+                        </div>
+                        
+                        <!-- Coupon Form -->
+                        <div style="margin: 8px 0; border: 1px dashed rgba(21,101,142,.15); padding: 12px; border-radius: 8px;">
+                            <div style="display:flex; gap:8px;" id="coupon-input-group">
+                                <input type="text" id="coupon_code" placeholder="CÓDIGO DE CUPÓN" value="{{ $coupon->code ?? '' }}" style="flex:1; padding:8px 12px; border:1px solid rgba(21,101,142,.18); border-radius:6px; font-size:13px; outline:none; text-transform:uppercase;" {{ $discountPrice > 0 ? 'disabled' : '' }}>
+                                <button type="button" id="coupon_apply_btn" onclick="{{ $discountPrice > 0 ? 'removeCoupon()' : 'applyCoupon()' }}" style="padding:8px 16px; background:#0284c7; color:#fff; border:none; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer;">
+                                    {{ $discountPrice > 0 ? 'Quitar' : 'Aplicar' }}
+                                </button>
+                            </div>
+                            <div id="coupon_msg" style="font-size:12px; margin-top:6px; display:none; font-weight:600;"></div>
+                        </div>
+
+                        <div class="summary-divider"></div>
+                        <div class="summary-row">
+                            <span>Base Imponible (sin IGV)</span>
+                            <span id="summary-sin-igv">S/ {{ number_format($sinIgv, 2) }}</span>
                         </div>
                         <div class="summary-row">
                             <span>IGV (18%)</span>
-                            <span>S/ {{ number_format($soloIgv, 2) }}</span>
+                            <span id="summary-solo-igv">S/ {{ number_format($soloIgv, 2) }}</span>
                         </div>
                         <div class="summary-divider"></div>
                         <div class="summary-total">
-                            <span>Total</span>
-                            <span>S/ {{ number_format($total, 2) }}</span>
+                            <span>Total a pagar</span>
+                            <span id="summary-total">S/ {{ number_format($totalPrice, 2) }}</span>
                         </div>
 
                         <button class="pay-button" type="submit" form="payment-form" id="pay-btn">
                             <span class="material-symbols-outlined">check_circle</span>
-                            Pagar S/ {{ number_format($total, 2) }}
+                            <span id="pay-btn-text">Pagar S/ {{ number_format($totalPrice, 2) }}</span>
                         </button>
 
                         <div class="secure-badges">
@@ -418,5 +440,127 @@ document.getElementById('payment-form')?.addEventListener('submit', function () 
     const btn = document.getElementById('pay-btn');
     if (btn) { btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined">hourglass_top</span> Procesando…'; }
 });
+
+async function applyCoupon() {
+    const codeInput = document.getElementById('coupon_code');
+    const msgDiv = document.getElementById('coupon_msg');
+    const btn = document.getElementById('coupon_apply_btn');
+    const code = codeInput.value.trim();
+
+    if (!code) {
+        msgDiv.style.display = 'block';
+        msgDiv.style.color = '#ef4444';
+        msgDiv.textContent = 'Ingresa un código de cupón.';
+        return;
+    }
+
+    btn.disabled = true;
+    msgDiv.style.display = 'none';
+
+    try {
+        const res = await fetch('{{ route("cart.coupon.apply") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ code: code })
+        });
+        
+        const data = await res.json();
+        
+        if (res.status === 200 && data.ok) {
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#16a34a';
+            msgDiv.textContent = data.msg;
+
+            // Update UI fields
+            codeInput.disabled = true;
+            btn.textContent = 'Quitar';
+            btn.setAttribute('onclick', 'removeCoupon()');
+            btn.style.background = '#dc2626';
+
+            // Show coupon discount row
+            document.getElementById('coupon-row').style.display = 'flex';
+            document.getElementById('coupon-label').textContent = 'Descuento (Cupón: ' + data.code + ')';
+            document.getElementById('coupon-value').textContent = '-S/ ' + Number(data.discount).toFixed(2);
+
+            // Update totals
+            const total = Number(data.total);
+            const sinIgv = total / 1.18;
+            const soloIgv = total - sinIgv;
+
+            document.getElementById('summary-sin-igv').textContent = 'S/ ' + sinIgv.toFixed(2);
+            document.getElementById('summary-solo-igv').textContent = 'S/ ' + soloIgv.toFixed(2);
+            document.getElementById('summary-total').textContent = 'S/ ' + total.toFixed(2);
+            document.getElementById('pay-btn-text').textContent = 'Pagar S/ ' + total.toFixed(2);
+        } else {
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#ef4444';
+            msgDiv.textContent = data.msg || 'Cupón inválido.';
+        }
+    } catch (err) {
+        msgDiv.style.display = 'block';
+        msgDiv.style.color = '#ef4444';
+        msgDiv.textContent = 'Ocurrió un error al aplicar el cupón.';
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function removeCoupon() {
+    const codeInput = document.getElementById('coupon_code');
+    const msgDiv = document.getElementById('coupon_msg');
+    const btn = document.getElementById('coupon_apply_btn');
+
+    btn.disabled = true;
+    msgDiv.style.display = 'none';
+
+    try {
+        const res = await fetch('{{ route("cart.coupon.remove") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        });
+        
+        const data = await res.json();
+        
+        if (data.ok) {
+            msgDiv.style.display = 'block';
+            msgDiv.style.color = '#16a34a';
+            msgDiv.textContent = data.msg;
+
+            // Reset UI inputs
+            codeInput.disabled = false;
+            codeInput.value = '';
+            btn.textContent = 'Aplicar';
+            btn.setAttribute('onclick', 'applyCoupon()');
+            btn.style.background = '#0284c7';
+
+            // Hide coupon discount row
+            document.getElementById('coupon-row').style.display = 'none';
+
+            // Update totals
+            const total = Number(data.total);
+            const sinIgv = total / 1.18;
+            const soloIgv = total - sinIgv;
+
+            document.getElementById('summary-sin-igv').textContent = 'S/ ' + sinIgv.toFixed(2);
+            document.getElementById('summary-solo-igv').textContent = 'S/ ' + soloIgv.toFixed(2);
+            document.getElementById('summary-total').textContent = 'S/ ' + total.toFixed(2);
+            document.getElementById('pay-btn-text').textContent = 'Pagar S/ ' + total.toFixed(2);
+        }
+    } catch (err) {
+        msgDiv.style.display = 'block';
+        msgDiv.style.color = '#ef4444';
+        msgDiv.textContent = 'Ocurrió un error al remover el cupón.';
+    } finally {
+        btn.disabled = false;
+    }
+}
 </script>
 @endpush
