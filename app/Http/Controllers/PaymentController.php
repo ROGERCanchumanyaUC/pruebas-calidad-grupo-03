@@ -99,6 +99,9 @@ class PaymentController extends Controller
         session()->forget('cart');
         session()->forget('coupon_code');
 
+        // Invalidate admin dashboard cache
+        \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
+
         return redirect()->route('pago.exito')
             ->with('paid_count', count($cart));
     }

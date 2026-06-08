@@ -87,6 +87,8 @@ class StudentController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
+        \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
+
         return back()->with('success', "Acceso suspendido para el alumno {$student->name} en el curso {$course->name}.");
     }
 
@@ -116,6 +118,8 @@ class StudentController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
 
         return back()->with('success', "Acceso reactivado para el alumno {$student->name} en el curso {$course->name}.");
     }
@@ -153,6 +157,8 @@ class StudentController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
 
         return back()->with('success', "Progreso reiniciado para el alumno {$student->name} en el curso {$course->name}.");
     }
