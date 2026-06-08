@@ -3,6 +3,9 @@
 use App\Http\Controllers\Admin\ContactsController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Admin\CourseModuleController;
+use App\Http\Controllers\Admin\CourseMaterialController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CartController;
@@ -48,4 +51,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts');
     Route::patch('/contacts/{contact}/read', [ContactsController::class, 'markRead'])->name('contacts.read');
     Route::delete('/contacts/{contact}', [ContactsController::class, 'destroy'])->name('contacts.destroy');
+
+    // Admin Course Management
+    Route::patch('/courses/{course}/publish', [AdminCourseController::class, 'publish'])->name('courses.publish');
+    Route::patch('/courses/{course}/unpublish', [AdminCourseController::class, 'unpublish'])->name('courses.unpublish');
+    Route::post('/courses/{course}/duplicate', [AdminCourseController::class, 'duplicate'])->name('courses.duplicate');
+    Route::resource('courses', AdminCourseController::class);
+
+    // Modules & Materials Management
+    Route::patch('/modules/reorder', [CourseModuleController::class, 'reorder'])->name('modules.reorder');
+    Route::resource('modules', CourseModuleController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('materials', CourseMaterialController::class)->only(['store', 'update', 'destroy']);
 });
+
