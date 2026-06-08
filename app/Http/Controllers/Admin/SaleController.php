@@ -41,7 +41,7 @@ class SaleController extends Controller
      */
     public function show(Sale $sale)
     {
-        $sale->load(['user', 'coupon', 'saleItems.course']);
+        $sale->load(['user', 'coupon', 'items.course']);
 
         return view('admin.sales.show', compact('sale'));
     }

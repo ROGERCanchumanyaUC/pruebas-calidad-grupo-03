@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\CourseMaterial;
 use App\Models\CourseModule;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -23,7 +24,7 @@ class CourseSeeder extends Seeder
         ];
 
         foreach ($categorias as $cat) {
-            Category::create($cat);
+            Category::updateOrCreate(['slug' => $cat['slug']], $cat);
         }
 
         // ── Los 9 cursos del prototipo migrados a BD ──
@@ -208,13 +209,54 @@ class CourseSeeder extends Seeder
             $courseData['slug'] = Str::slug($courseData['name']);
             $courseData['published_at'] = now();
 
-            $course = Course::create($courseData);
+            $course = Course::updateOrCreate(
+                ['slug' => $courseData['slug']],
+                $courseData
+            );
 
             // Create modules for the course
             foreach ($modules as $index => $moduleData) {
                 $moduleData['course_id'] = $course->id;
                 $moduleData['order'] = $index + 1;
-                CourseModule::create($moduleData);
+                $module = CourseModule::updateOrCreate(
+                    [
+                        'course_id' => $course->id,
+                        'order' => $moduleData['order'],
+                    ],
+                    $moduleData
+                );
+
+                CourseMaterial::updateOrCreate(
+                    [
+                        'module_id' => $module->id,
+                        'title' => 'Lectura: ' . $module->name,
+                    ],
+                    [
+                        'type' => 'texto',
+                        'description' => 'Material base del modulo para repaso y trabajo autonomo.',
+                        'content' => '<p>Revisa los conceptos clave del modulo y aplica la plantilla de trabajo en tu contexto operativo.</p>',
+                        'order' => 1,
+                        'is_downloadable' => false,
+                    ]
+                );
+
+                if ($index === 0) {
+                    CourseMaterial::updateOrCreate(
+                        [
+                            'module_id' => $module->id,
+                            'title' => 'Video introductorio',
+                        ],
+                        [
+                            'type' => 'video',
+                            'description' => 'Introduccion al curso y objetivos del modulo.',
+                            'video_source' => 'youtube',
+                            'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                            'duration_minutes' => 8,
+                            'order' => 2,
+                            'is_downloadable' => false,
+                        ]
+                    );
+                }
             }
         }
     }

@@ -58,5 +58,8 @@ class DatabaseSeeder extends Seeder
 
         // 5. Seed settings
         $this->call(SettingSeeder::class);
+
+        // 6. Seed LMS demo data for QA and smoke testing
+        $this->call(DemoLmsSeeder::class);
     }
 }

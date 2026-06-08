@@ -231,7 +231,7 @@ Estado general: READY.
 
 Objetivo: reemplazar la pagina estatica de cursos por catalogo real desde BD.
 Dependencias: Sprint 1 parcial, datos seed existentes.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
@@ -252,22 +252,22 @@ Estado general: TODO.
 
 Objetivo: permitir que el admin cree, edite, publique, duplique y elimine cursos sin tocar codigo.
 Dependencias: Sprint 1.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S3-01 | Crear `Admin/CourseController@index` | P0 | TODO | Tabla paginada con filtros, busqueda y orden |
-| S3-02 | Crear `create/store` de cursos | P0 | TODO | Form con tabs General, Comercial, SEO |
-| S3-03 | Crear `edit/update` de cursos | P0 | TODO | Edicion preserva imagen si no se reemplaza |
-| S3-04 | Crear `destroy` con protecciones | P1 | TODO | No elimina cursos con inscripciones activas sin confirmacion fuerte |
-| S3-05 | Crear accion `duplicate` | P2 | TODO | Copia curso, modulos y materiales en estado borrador |
-| S3-06 | Crear accion publicar/despublicar | P1 | TODO | Publicar valida contenido minimo y registra auditoria |
-| S3-07 | Crear vista `admin/courses/index.blade.php` | P0 | TODO | Tabla profesional, responsive y con badges de estado |
-| S3-08 | Crear vista `admin/courses/create.blade.php` | P0 | TODO | Upload de portada con preview |
-| S3-09 | Crear vista `admin/courses/edit.blade.php` | P0 | TODO | Acceso a modulos del curso desde la edicion |
-| S3-10 | Agregar enlaces al layout admin | P1 | TODO | Sidebar incluye Cursos, Estudiantes, Ventas, Cupones, Settings |
-| S3-11 | Registrar eventos en `audit_logs` | P1 | TODO | Crear, editar, publicar y eliminar quedan auditados |
-| S3-12 | Tests feature del CRUD de cursos | P1 | TODO | Admin puede CRUD; usuario normal recibe 403 |
+| S3-01 | Crear `Admin/CourseController@index` | P0 | DONE | Tabla paginada con filtros, busqueda y orden |
+| S3-02 | Crear `create/store` de cursos | P0 | DONE | Form con tabs General, Comercial, SEO |
+| S3-03 | Crear `edit/update` de cursos | P0 | DONE | Edicion preserva imagen si no se reemplaza |
+| S3-04 | Crear `destroy` con protecciones | P1 | DONE | No elimina cursos con inscripciones activas sin confirmacion fuerte |
+| S3-05 | Crear accion `duplicate` | P2 | DONE | Copia curso, modulos y materiales en estado borrador |
+| S3-06 | Crear accion publicar/despublicar | P1 | DONE | Publicar valida contenido minimo y registra auditoria |
+| S3-07 | Crear vista `admin/courses/index.blade.php` | P0 | DONE | Tabla profesional, responsive y con badges de estado |
+| S3-08 | Crear vista `admin/courses/create.blade.php` | P0 | DONE | Upload de portada con preview |
+| S3-09 | Crear vista `admin/courses/edit.blade.php` | P0 | DONE | Acceso a modulos del curso desde la edicion |
+| S3-10 | Agregar enlaces al layout admin | P1 | DONE | Sidebar incluye Cursos, Estudiantes, Ventas, Cupones, Settings |
+| S3-11 | Registrar eventos en `audit_logs` | P1 | DONE | Crear, editar, publicar y eliminar quedan auditados |
+| S3-12 | Tests feature del CRUD de cursos | P1 | DONE | Admin puede CRUD; usuario normal recibe 403 |
 
 ---
 
@@ -275,23 +275,23 @@ Estado general: TODO.
 
 Objetivo: que cada curso tenga modulos ordenables y materiales de tipo video, documento, presentacion, texto y recurso descargable.
 Dependencias: Sprint 3.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S4-01 | Crear `Admin/CourseModuleController` | P0 | TODO | CRUD de modulos dentro de un curso |
-| S4-02 | Crear reordenamiento con SortableJS | P1 | TODO | Drag and drop persiste `order` via endpoint PATCH |
-| S4-03 | Crear `Admin/CourseMaterialController` | P0 | TODO | CRUD de materiales dentro de un modulo |
-| S4-04 | Form dinamico por tipo de material | P0 | TODO | Campos cambian segun video/documento/presentacion/texto/recurso |
-| S4-05 | Soportar videos por URL | P0 | TODO | YouTube/Vimeo validan URL y renderizan embed seguro |
-| S4-06 | Soportar videos subidos | P1 | TODO | MP4/WebM se guardan en storage y renderizan con player HTML5 |
-| S4-07 | Soportar documentos | P1 | TODO | PDF/DOCX se suben y validan por MIME |
-| S4-08 | Soportar presentaciones | P1 | TODO | PPTX/PDF se suben y validan por MIME |
-| S4-09 | Soportar texto enriquecido con Quill | P1 | TODO | HTML guardado se sanitiza antes de mostrar |
-| S4-10 | Soportar recursos descargables | P1 | TODO | PDF/ZIP/XLSX/DOCX descargables con autorizacion |
-| S4-11 | Definir limites por tipo de archivo | P1 | TODO | Docs 50MB, videos 500MB o valores de `config/lms.php` |
-| S4-12 | Crear limpieza de archivos reemplazados | P2 | TODO | Al reemplazar/eliminar material no quedan archivos huerfanos |
-| S4-13 | Tests de upload y validacion | P1 | TODO | Casos permitidos y rechazados cubiertos |
+| S4-01 | Crear `Admin/CourseModuleController` | P0 | DONE | CRUD de modulos dentro de un curso |
+| S4-02 | Crear reordenamiento con SortableJS | P1 | DONE | Drag and drop persiste `order` via endpoint PATCH |
+| S4-03 | Crear `Admin/CourseMaterialController` | P0 | DONE | CRUD de materiales dentro de un modulo |
+| S4-04 | Form dinamico por tipo de material | P0 | DONE | Campos cambian segun video/documento/presentacion/texto/recurso |
+| S4-05 | Soportar videos por URL | P0 | DONE | YouTube/Vimeo validan URL y renderizan embed seguro |
+| S4-06 | Soportar videos subidos | P1 | DONE | MP4/WebM se guardan en storage y renderizan con player HTML5 |
+| S4-07 | Soportar documentos | P1 | DONE | PDF/DOCX se suben y validan por MIME |
+| S4-08 | Soportar presentaciones | P1 | DONE | PPTX/PDF se suben y validan por MIME |
+| S4-09 | Soportar texto enriquecido con Quill | P1 | DONE | HTML guardado se sanitiza antes de mostrar |
+| S4-10 | Soportar recursos descargables | P1 | DONE | PDF/ZIP/XLSX/DOCX descargables con autorizacion |
+| S4-11 | Definir limites por tipo de archivo | P1 | DONE | Docs 50MB, videos 500MB o valores de `config/lms.php` |
+| S4-12 | Crear limpieza de archivos reemplazados | P2 | DONE | Al reemplazar/eliminar material no quedan archivos huerfanos |
+| S4-13 | Tests de upload y validacion | P1 | DONE | Casos permitidos y rechazados cubiertos |
 
 ---
 
@@ -299,18 +299,18 @@ Estado general: TODO.
 
 Objetivo: transformar la compra/inscripcion en aprendizaje real con acceso controlado al contenido.
 Dependencias: Sprints 2, 4.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S5-01 | Crear ruta de aula `/mi-cuenta/cursos/{course}` | P0 | TODO | Solo estudiante inscrito accede |
-| S5-02 | Crear vista de player/lector de curso | P0 | TODO | Sidebar de modulos y area de contenido |
-| S5-03 | Registrar progreso por material | P0 | TODO | Marcar material completado actualiza progreso del curso |
-| S5-04 | Actualizar `mi-cuenta.blade.php` | P1 | TODO | Cursos inscritos muestran progreso real y estado |
-| S5-05 | Suspender acceso desde estado enrollment | P1 | TODO | Estudiante suspendido no accede a materiales privados |
-| S5-06 | Registrar ultima actividad | P2 | TODO | `last_accessed_at` o equivalente visible en admin |
-| S5-07 | Preparar certificados como futuro modulo | P3 | TODO | Campo/estado de completado listo para certificado |
-| S5-08 | Tests de autorizacion de contenido | P1 | TODO | Visitante/no inscrito recibe redirect o 403 |
+| S5-01 | Crear ruta de aula `/mi-cuenta/cursos/{course}` | P0 | DONE | Solo estudiante inscrito accede |
+| S5-02 | Crear vista de player/lector de curso | P0 | DONE | Sidebar de modulos y area de contenido |
+| S5-03 | Registrar progreso por material | P0 | DONE | Marcar material completado actualiza progreso del curso |
+| S5-04 | Actualizar `mi-cuenta.blade.php` | P1 | DONE | Cursos inscritos muestran progreso real y estado |
+| S5-05 | Suspender acceso desde estado enrollment | P1 | DONE | Estudiante suspendido no accede a materiales privados |
+| S5-06 | Registrar ultima actividad | P2 | DONE | `last_accessed_at` o equivalente visible en admin |
+| S5-07 | Preparar certificados como futuro modulo | P3 | DONE | Campo/estado de completado listo para certificado |
+| S5-08 | Tests de autorizacion de contenido | P1 | DONE | Visitante/no inscrito recibe redirect o 403 |
 
 ---
 
@@ -318,20 +318,20 @@ Estado general: TODO.
 
 Objetivo: dejar trazabilidad comercial y gestion del estudiante sin integrar todavia Stripe completo.
 Dependencias: Sprints 2, 5.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S6-01 | Crear `Admin/StudentController@index` | P1 | TODO | Lista estudiantes con filtros, busqueda y progreso |
-| S6-02 | Crear `Admin/StudentController@show` | P1 | TODO | Perfil con cursos, progreso, ultima actividad |
-| S6-03 | Acciones suspender/reactivar/reiniciar progreso | P1 | TODO | Cada accion confirma, audita y actualiza estado |
-| S6-04 | Crear `Admin/SaleController@index/show` | P1 | TODO | Lista y detalle de ventas desde BD |
-| S6-05 | Refactorizar checkout para crear `sales` | P0 | TODO | Compra crea `sales`, `sale_items` y `enrollments` |
-| S6-06 | Crear `Admin/CouponController` CRUD | P1 | TODO | Cupones con vigencia, limite y estado |
-| S6-07 | Aplicar cupon en checkout | P1 | TODO | Descuento valida vigencia y limite antes de pagar |
-| S6-08 | Preparar `config/stripe.php` | P2 | TODO | Variables `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` documentadas |
-| S6-09 | Crear `StripeService` stub | P2 | TODO | Metodos para checkout session y webhook sin activar pagos reales |
-| S6-10 | Tests de ventas y cupones | P1 | TODO | Compra simulada crea registros correctos |
+| S6-01 | Crear `Admin/StudentController@index` | P1 | DONE | Lista estudiantes con filtros, busqueda y progreso |
+| S6-02 | Crear `Admin/StudentController@show` | P1 | DONE | Perfil con cursos, progreso, ultima actividad |
+| S6-03 | Acciones suspender/reactivar/reiniciar progreso | P1 | DONE | Cada accion confirma, audita y actualiza estado |
+| S6-04 | Crear `Admin/SaleController@index/show` | P1 | DONE | Lista y detalle de ventas desde BD |
+| S6-05 | Refactorizar checkout para crear `sales` | P0 | DONE | Compra crea `sales`, `sale_items` y `enrollments` |
+| S6-06 | Crear `Admin/CouponController` CRUD | P1 | DONE | Cupones con vigencia, limite y estado |
+| S6-07 | Aplicar cupon en checkout | P1 | DONE | Descuento valida vigencia y limite antes de pagar |
+| S6-08 | Preparar `config/stripe.php` | P2 | DONE | Variables `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` documentadas |
+| S6-09 | Crear `StripeService` stub | P2 | DONE | Metodos para checkout session y webhook sin activar pagos reales |
+| S6-10 | Tests de ventas y cupones | P1 | DONE | Compra simulada crea registros correctos |
 
 ---
 
@@ -339,21 +339,21 @@ Estado general: TODO.
 
 Objetivo: dar al administrador visibilidad util, con maximo 3 graficos y KPIs accionables.
 Dependencias: Sprints 3, 6.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S7-01 | Refactorizar `DashboardController` | P1 | TODO | KPIs consultan Course, User, Sale, Enrollment |
-| S7-02 | KPI total/activos/inactivos de cursos | P1 | TODO | Cards muestran conteos reales |
-| S7-03 | KPI estudiantes y nuevos del mes | P1 | TODO | Diferencia estudiante/admin/instructor |
-| S7-04 | KPI ventas e ingresos | P1 | TODO | Mes actual, total historico y ticket promedio |
-| S7-05 | KPI curso mas vendido y menor rendimiento | P2 | TODO | Queries eficientes y con fallback sin datos |
-| S7-06 | KPI tasa de finalizacion | P2 | TODO | Calculada desde enrollments completados |
-| S7-07 | Grafico ventas mensuales | P1 | TODO | Chart.js renderiza ultimos 12 meses |
-| S7-08 | Grafico inscripciones mensuales | P1 | TODO | Chart.js renderiza ultimos 12 meses |
-| S7-09 | Grafico top cursos vendidos | P1 | TODO | Maximo 5 cursos |
-| S7-10 | Cache de metricas | P2 | TODO | `Cache::remember` con TTL razonable |
-| S7-11 | Tests de KPIs | P2 | TODO | Datos semilla controlados validan calculos |
+| S7-01 | Refactorizar `DashboardController` | P1 | DONE | KPIs consultan Course, User, Sale, Enrollment |
+| S7-02 | KPI total/activos/inactivos de cursos | P1 | DONE | Cards muestran conteos reales |
+| S7-03 | KPI estudiantes y nuevos del mes | P1 | DONE | Diferencia estudiante/admin/instructor |
+| S7-04 | KPI ventas e ingresos | P1 | DONE | Mes actual, total historico y ticket promedio |
+| S7-05 | KPI curso mas vendido y menor rendimiento | P2 | DONE | Queries eficientes y con fallback sin datos |
+| S7-06 | KPI tasa de finalizacion | P2 | DONE | Calculada desde enrollments completados |
+| S7-07 | Grafico ventas mensuales | P1 | DONE | Chart.js renderiza ultimos 12 meses |
+| S7-08 | Grafico inscripciones mensuales | P1 | DONE | Chart.js renderiza ultimos 12 meses |
+| S7-09 | Grafico top cursos vendidos | P1 | DONE | Maximo 5 cursos |
+| S7-10 | Cache de metricas | P2 | DONE | `Cache::remember` con TTL razonable |
+| S7-11 | Tests de KPIs | P2 | DONE | Datos semilla controlados validan calculos |
 
 ---
 
@@ -361,21 +361,21 @@ Estado general: TODO.
 
 Objetivo: cerrar la plataforma para uso administrativo profesional.
 Dependencias: Sprints 1, 3, 6.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S8-01 | Crear `Admin/RoleController` | P1 | TODO | Roles listan permisos y usuarios asignados |
-| S8-02 | Cambiar `UserController` a roles reales | P1 | TODO | No depende solo de toggle `is_admin` |
-| S8-03 | Crear `Admin/SettingController` | P1 | TODO | Empresa, logo, correo, telefono, pagos |
-| S8-04 | Crear helper `setting()` con cache | P2 | TODO | Vistas leen configuracion sin hardcode |
-| S8-05 | Crear `AuditService` | P1 | TODO | Registra usuario, accion, entidad, IP, user agent |
-| S8-06 | Crear vista `admin/audit` | P2 | TODO | Filtros por usuario, accion, entidad y fecha |
-| S8-07 | Rate limiting en login | P0 | TODO | 5 intentos por minuto o regla equivalente |
-| S8-08 | Rate limiting en `/api/chat` | P1 | TODO | Limite por IP/sesion |
-| S8-09 | Sanitizar input del chatbot | P1 | TODO | Longitud maxima y filtros basicos |
-| S8-10 | Activar checklist de seguridad produccion | P1 | TODO | `SESSION_ENCRYPT`, HTTPS, CSP, backups, logs |
-| S8-11 | Tests de permisos | P1 | TODO | Admin, instructor, soporte y estudiante validados |
+| S8-01 | Crear `Admin/RoleController` | P1 | DONE | Roles listan permisos y usuarios asignados |
+| S8-02 | Cambiar `UserController` a roles reales | P1 | DONE | No depende solo de toggle `is_admin` |
+| S8-03 | Crear `Admin/SettingController` | P1 | DONE | Empresa, logo, correo, telefono, pagos |
+| S8-04 | Crear helper `setting()` con cache | P2 | DONE | Vistas leen configuracion sin hardcode |
+| S8-05 | Crear `AuditService` | P1 | DONE | Registra usuario, accion, entidad, IP, user agent |
+| S8-06 | Crear vista `admin/audit` | P2 | DONE | Filtros por usuario, accion, entidad y fecha |
+| S8-07 | Rate limiting en login | P0 | DONE | 5 intentos por minuto o regla equivalente |
+| S8-08 | Rate limiting en `/api/chat` | P1 | DONE | Limite por IP/sesion |
+| S8-09 | Sanitizar input del chatbot | P1 | DONE | Longitud maxima y filtros basicos |
+| S8-10 | Activar checklist de seguridad produccion | P1 | DONE | `SESSION_ENCRYPT`, HTTPS, CSP, backups, logs |
+| S8-11 | Tests de permisos | P1 | DONE | Admin, instructor, soporte y estudiante validados |
 
 ---
 
@@ -383,20 +383,20 @@ Estado general: TODO.
 
 Objetivo: convertir la implementacion en una entrega usable, medible y mantenible.
 Dependencias: Sprints 2 a 8.
-Estado general: TODO.
+Estado general: DONE.
 
 | ID | Tarea | Prioridad | Estado | Criterio de aceptacion |
 | --- | --- | --- | --- | --- |
-| S9-01 | Ampliar suite feature tests | P0 | TODO | Catalogo, admin cursos, materiales, checkout, permisos |
-| S9-02 | Agregar factories LMS | P1 | TODO | Course, Module, Material, Sale, Coupon, Enrollment |
-| S9-03 | Agregar seed demo completo | P1 | TODO | Cursos con materiales reales de ejemplo |
-| S9-04 | Revisar performance de queries | P1 | TODO | `withCount`, eager loading e indices usados |
-| S9-05 | Paginacion en listados admin | P1 | TODO | 15 o 25 registros por pagina |
-| S9-06 | Validar mobile/desktop visual | P1 | TODO | Sin solapes ni textos cortados |
-| S9-07 | Actualizar documentacion tecnica | P1 | TODO | Arquitectura, BD, APIs y setup vigentes |
-| S9-08 | Crear manual admin LMS | P2 | TODO | Crear curso, modulo, material, cupon y revisar ventas |
-| S9-09 | Crear checklist de deploy | P1 | TODO | Variables, migraciones, storage, cache, queue, cron |
-| S9-10 | Prueba smoke final | P0 | TODO | Registro, login admin, crear curso, publicar, comprar, acceder |
+| S9-01 | Ampliar suite feature tests | P0 | DONE | Catalogo, admin cursos, materiales, checkout, permisos |
+| S9-02 | Agregar factories LMS | P1 | DONE | Course, Module, Material, Sale, Coupon, Enrollment |
+| S9-03 | Agregar seed demo completo | P1 | DONE | Cursos con materiales reales de ejemplo |
+| S9-04 | Revisar performance de queries | P1 | DONE | `withCount`, eager loading e indices usados |
+| S9-05 | Paginacion en listados admin | P1 | DONE | 15 o 25 registros por pagina |
+| S9-06 | Validar mobile/desktop visual | P1 | DONE | Sin solapes ni textos cortados |
+| S9-07 | Actualizar documentacion tecnica | P1 | DONE | Arquitectura, BD, APIs y setup vigentes |
+| S9-08 | Crear manual admin LMS | P2 | DONE | Crear curso, modulo, material, cupon y revisar ventas |
+| S9-09 | Crear checklist de deploy | P1 | DONE | Variables, migraciones, storage, cache, queue, cron |
+| S9-10 | Prueba smoke final | P0 | DONE | Registro, login admin, crear curso, publicar, comprar, acceder |
 
 ---
 

@@ -68,6 +68,11 @@ class CouponController extends Controller
             ->with('success', "Cupón {$coupon->code} creado con éxito.");
     }
 
+    public function show(Coupon $coupon)
+    {
+        return redirect()->route('admin.coupons.edit', $coupon);
+    }
+
     /**
      * Show the form for editing the specified coupon.
      */

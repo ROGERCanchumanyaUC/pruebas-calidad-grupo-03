@@ -1,126 +1,216 @@
-# Plataforma LMS - JM y JS Alimentos (v2.0)
+# Plataforma LMS - JM y JS Alimentos
 
-Este repositorio contiene la evolución completa del prototipo a una plataforma **LMS (Learning Management System)** funcional y profesional para cursos de calidad e inocuidad alimentaria, desarrollada sobre **Laravel 12**, **React** y **Vite**.
+Branch: `feat_LMS_v2.0`
 
----
+Este repositorio contiene la evolucion del prototipo de JM y JS Alimentos hacia una plataforma LMS funcional para cursos de calidad, inocuidad alimentaria, BPM, HACCP e ISO. La aplicacion esta construida con Laravel 12, MySQL/MariaDB, Blade, React y Vite.
 
-## 🚀 Arquitectura y Stack Tecnológico
+## Estado Actual
 
-La arquitectura de la aplicación sigue patrones MVC estrictos y estándares corporativos de seguridad:
+La rama `feat_LMS_v2.0` deja implementado el MVP LMS de punta a punta:
 
-*   **Core Backend:** Laravel `12.x` y PHP `8.5+` (Compatible con PHP `8.2+`).
-*   **Base de Datos:** MySQL / MariaDB (Puerto local `3307`, base de datos `jm_js_alimentos`) con migraciones normalizadas y carga ansiosa (*eager loading*) para prevenir consultas N+1.
-*   **Frontend Compilación:** Vite `7.x` y React con dependencias de terceros (como *Quill* y *SortableJS*) empaquetadas localmente a través de NPM para evitar dependencias inestables de CDNs externas.
-*   **Diseño Visual:** Tema oscuro de alta fidelidad, glassmorphism con desenfoque (`backdrop-filter`) y efectos dinámicos de micro-animación en vistas públicas y administrativas.
-*   **Almacenamiento Seguro (Private Storage):** Los materiales de estudio cargados en la plataforma se almacenan estrictamente en el disco local privado (`storage/app/private/materials/{course_id}/{module_id}/`) protegiendo el acceso no autorizado mediante controladores seguros.
+- Catalogo publico dinamico con filtros.
+- Carrito seguro basado en `course_id`.
+- Checkout simulado con ventas, items de venta, cupones y matriculas.
+- Panel admin para cursos, modulos, materiales, estudiantes, ventas, cupones, usuarios, roles, settings y auditoria.
+- Aula del estudiante con acceso privado a materiales y progreso por leccion.
+- Dashboard ejecutivo con KPIs y graficos.
+- Chatbot IA con Gemini mediante `/api/chat`.
+- Seguridad base: roles/permisos, rate limiting, sanitizacion de HTML y headers de seguridad.
+- Factories, seed demo, manual admin y checklist de deploy.
 
----
+## Stack
 
-## 📦 Características Implementadas (Sprints 1 - 6)
+- Backend: Laravel 12, PHP 8.2+
+- Base de datos: MySQL/MariaDB
+- Frontend: Blade, React, Vite
+- UI/Interaccion: Quill, SortableJS, Chart.js
+- Pagos preparados: Stripe SDK instalado y servicio base
+- IA: Google Gemini API
+- Testing: PHPUnit Feature/Unit tests
 
-### 🔑 Fundamentos y Seguridad (Sprint 1)
-*   **Roles y Permisos:** Middlewares de protección basados en roles (`admin`, `instructor`, `estudiante`) con bypass de permisos automático para el administrador principal.
-*   **Validaciones FormRequests:** Procesamiento y limpieza de datos en la creación de cursos, módulos y materiales.
-*   **Servicio de Publicación:** El sistema evalúa campos obligatorios, módulos y contenidos mínimos antes de permitir publicar un curso al catálogo.
+## Sprints Implementados
 
-### 🏷️ Catálogo Público y Carrito (Sprint 2)
-*   **Catálogo Dinámico:** Reemplazo de las tarjetas Blade estáticas por un catálogo en tiempo real con filtros avanzados (nivel, categoría, búsqueda por texto) y exclusión automática de borradores.
-*   **Seguridad en Precios:** El carrito de compra recibe únicamente el `course_id`. Los precios y metadatos se resuelven en el servidor, evitando ataques de manipulación de precios desde el cliente.
+### Sprint 1 - Fundamentos LMS
 
-### 🛠️ CRUD Administrativo y Duplicación (Sprint 3)
-*   **Panel Administrativo:** Pantallas interactivas de gestión de cursos organizadas en pestañas (General, Comercial, SEO) con previsualizadores de portadas.
-*   **Duplicador Profundo:** Clona cursos completos recreando la estructura de módulos, lecciones y duplicando físicamente sus archivos correspondientes en el almacenamiento privado.
-*   **Registro de Auditoría:** Toda acción administrativa (creación, edición, duplicación, publicación y eliminación) se registra en la tabla `audit_logs`.
+- Modelos y migraciones base para roles, permisos, categorias, cursos, modulos, materiales, ventas, cupones, settings y auditoria.
+- Middleware `role` y `permission`.
+- Servicio de publicacion de cursos.
+- Configuracion de subidas por tipo de archivo.
 
-### 📚 Constructor de Temario y Lecciones (Sprint 4)
-*   **Constructor Drag & Drop:** Reordenamiento interactivo del temario mediante SortableJS arrastrando módulos con persistencia asíncrona.
-*   **Soporte de Archivos Multiformato:** Carga y validación automática de videos (Youtube, Vimeo, o MP4/WebM subidos), documentos PDF/Word, presentaciones y recursos descargables.
-*   **Sanitizador HTML:** Las lecciones de texto enriquecido (Quill) se sanitizan en el servidor bloqueando inyecciones XSS (`<script>`, `<iframe>` maliciosos y eventos JS).
+### Sprint 2 - Catalogo Publico Y Carrito
 
-### 📖 Aula de Aprendizaje e Hitos (Sprint 5)
-*   **Aula Virtual Premium:** Interfaz oscura, sidebar colapsable del temario e interactividad por AJAX para marcar lecciones completadas.
-*   **Progreso Dinámico:** El progreso total del curso se recalcula de forma interactiva. Al llegar al 100%, la matrícula se marca automáticamente como `completada` registrando el timestamp.
-*   **Streaming Seguro:** Los videos y PDFs alojados de forma privada se sirven dinámicamente mediante streams del servidor, verificando la propiedad de la matrícula antes de la entrega.
+- Catalogo `/cursos` con cursos publicados desde BD.
+- Detalle publico por slug.
+- Filtros por nivel, categoria, precio y busqueda.
+- Carrito que valida cursos publicados y resuelve precios en servidor.
 
-### 💳 Checkout, Cupones y Gestión Escolar (Sprint 6)
-*   **Cupones en Checkout:** Integración visual e interactividad AJAX para aplicar cupones de descuento (porcentaje o monto fijo) con validaciones de vigencia, estado activo y límites de uso global.
-*   **Registro de Ventas:** El checkout ahora genera una traza comercial transparente guardando la factura (`sales`), ítems comprados (`sale_items`) y activando las matrículas correspondientes.
-*   **Consola Administrativa Escolar:** Panel para listar estudiantes, consultar su avance, suspender o reactivar su acceso a los cursos, o reiniciar su progreso en cascada.
+### Sprint 3 - CRUD Admin De Cursos
 
----
+- CRUD administrativo de cursos.
+- Publicar/despublicar con validacion de contenido minimo.
+- Duplicacion profunda de curso, modulos, materiales y archivos.
+- Auditoria de acciones criticas.
 
-## 🛠️ Instalación y Configuración Local
+### Sprint 4 - Constructor De Modulos Y Materiales
 
-### 1. Clonar e Instalar Dependencias
+- CRUD de modulos y materiales.
+- Reordenamiento con SortableJS.
+- Soporte para videos YouTube/Vimeo/subidos, documentos, presentaciones, texto enriquecido y recursos descargables.
+- Sanitizacion de contenido Quill.
+- Limpieza de archivos reemplazados o eliminados.
+
+### Sprint 5 - Aula Del Estudiante
+
+- Aula privada por curso matriculado.
+- Control de acceso por estado de matricula.
+- Descarga/streaming seguro de archivos privados.
+- Progreso por material.
+- Cambio automatico a `completado` al llegar al 100%.
+
+### Sprint 6 - Ventas, Cupones Y Gestion Escolar
+
+- Checkout simulado que crea `sales`, `sale_items` y `enrollments`.
+- Cupones con vigencia, limite de uso y estado activo.
+- Panel de estudiantes con suspension, reactivacion y reinicio de progreso.
+- Panel de ventas con listado y detalle.
+
+### Sprint 7 - Dashboard Ejecutivo
+
+- KPIs de cursos, usuarios, estudiantes, instructores, ventas, ingresos, ticket promedio y finalizacion.
+- Graficos de ventas e inscripciones mensuales.
+- Top cursos vendidos.
+- Cache de metricas administrativas.
+
+### Sprint 8 - Roles, Settings, Auditoria Y Seguridad
+
+- Roles reales: `admin`, `instructor`, `soporte`, `estudiante`.
+- Rutas admin protegidas con permisos especificos.
+- Admin legacy compatible con `is_admin`.
+- Instructor limitado a cursos propios.
+- Settings editables con helper `setting()` y cache.
+- Auditoria filtrable.
+- Rate limiting en login y chatbot.
+- Sanitizacion basica del input del chatbot.
+- Headers de seguridad.
+
+### Sprint 9 - QA, Documentacion Y Release
+
+- Factories LMS para categoria, curso, modulo, material, cupon, venta, item de venta y matricula.
+- Seed demo idempotente.
+- Manual admin.
+- Checklist de deploy.
+- Pruebas ampliadas de seguridad, roles, permisos, checkout, aula, dashboard y release readiness.
+- Validacion de `route:cache`, `config:cache` y `view:cache`.
+
+## Instalacion Local
+
+### 1. Clonar y entrar a la rama
+
 ```bash
 git clone https://github.com/ROGERCanchumanyaUC/pruebas-calidad-grupo-03.git
 cd pruebas-calidad-grupo-03
 git checkout feat_LMS_v2.0
+```
+
+### 2. Instalar dependencias
+
+```bash
 composer install
 npm ci
 ```
 
-### 2. Configuración del Entorno
-Duplica el archivo de configuración:
+### 3. Configurar entorno
+
 ```bash
 cp .env.example .env
-```
-
-Genera la llave de la aplicación:
-```bash
 php artisan key:generate
 ```
 
-### 3. Configurar Base de Datos MySQL (XAMPP o Docker)
-En tu archivo `.env`, asegúrate de apuntar a tu motor local. Ejemplo para MySQL en puerto `3307`:
+Ejemplo local con XAMPP/MySQL:
+
 ```env
+APP_URL=http://localhost
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3307
 DB_DATABASE=jm_js_alimentos
 DB_USERNAME=root
 DB_PASSWORD=
+FILESYSTEM_DISK=public
 ```
 
-### 4. Migrar y Cargar Semillas
-```bash
-php artisan migrate:fresh --seed
-```
-*Credenciales de prueba administrador:* `72682019@continental.edu.pe` / `password`
+Para habilitar el asistente IA:
 
-### 5. Configurar Enlaces de Almacenamiento
-Enlaza el almacenamiento público (para portadas y recursos públicos):
+```env
+GEMINI_API_KEY=tu_clave_de_google_ai_studio
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+No subas `.env` al repositorio.
+
+### 4. Migrar y cargar demo
+
 ```bash
+php artisan migrate --seed
 php artisan storage:link
 ```
 
-### 6. Levantar Servidores locales
-Para compilar los recursos frontend de Vite en desarrollo:
+Para reiniciar completamente una base local de desarrollo:
+
 ```bash
+php artisan migrate:fresh --seed
+```
+
+No uses `migrate:fresh` en produccion.
+
+### 5. Levantar la aplicacion
+
+```bash
+php artisan serve
 npm run dev
 ```
 
-En otra terminal, levanta el servidor de desarrollo de Laravel:
+Credenciales demo:
+
+- Admin: `72682019@continental.edu.pe` / `password`
+- Estudiante: `test@example.com` / `password`
+
+## Comandos De Calidad
+
 ```bash
-php artisan serve
+php artisan test
+npm run build
+composer audit
+npm audit --audit-level=moderate
 ```
 
----
+Comandos de cache validados para produccion:
 
-## 🧪 Pruebas y Aseguramiento de Calidad
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
 
-La plataforma cuenta con cobertura completa de pruebas automatizadas unitarias y de integración para garantizar que las actualizaciones de código no rompan flujos de negocio clave:
+Para limpiar cache local:
 
-*   **Ejecución de Tests:**
-    ```bash
-    php artisan test
-    ```
-*   **Compilación Frontend de Producción:**
-    ```bash
-    npm run build
-    ```
-*   **Auditorías de Seguridad (Limpio):**
-    ```bash
-    composer audit
-    npm audit --audit-level=moderate
-    ```
+```bash
+php artisan optimize:clear
+```
+
+## Documentacion
+
+- Kanban profesional: `documentacion/KANBAN.md`
+- Auditoria tecnica: `documentacion/AUDITORIA_LMS_2026_06_07.md`
+- Manual admin: `documentacion/MANUAL_ADMIN_LMS.md`
+- Checklist deploy: `documentacion/CHECKLIST_DEPLOY_LMS.md`
+- Documentacion general: `documentacion/DOCUMENTACION_GENERAL.md`
+- Arquitectura: `documentacion/ARQUITECTURA.md`
+
+## Notas De Seguridad
+
+- Las claves Gemini, Stripe, correo y BD deben vivir en `.env`.
+- Los materiales privados se sirven por controlador, no como archivos publicos directos.
+- Las rutas admin usan permisos especificos y el rol `admin` conserva bypass total.
+- El warning local `Module "mysqli" is already loaded` corresponde a configuracion PHP/XAMPP duplicada y no bloquea la app.
+

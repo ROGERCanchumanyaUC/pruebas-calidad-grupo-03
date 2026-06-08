@@ -23,6 +23,25 @@ class CourseController extends Controller
         $this->publishingService = $publishingService;
     }
 
+    private function authorizeCourseOwnership(Course $course): void
+    {
+        $user = request()->user();
+
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->isAdmin()) {
+            return;
+        }
+
+        if ($user->hasRole('instructor') && (int) $course->instructor_id === (int) $user->id) {
+            return;
+        }
+
+        abort(403, 'No tienes permiso para gestionar este curso.');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -30,6 +49,10 @@ class CourseController extends Controller
     {
         $query = Course::with(['category', 'instructor'])
             ->withCount(['enrollments', 'modules']);
+
+        if (! $request->user()->isAdmin() && $request->user()->hasRole('instructor')) {
+            $query->where('instructor_id', $request->user()->id);
+        }
 
         // Search filter
         if ($request->filled('search')) {
@@ -64,15 +87,16 @@ class CourseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $categories = Category::orderBy('name')->get();
-        // Load instructors (users that are admins or have instructor role)
-        $instructors = User::where('is_admin', true)
-            ->orWhereHas('roles', function ($q) {
-                $q->where('name', 'instructor');
-            })
-            ->get();
+        $instructors = $request->user()->isAdmin()
+            ? User::where('is_admin', true)
+                ->orWhereHas('roles', function ($q) {
+                    $q->where('name', 'instructor');
+                })
+                ->get()
+            : collect([$request->user()]);
 
         return view('admin.courses.create', compact('categories', 'instructors'));
     }
@@ -98,6 +122,12 @@ class CourseController extends Controller
         // Ensure checkbox is handled
         $data['is_featured'] = $request->has('is_featured');
 
+        if (! $request->user()->isAdmin()) {
+            $data['instructor_id'] = $request->user()->id;
+            $data['status'] = 'borrador';
+            $data['is_featured'] = false;
+        }
+
         $course = Course::create($data);
 
         // Audit Log
@@ -120,6 +150,8 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         return redirect()->route('admin.courses.edit', $course);
     }
 
@@ -128,13 +160,17 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         $course->load(['modules.materials']);
         $categories = Category::orderBy('name')->get();
-        $instructors = User::where('is_admin', true)
-            ->orWhereHas('roles', function ($q) {
-                $q->where('name', 'instructor');
-            })
-            ->get();
+        $instructors = request()->user()->isAdmin()
+            ? User::where('is_admin', true)
+                ->orWhereHas('roles', function ($q) {
+                    $q->where('name', 'instructor');
+                })
+                ->get()
+            : collect([request()->user()]);
 
         return view('admin.courses.edit', compact('course', 'categories', 'instructors'));
     }
@@ -144,6 +180,8 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         $data = $request->validated();
         $oldValues = $course->toArray();
 
@@ -165,6 +203,11 @@ class CourseController extends Controller
         }
 
         $data['is_featured'] = $request->has('is_featured');
+
+        if (! $request->user()->isAdmin()) {
+            $data['instructor_id'] = $course->instructor_id ?: $request->user()->id;
+            $data['is_featured'] = (bool) $course->is_featured;
+        }
 
         $course->update($data);
 
@@ -189,6 +232,8 @@ class CourseController extends Controller
      */
     public function destroy(Request $request, Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         // Protect against deleting courses with active/completed enrollments
         if ($course->enrollments()->whereIn('status', ['activo', 'completado'])->exists()) {
             return back()->with('error', 'No se puede eliminar el curso porque tiene estudiantes matriculados activos.');
@@ -234,6 +279,8 @@ class CourseController extends Controller
      */
     public function publish(Request $request, Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         $errors = $this->publishingService->canPublish($course);
 
         if (count($errors) > 0) {
@@ -263,6 +310,8 @@ class CourseController extends Controller
      */
     public function unpublish(Request $request, Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         $oldValues = $course->toArray();
         $course->update([
             'status' => 'borrador',
@@ -289,6 +338,8 @@ class CourseController extends Controller
      */
     public function duplicate(Request $request, Course $course)
     {
+        $this->authorizeCourseOwnership($course);
+
         $course->load(['modules.materials']);
 
         // Replicate course

@@ -8,7 +8,8 @@ class UpdateCourseModuleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->isAdmin();
+        return $this->user()
+            && ($this->user()->isAdmin() || $this->user()->hasPermission('modules.edit'));
     }
 
     public function rules(): array

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\CourseMaterial;
 use App\Models\CourseModule;
 use App\Models\AuditLog;
@@ -14,13 +15,33 @@ use Illuminate\Support\Str;
 
 class CourseMaterialController extends Controller
 {
+    private function authorizeCourseOwnership(Course $course): void
+    {
+        $user = request()->user();
+
+        if (! $user) {
+            abort(401);
+        }
+
+        if ($user->isAdmin()) {
+            return;
+        }
+
+        if ($user->hasRole('instructor') && (int) $course->instructor_id === (int) $user->id) {
+            return;
+        }
+
+        abort(403, 'No tienes permiso para gestionar este curso.');
+    }
+
     /**
      * Store a newly created material in storage.
      */
     public function store(StoreCourseMaterialRequest $request)
     {
         $data = $request->validated();
-        $module = CourseModule::findOrFail($data['module_id']);
+        $module = CourseModule::with('course')->findOrFail($data['module_id']);
+        $this->authorizeCourseOwnership($module->course);
         $courseId = $module->course_id;
 
         // Auto-increment order if not specified
@@ -74,8 +95,16 @@ class CourseMaterialController extends Controller
 
     public function update(UpdateCourseMaterialRequest $request, CourseMaterial $material)
     {
+        $material->loadMissing('module.course');
+        $this->authorizeCourseOwnership($material->module->course);
+
         $data = $request->validated();
         $oldValues = $material->toArray();
+
+        if (isset($data['module_id']) && (int) $data['module_id'] !== (int) $material->module_id) {
+            $targetModule = CourseModule::with('course')->findOrFail($data['module_id']);
+            $this->authorizeCourseOwnership($targetModule->course);
+        }
 
         $module = $material->module;
         $courseId = $module->course_id;
@@ -159,6 +188,9 @@ class CourseMaterialController extends Controller
      */
     public function destroy(Request $request, CourseMaterial $material)
     {
+        $material->loadMissing('module.course');
+        $this->authorizeCourseOwnership($material->module->course);
+
         $oldValues = $material->toArray();
 
         // Physically delete file from private storage

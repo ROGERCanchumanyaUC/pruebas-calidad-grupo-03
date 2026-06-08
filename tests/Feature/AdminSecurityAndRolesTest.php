@@ -6,6 +6,9 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\AuditLog;
+use App\Models\Category;
+use App\Models\Course;
+use App\Models\Permission;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -161,6 +164,86 @@ class AdminSecurityAndRolesTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.roles.show', $this->adminRole));
         $response->assertStatus(200);
         $response->assertSee($this->admin->name);
+    }
+
+    public function test_admin_role_without_legacy_flag_keeps_admin_access()
+    {
+        $roleOnlyAdmin = User::factory()->create(['is_admin' => false]);
+        $roleOnlyAdmin->roles()->attach($this->adminRole->id);
+
+        $response = $this->actingAs($roleOnlyAdmin)->get(route('admin.dashboard'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_support_role_can_access_only_support_areas()
+    {
+        $supportRole = Role::create([
+            'name' => 'soporte',
+            'display_name' => 'Soporte',
+            'description' => 'Soporte operativo',
+        ]);
+
+        foreach (['dashboard.view', 'students.view', 'contacts.view'] as $permissionName) {
+            $permission = Permission::create([
+                'name' => $permissionName,
+                'display_name' => $permissionName,
+                'module' => 'test',
+            ]);
+            $supportRole->permissions()->attach($permission->id);
+        }
+
+        $support = User::factory()->create(['is_admin' => false]);
+        $support->roles()->attach($supportRole->id);
+
+        $this->actingAs($support)->get(route('admin.dashboard'))->assertStatus(200);
+        $this->actingAs($support)->get(route('admin.students.index'))->assertStatus(200);
+        $this->actingAs($support)->get(route('admin.courses.index'))->assertStatus(403);
+        $this->actingAs($support)->get(route('admin.settings.index'))->assertStatus(403);
+    }
+
+    public function test_instructor_can_only_manage_own_courses()
+    {
+        $instructorRole = Role::create([
+            'name' => 'instructor',
+            'display_name' => 'Instructor',
+            'description' => 'Gestiona cursos propios',
+        ]);
+
+        foreach (['courses.view', 'courses.edit'] as $permissionName) {
+            $permission = Permission::create([
+                'name' => $permissionName,
+                'display_name' => $permissionName,
+                'module' => 'test',
+            ]);
+            $instructorRole->permissions()->attach($permission->id);
+        }
+
+        $instructor = User::factory()->create(['is_admin' => false]);
+        $otherInstructor = User::factory()->create(['is_admin' => false]);
+        $instructor->roles()->attach($instructorRole->id);
+
+        $category = Category::factory()->create();
+        $ownCourse = Course::factory()->create([
+            'category_id' => $category->id,
+            'instructor_id' => $instructor->id,
+            'name' => 'Curso Propio',
+            'slug' => 'curso-propio',
+        ]);
+        $otherCourse = Course::factory()->create([
+            'category_id' => $category->id,
+            'instructor_id' => $otherInstructor->id,
+            'name' => 'Curso Ajeno',
+            'slug' => 'curso-ajeno',
+        ]);
+
+        $response = $this->actingAs($instructor)->get(route('admin.courses.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Curso Propio');
+        $response->assertDontSee('Curso Ajeno');
+
+        $this->actingAs($instructor)->get(route('admin.courses.edit', $ownCourse))->assertStatus(200);
+        $this->actingAs($instructor)->get(route('admin.courses.edit', $otherCourse))->assertStatus(403);
     }
 
     public function test_user_roles_sync_and_is_admin_sync()

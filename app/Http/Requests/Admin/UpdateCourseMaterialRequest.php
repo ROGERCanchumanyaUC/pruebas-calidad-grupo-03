@@ -8,7 +8,8 @@ class UpdateCourseMaterialRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user() && $this->user()->isAdmin();
+        return $this->user()
+            && ($this->user()->isAdmin() || $this->user()->hasPermission('materials.edit'));
     }
 
     public function rules(): array

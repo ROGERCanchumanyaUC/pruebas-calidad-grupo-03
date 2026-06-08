@@ -32,7 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($sale->saleItems as $item)
+                        @foreach ($sale->items as $item)
                             <tr>
                                 <td>
                                     <strong style="color:#fff;">{{ $item->course->name ?? 'Curso eliminado' }}</strong>

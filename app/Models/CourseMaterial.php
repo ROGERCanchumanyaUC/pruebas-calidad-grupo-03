@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class CourseMaterial extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'module_id', 'type', 'title', 'description', 'content',
         'file_path', 'file_type', 'video_url', 'video_source',
