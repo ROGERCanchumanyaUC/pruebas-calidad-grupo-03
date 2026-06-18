@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ['email' => '71993692@continental.edu.pe'],
             [
                 'name' => 'Giancarlo Guerreros Cordova',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('71993692'),
                 'email_verified_at' => now(),
                 'is_admin' => true,
             ],

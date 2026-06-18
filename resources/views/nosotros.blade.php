@@ -426,9 +426,9 @@
              alt="Producción alimentaria JM y JS">
         <div class="ns-hero-overlay"></div>
         <div class="ns-hero-content">
-            <span class="ns-hero-tag">Nuestra empresa</span>
-            <h1>Conocimiento técnico con atención cercana.</h1>
-            <p>JM y JS Alimentos acompaña a empresas y profesionales que quieren mejorar su calidad sin perder claridad en el proceso.</p>
+            <span class="ns-hero-tag curtain-text">Nuestra empresa</span>
+            <h1 class="curtain-text">Conocimiento técnico con atención cercana.</h1>
+            <p class="curtain-text">JM y JS Alimentos acompaña a empresas y profesionales que quieren mejorar su calidad sin perder claridad en el proceso.</p>
             <div class="ns-hero-btns">
                 <a href="{{ route('cursos') }}" class="ns-btn-primary">Ver cursos</a>
                 <a href="{{ route('contacto') }}#contacto-formulario" class="ns-btn-outline">Hablar con nosotros</a>

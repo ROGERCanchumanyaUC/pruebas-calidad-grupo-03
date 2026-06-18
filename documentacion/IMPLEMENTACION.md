@@ -11,17 +11,12 @@
 |---|---|---|
 | **Lenguaje backend** | PHP | ^8.2 |
 | **Framework backend** | Laravel | ^12.0 |
-| **Base de datos (dev/prod local)** | MySQL (XAMPP) | 8.x / MariaDB 10.x |
-| **Base de datos (pruebas)** | SQLite en memoria (`:memory:`) | 3.x |
-| **Pasarela de pago (SDK)** | stripe/stripe-php (preparado, no activado) | ^20.2 |
+| **Base de datos** | SQLite | 3.x |
 | **Lenguaje frontend** | JavaScript (ESM) | ES2022+ |
 | **Framework frontend** | React | ^19.2.5 |
 | **Bundler** | Vite | ^7.0.7 |
 | **CSS framework** | Tailwind CSS | ^4.0.0 |
-| **Gráficos** | Chart.js | ^4.5.1 |
-| **Editor de texto enriquecido** | Quill | ^2.0.2 |
-| **Reordenamiento (drag & drop)** | SortableJS | ^1.15.7 |
-| **Servidor local** | XAMPP (Apache + PHP + MySQL) | — |
+| **Servidor local** | XAMPP (Apache + PHP) | — |
 | **Gestor de paquetes PHP** | Composer | ^2.x |
 | **Gestor de paquetes JS** | npm | ^10.x |
 | **Motor de plantillas** | Blade (Laravel) | built-in |
@@ -49,7 +44,7 @@ Navegador del usuario
         └── routes/api.php   ← Rutas que devuelven JSON
         │
         ▼
-   Controladores → (Servicios) → Modelos → MySQL (jm_js_alimentos)
+   Controladores → Modelos → SQLite (database/database.sqlite)
         │
         ▼
    Vistas Blade → HTML renderizado → Navegador
@@ -73,12 +68,8 @@ APP_FALLBACK_LOCALE=es
 
 BCRYPT_ROUNDS=12            # hashing seguro de contraseñas
 
-DB_CONNECTION=mysql         # MySQL servido por XAMPP
-DB_HOST=127.0.0.1
-DB_PORT=3307                # puerto del MySQL de XAMPP en este entorno
-DB_DATABASE=jm_js_alimentos
-DB_USERNAME=root
-DB_PASSWORD=
+DB_CONNECTION=sqlite        # base de datos en archivo local
+# DB_DATABASE se resuelve automáticamente a database/database.sqlite
 
 SESSION_DRIVER=database     # sesiones guardadas en BD
 SESSION_LIFETIME=120        # minutos antes de expirar
@@ -95,11 +86,6 @@ MAIL_MAILER=log             # correos escritos al log (no se envían)
 # Integración con Google Gemini (chatbot IA)
 GEMINI_API_KEY=             # clave obtenida en Google AI Studio
 GEMINI_MODEL=gemini-2.5-flash
-
-# Integración con Stripe (preparada; cobro real aún no activado)
-STRIPE_KEY=
-STRIPE_SECRET=
-STRIPE_WEBHOOK_SECRET=
 ```
 
 ---
@@ -111,8 +97,8 @@ Definida en `phpunit.xml`, sobreescribe las variables de `.env` solo durante los
 | Variable | Valor en tests | Propósito |
 |---|---|---|
 | `APP_ENV` | `testing` | Activa guards del framework para tests |
-| `DB_CONNECTION` | `sqlite` | BD ligera y aislada para tests (independiente del MySQL de desarrollo) |
-| `DB_DATABASE` | `:memory:` | BD en RAM, se crea y destruye en cada ejecución |
+| `DB_CONNECTION` | `sqlite` | Igual que producción local |
+| `DB_DATABASE` | `:memory:` | BD en RAM, se destruye al finalizar |
 | `BCRYPT_ROUNDS` | `4` | Hashing rápido (seguridad no importa en tests) |
 | `CACHE_STORE` | `array` | Caché en memoria, sin persistencia |
 | `SESSION_DRIVER` | `array` | Sesiones en memoria, sin persistencia |
@@ -123,66 +109,65 @@ Definida en `phpunit.xml`, sobreescribe las variables de `.env` solo durante los
 
 ### 1.5 Estructura de la base de datos
 
-**Motor:** MySQL (servido por XAMPP) — base de datos `jm_js_alimentos`. El esquema se gestiona íntegramente mediante migraciones de Laravel (`database/migrations`).
+**Motor:** SQLite 3 — archivo `database/database.sqlite`
 
-> En el entorno de **pruebas** el mismo esquema se materializa sobre SQLite en memoria; las migraciones son compatibles con ambos motores.
+```sql
+-- Tabla de usuarios (base de Laravel + campos personalizados)
+CREATE TABLE users (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    name              TEXT NOT NULL,
+    email             TEXT NOT NULL UNIQUE,
+    email_verified_at DATETIME,
+    password          TEXT NOT NULL,           -- Hash bcrypt (12 rondas)
+    is_admin          INTEGER NOT NULL DEFAULT 0,  -- BOOLEAN: 0/1
+    dni               TEXT,                    -- Nullable
+    phone             TEXT,                    -- Nullable
+    remember_token    TEXT,
+    created_at        DATETIME,
+    updated_at        DATETIME
+);
 
-#### Tablas de autenticación y RBAC
+-- Tabla de inscripciones
+CREATE TABLE enrollments (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    course_name TEXT NOT NULL,
+    level       TEXT NOT NULL,
+    price       REAL NOT NULL,                 -- DECIMAL(8,2)
+    status      TEXT NOT NULL DEFAULT 'pendiente',  -- pendiente|pagado|completado
+    created_at  DATETIME,
+    updated_at  DATETIME
+);
 
-```
-users           id, name, email (único), email_verified_at, password (bcrypt),
-                is_admin (bool, sincronizado con el rol), dni (nullable),
-                phone (nullable), remember_token, timestamps
-roles           id, name, display_name, description, timestamps
-permissions     id, name, display_name, module (indexado), timestamps
-role_user       role_id (FK), user_id (FK)            -- pivote usuario↔rol
-role_permission role_id (FK), permission_id (FK)       -- pivote rol↔permiso
-```
+-- Tabla de mensajes de contacto
+CREATE TABLE contacts (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre     TEXT NOT NULL,
+    correo     TEXT NOT NULL,
+    tema       TEXT NOT NULL,
+    curso      TEXT,                           -- Nullable
+    mensaje    TEXT NOT NULL,
+    leido      INTEGER NOT NULL DEFAULT 0,     -- BOOLEAN: 0/1
+    created_at DATETIME,
+    updated_at DATETIME
+);
 
-#### Tablas del catálogo y contenido (LMS)
+-- Tabla de sesiones (driver: database)
+CREATE TABLE sessions (
+    id            TEXT PRIMARY KEY,
+    user_id       INTEGER,
+    ip_address    TEXT,
+    user_agent    TEXT,
+    payload       TEXT NOT NULL,
+    last_activity INTEGER NOT NULL
+);
 
-```
-categories       id, name, slug, description, icon, order, is_active, timestamps
-courses          id, category_id (FK), instructor_id (FK), name, slug,
-                 short_description, description (longText), cover_image,
-                 level (enum), status (enum), price, sale_price,
-                 sale_start, sale_end, duration_weeks, meta_description,
-                 is_featured, published_at, timestamps  (índices: category, instructor, status, level)
-course_modules   id, course_id (FK), name, description, order, status (enum), timestamps
-course_materials id, module_id (FK), type (enum), title, description,
-                 content (longText), file_path, file_type, video_url,
-                 video_source (enum), duration_minutes, order,
-                 is_downloadable, timestamps
-course_material_user  user_id (FK), course_material_id (FK)  -- pivote: materiales completados
-```
-
-#### Tablas de inscripciones, ventas y cupones
-
-```
-enrollments  id, user_id (FK), course_id (FK), status (enum),
-             progress (decimal), last_accessed_at, total_time_minutes,
-             completed_at, enrolled_at, timestamps
-coupons      id, code, type (enum), value, start_date, end_date,
-             usage_limit, times_used, is_active, timestamps
-sales        id, user_id (FK), coupon_id (FK nullable), subtotal, discount,
-             total, payment_method (enum), payment_status (enum),
-             stripe_payment_id, notes, paid_at, timestamps
-sale_items   id, sale_id (FK), course_id (FK), price
-```
-
-> **Cambio respecto al prototipo:** `enrollments` ya no guarda `course_name`/`level` como texto, sino una FK `course_id` y campos de seguimiento de progreso. La venta queda trazada en `sales`/`sale_items`.
-
-#### Tablas de operación y soporte
-
-```
-contacts     id, nombre, correo, tema, curso (nullable), mensaje,
-             leido (bool), timestamps
-audit_logs   id, user_id (FK), action, entity_type, entity_id,
-             old_values (json), new_values (json), ip_address,
-             user_agent, timestamps
-settings     id, key, value (text), type, group
-sessions     id, user_id, ip_address, user_agent, payload, last_activity
-cache / cache_locks / jobs / job_batches / failed_jobs   -- tablas de framework
+-- Tablas del sistema (caché y colas)
+CREATE TABLE cache (...);
+CREATE TABLE cache_locks (...);
+CREATE TABLE jobs (...);
+CREATE TABLE job_batches (...);
+CREATE TABLE failed_jobs (...);
 ```
 
 ---
@@ -214,20 +199,17 @@ El bundle compilado se deposita en `public/build/` y es referenciado por `@vite(
 
 ### 1.7 Registro de middleware personalizado
 
-En `bootstrap/app.php` se registran los alias de los middleware personalizados y se aplican los globales:
+En `bootstrap/app.php` se registra el alias `'admin'` para `AdminMiddleware`:
 
 ```php
 ->withMiddleware(function (Middleware $middleware): void {
     $middleware->alias([
-        'admin'      => \App\Http\Middleware\AdminMiddleware::class,
-        'role'       => \App\Http\Middleware\RoleMiddleware::class,
-        'permission' => \App\Http\Middleware\PermissionMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ]);
-    // SecurityHeadersMiddleware se aplica a las respuestas (cabeceras de seguridad)
 })
 ```
 
-Esto permite proteger rutas por permiso (`middleware('permission:courses.edit')`) o por rol (`middleware('role:instructor')`) sin importar la clase completa. El `AdminMiddleware` se conserva por compatibilidad y ahora evalúa `$user->isAdmin()`, derivado del rol.
+Esto permite usar `middleware('admin')` en cualquier ruta sin importar la clase completa.
 
 ---
 
@@ -241,11 +223,11 @@ Esto permite proteger rutas por permiso (`middleware('permission:courses.edit')`
 | **Composer** | 2.x | Gestión de dependencias PHP |
 | **Node.js** | 18.x LTS | Ejecución de Vite y npm |
 | **npm** | 9.x | Gestión de dependencias JavaScript |
-| **XAMPP** (o equivalente) | 8.2+ | Servidor Apache + PHP + MySQL integrado |
-| **MySQL / MariaDB** | 8.x / 10.x | Motor de base de datos (incluido en XAMPP) |
+| **XAMPP** (o equivalente) | 8.2+ | Servidor Apache + PHP integrado |
+| **SQLite** | 3.x | Incluido en PHP; no requiere instalación separada |
 | **Git** | 2.x | Control de versiones |
 
-> **Nota:** Para desarrollo/producción local debe estar habilitada la extensión `pdo_mysql` (incluida en XAMPP). El entorno de pruebas usa SQLite en memoria, por lo que también conviene tener `pdo_sqlite` activa para correr la suite de tests.
+> **Nota:** La extensión `pdo_sqlite` de PHP debe estar habilitada. En XAMPP viene activada por defecto.
 
 ---
 
@@ -278,16 +260,14 @@ Estas extensiones son estándar en XAMPP/PHP 8.2+:
 | Extensión | Uso en el proyecto |
 |---|---|
 | `pdo` | Capa de abstracción de base de datos |
-| `pdo_mysql` | Conexión con MySQL (desarrollo/producción local) |
-| `pdo_sqlite` | Conexión con SQLite en memoria (entorno de pruebas) |
+| `pdo_sqlite` | Conexión con SQLite |
 | `mbstring` | Manipulación de cadenas multibyte |
 | `openssl` | Cifrado de sesiones y cookies |
 | `tokenizer` | Tokenización para Blade y Artisan |
 | `xml` | Parseo de XML (phpunit, Composer) |
 | `ctype` | Validación de tipos de caracteres |
-| `fileinfo` | Detección de tipos MIME (validación de archivos de materiales) |
+| `fileinfo` | Detección de tipos MIME |
 | `curl` | Llamadas HTTP a la API de Gemini |
-| `gd` o `imagick` | Procesamiento de imágenes de portada de cursos |
 
 ---
 
@@ -301,7 +281,6 @@ Estas extensiones son estándar en XAMPP/PHP 8.2+:
 |---|---|---|
 | `laravel/framework` | ^12.0 | Framework principal: routing, ORM, middleware, autenticación, sesiones, validación |
 | `laravel/tinker` | ^2.10.1 | REPL interactivo para depuración desde la terminal (`php artisan tinker`) |
-| `stripe/stripe-php` | ^20.2 | SDK de Stripe para la pasarela de pago (integración preparada; el cobro real aún no está activado) |
 
 #### Desarrollo (no se usan en producción)
 
@@ -336,9 +315,6 @@ Estas extensiones son estándar en XAMPP/PHP 8.2+:
 |---|---|---|
 | `react` | ^19.2.5 | Librería de UI para el componente del chatbot |
 | `react-dom` | ^19.2.5 | Renderizado de React en el DOM del navegador |
-| `chart.js` | ^4.5.1 | Gráficos del dashboard administrativo (ventas e inscripciones mensuales, top cursos) |
-| `quill` | ^2.0.2 | Editor de texto enriquecido para materiales de tipo texto |
-| `sortablejs` | ^1.15.7 | Reordenamiento de módulos por arrastrar y soltar |
 
 #### Desarrollo (devDependencies)
 
@@ -401,14 +377,13 @@ Paso 5: Crear el archivo de entorno
     └── php artisan key:generate
         (genera APP_KEY única para cifrar sesiones y cookies)
 
-Paso 6: Crear la base de datos MySQL
-    └── En phpMyAdmin (XAMPP) o consola: CREATE DATABASE jm_js_alimentos;
-        (verificar host/puerto/credenciales en .env: 127.0.0.1:3307, root)
+Paso 6: Crear la base de datos SQLite
+    └── New-Item database\database.sqlite -ItemType File
+        (en Windows PowerShell)
 
-Paso 7: Ejecutar las migraciones y poblar datos demo
-    └── php artisan migrate --seed
-        (crea todas las tablas en jm_js_alimentos y carga roles,
-         permisos, categorías, cursos y datos demo del LMS)
+Paso 7: Ejecutar las migraciones
+    └── php artisan migrate
+        (crea todas las tablas en database.sqlite)
 
 Paso 8: Compilar los assets del frontend
     └── npm run build
@@ -430,13 +405,8 @@ APP_NAME="JM y JS Alimentos"
 APP_URL=http://localhost/boceto/public
 APP_LOCALE=es
 
-# Base de datos (MySQL servido por XAMPP)
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3307
-DB_DATABASE=jm_js_alimentos
-DB_USERNAME=root
-DB_PASSWORD=
+# Base de datos (ya configurada para SQLite)
+DB_CONNECTION=sqlite
 
 # Sesiones y caché en BD
 SESSION_DRIVER=database
@@ -446,11 +416,6 @@ QUEUE_CONNECTION=database
 # Chatbot IA — obtener en https://aistudio.google.com/app/apikey
 GEMINI_API_KEY=tu_clave_aqui
 GEMINI_MODEL=gemini-2.5-flash
-
-# Stripe (opcional; el cobro real aún no está activado)
-STRIPE_KEY=
-STRIPE_SECRET=
-STRIPE_WEBHOOK_SECRET=
 ```
 
 **Verificación del chatbot:** Abrir la aplicación y enviar un mensaje al asistente. Debe responder con información sobre la empresa.
@@ -459,29 +424,25 @@ STRIPE_WEBHOOK_SECRET=
 
 ### Fase 3 — Creación del usuario administrador
 
-**Objetivo:** Tener acceso al panel de administración mediante el modelo de roles.
+**Objetivo:** Tener acceso al panel de administración.
 
 ```
-Opción A — Sembrar roles, permisos y datos demo (recomendado):
-    php artisan db:seed
-    (ejecuta RoleAndPermissionSeeder, SettingSeeder, CourseSeeder y
-     DemoLmsSeeder; crea el rol "admin" con todos sus permisos)
-
-Opción B — Asignar el rol admin a un usuario via tinker:
+Opción A — Via tinker (consola interactiva):
     php artisan tinker
-    >>> $u = App\Models\User::create([
+    >>> App\Models\User::create([
     ...     'name' => 'Administrador',
     ...     'email' => 'admin@jmjs.com',
     ...     'password' => 'admin2024',
+    ...     'is_admin' => true,
     ... ]);
-    >>> $u->assignRole('admin');   // sincroniza también is_admin
+
+Opción B — Via DatabaseSeeder (si existe):
+    php artisan db:seed
 
 Opción C — Registro normal + elevación:
     1. Registrarse en /register con cualquier cuenta
-    2. Via tinker: App\Models\User::find(1)->assignRole('admin')
+    2. Via tinker: App\Models\User::find(1)->update(['is_admin' => true])
 ```
-
-> El acceso administrativo se concede por **rol/permisos**, no por el flag `is_admin` directo. El método `assignRole()` mantiene `is_admin` sincronizado por compatibilidad.
 
 **Verificación:** Iniciar sesión con el admin → debe redirigir a `/admin`.
 
@@ -532,27 +493,14 @@ Paso 5: Ver reporte con cobertura de código
     php artisan test --coverage
 ```
 
-**Salida esperada (suite del LMS):**
+**Salida esperada:**
 ```
-   PASS  Tests\Unit\CoursePublishingServiceTest
-   PASS  Tests\Unit\LmsRelationshipsTest
-   PASS  Tests\Unit\VideoEmbedServiceTest
-   PASS  Tests\Feature\PublicCourseCatalogTest
-   PASS  Tests\Feature\AdminCourseCrudTest
-   PASS  Tests\Feature\AdminCourseMaterialTest
-   PASS  Tests\Feature\AdminSalesAndCouponsTest
-   PASS  Tests\Feature\AdminDashboardAnalyticsTest
-   PASS  Tests\Feature\AdminSecurityAndRolesTest
-   PASS  Tests\Feature\PermissionMiddlewareTest
-   PASS  Tests\Feature\StudentCourseAccessTest
-   PASS  Tests\Feature\LmsReleaseReadinessTest
-   ...
+   PASS  Tests\Unit\ExampleTest
+   PASS  Tests\Feature\ExampleTest
 
-   Tests:    72 passed
+   Tests:    2 passed
    Duration: X.XXs
 ```
-
-> El detalle de cada caso de prueba está documentado en `PRUEBAS_CALIDAD.md`.
 
 ---
 
@@ -607,25 +555,18 @@ php artisan route:list --path=admin  # Filtrar por prefijo
 │                    CAPA DE APLICACIÓN                       │
 │  Laravel 12.0 (PHP ^8.2)                                    │
 │  ├── Routing (web + api)                                    │
-│  ├── Middleware (auth, guest, admin, role, permission,      │
-│  │              SecurityHeaders) + rate limiting            │
-│  ├── Controladores (web + Admin/* + Api/*)                  │
-│  ├── Form Requests (validación de cursos/módulos/materiales)│
-│  ├── Servicios (Audit, CoursePublishing, Stripe, VideoEmbed)│
-│  ├── Eloquent ORM (User, Role, Permission, Category, Course,│
-│  │   CourseModule, CourseMaterial, Enrollment, Coupon,      │
-│  │   Sale, SaleItem, AuditLog, Setting, Contact)            │
-│  └── Gestión de sesiones, autenticación y RBAC              │
+│  ├── Middleware (auth, guest, admin)                        │
+│  ├── Controladores (lógica de cada pantalla)                │
+│  ├── Eloquent ORM (modelos User, Enrollment, Contact)       │
+│  ├── Validación de formularios                              │
+│  └── Gestión de sesiones y autenticación                    │
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
 │                    CAPA DE DATOS                            │
-│  MySQL (XAMPP) — base de datos jm_js_alimentos              │
-│  (SQLite en memoria para el entorno de pruebas)             │
-│  Tablas: users, roles, permissions, categories, courses,    │
-│   course_modules, course_materials, enrollments, coupons,   │
-│   sales, sale_items, audit_logs, settings, contacts,        │
-│   sessions, cache, jobs                                     │
+│  SQLite 3 — database/database.sqlite                        │
+│  Tablas: users, enrollments, contacts,                      │
+│           sessions, cache, jobs                             │
 └─────────────────────────────────────────────────────────────┘
 
                     SERVICIO EXTERNO
@@ -645,7 +586,6 @@ php artisan route:list --path=admin  # Filtrar por prefijo
 | PHP | ^8.2 |
 | Laravel Framework | ^12.0 |
 | Laravel Tinker | ^2.10.1 |
-| stripe/stripe-php | ^20.2 |
 | PHPUnit | ^11.5.50 |
 | Faker | ^1.23 |
 | Laravel Pint | ^1.24 |
@@ -656,14 +596,10 @@ php artisan route:list --path=admin  # Filtrar por prefijo
 | laravel-vite-plugin | ^2.0.0 |
 | @vitejs/plugin-react | ^5.2.0 |
 | Tailwind CSS | ^4.0.0 |
-| Chart.js | ^4.5.1 |
-| Quill | ^2.0.2 |
-| SortableJS | ^1.15.7 |
 | concurrently | ^9.0.1 |
 | Google Gemini | gemini-2.5-flash |
-| MySQL (XAMPP) / MariaDB | 8.x / 10.x |
-| SQLite (solo pruebas) | 3.x |
+| SQLite | 3.x (incluido en PHP) |
 
 ---
 
-*Documentación de implementación — JM y JS Alimentos — Actualizada a junio de 2026 (plataforma LMS, MySQL)*
+*Documentación de implementación — JM y JS Alimentos — Mayo 2026*

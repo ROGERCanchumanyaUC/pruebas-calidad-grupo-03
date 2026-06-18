@@ -10,141 +10,109 @@ El proyecto está construido con **Laravel 12**, que impone una estructura de di
 boceto/
 │
 ├── app/                          ← Núcleo de la aplicación
-│   ├── Helpers/
-│   │   └── helpers.php           (helpers globales, p. ej. setting())
 │   ├── Http/
 │   │   ├── Controllers/          ← Lógica de cada pantalla
 │   │   │   ├── Controller.php        (clase base abstracta de Laravel)
 │   │   │   ├── AuthController.php    (login, registro, logout)
-│   │   │   ├── CartController.php    (carrito en sesión + cupones)
+│   │   │   ├── CartController.php    (carrito de compras en sesión)
 │   │   │   ├── ContactController.php (formulario de contacto)
-│   │   │   ├── CourseController.php  (catálogo público y detalle)
-│   │   │   ├── StudentCourseController.php (aula, progreso, archivos)
-│   │   │   ├── EnrollmentController.php (inscripciones)
+│   │   │   ├── EnrollmentController.php (inscripciones directas)
 │   │   │   ├── MiCuentaController.php   (panel del estudiante)
-│   │   │   ├── PaymentController.php    (checkout: ventas e inscripciones)
+│   │   │   ├── PaymentController.php    (proceso de pago)
 │   │   │   ├── Admin/
-│   │   │   │   ├── DashboardController.php  (KPIs y gráficos)
-│   │   │   │   ├── CourseController.php     (CRUD de cursos)
-│   │   │   │   ├── CourseModuleController.php   (módulos)
-│   │   │   │   ├── CourseMaterialController.php (materiales)
-│   │   │   │   ├── StudentController.php    (gestión de estudiantes)
-│   │   │   │   ├── SaleController.php       (ventas)
-│   │   │   │   ├── CouponController.php     (cupones)
-│   │   │   │   ├── RoleController.php       (roles y permisos)
-│   │   │   │   ├── SettingController.php    (configuración)
-│   │   │   │   ├── AuditController.php      (registros de auditoría)
-│   │   │   │   ├── UserController.php       (usuarios)
-│   │   │   │   └── ContactsController.php   (mensajes)
+│   │   │   │   ├── DashboardController.php  (estadísticas admin)
+│   │   │   │   ├── UserController.php       (gestión de usuarios)
+│   │   │   │   └── ContactsController.php   (gestión de mensajes)
 │   │   │   └── Api/
 │   │   │       └── ChatController.php       (chatbot IA con Gemini)
-│   │   ├── Middleware/
-│   │   │   ├── AdminMiddleware.php       (compatibilidad; usa isAdmin())
-│   │   │   ├── RoleMiddleware.php        (acceso por rol)
-│   │   │   ├── PermissionMiddleware.php  (acceso por permiso)
-│   │   │   └── SecurityHeadersMiddleware.php (cabeceras de seguridad)
-│   │   └── Requests/
-│   │       └── Admin/               ← Form Requests de validación
-│   │           ├── StoreCourseRequest.php / UpdateCourseRequest.php
-│   │           ├── StoreCourseModuleRequest.php / UpdateCourseModuleRequest.php
-│   │           └── StoreCourseMaterialRequest.php / UpdateCourseMaterialRequest.php
-│   ├── Models/                      ← Modelos Eloquent
-│   │   ├── User.php  Role.php  Permission.php
-│   │   ├── Category.php  Course.php  CourseModule.php  CourseMaterial.php
-│   │   ├── Enrollment.php  Coupon.php  Sale.php  SaleItem.php
-│   │   ├── AuditLog.php  Setting.php
-│   │   └── Contact.php
-│   ├── Services/                    ← Lógica de negocio reutilizable
-│   │   ├── AuditService.php          (registro de auditoría)
-│   │   ├── CoursePublishingService.php (reglas de publicación)
-│   │   ├── StripeService.php         (integración de pago, preparada)
-│   │   └── VideoEmbedService.php     (embed seguro de YouTube/Vimeo)
+│   │   └── Middleware/
+│   │       └── AdminMiddleware.php   (protección de rutas de admin)
+│   ├── Models/
+│   │   ├── User.php              ← Modelo de usuarios
+│   │   ├── Enrollment.php        ← Modelo de inscripciones
+│   │   └── Contact.php           ← Modelo de mensajes de contacto
 │   └── Providers/
-│       └── AppServiceProvider.php
+│       └── AppServiceProvider.php (configuración inicial de la app)
 │
 ├── bootstrap/
-│   ├── app.php                   ← Configuración de Laravel 12 (alias de middleware)
-│   └── providers.php
+│   ├── app.php                   ← Punto de configuración de Laravel 12
+│   └── providers.php             ← Lista de service providers
 │
 ├── config/                       ← Configuración del sistema
-│   ├── app.php  auth.php  session.php  cache.php  queue.php  mail.php
-│   ├── database.php              (conexión a MySQL)
-│   ├── services.php              (claves de Gemini y Stripe)
-│   ├── lms.php                   (límites de archivos y rutas de materiales)
-│   └── stripe.php                (claves y webhook de Stripe)
+│   ├── app.php                   (nombre, zona horaria, locale)
+│   ├── auth.php                  (guards y providers de autenticación)
+│   ├── database.php              (conexión a SQLite)
+│   ├── session.php               (sesiones en base de datos)
+│   ├── cache.php                 (caché en base de datos)
+│   ├── queue.php                 (colas de trabajos)
+│   ├── mail.php                  (configuración de correo)
+│   └── services.php              (clave y modelo de Gemini API)
 │
 ├── database/
 │   ├── migrations/               ← Historial de cambios en la BD
-│   │   ├── 0001_01_01_* (users, cache, jobs)
-│   │   ├── 2026_05_06_* (is_admin, contacts, enrollments, dni/phone)
-│   │   └── 2026_06_07_* / 2026_06_08_*  (roles y permisos, categories,
-│   │        courses, course_modules, course_materials, enrollments
-│   │        recreada, sales y coupons, audit_logs, settings,
-│   │        course_material_user)
-│   ├── factories/                ← Factories de todos los modelos del LMS
-│   │   ├── UserFactory.php  CategoryFactory.php  CourseFactory.php
-│   │   ├── CourseModuleFactory.php  CourseMaterialFactory.php
-│   │   ├── EnrollmentFactory.php  SaleFactory.php  SaleItemFactory.php
-│   │   └── CouponFactory.php
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 2026_05_06_185634_add_is_admin_to_users_table.php
+│   │   ├── 2026_05_06_213613_create_contacts_table.php
+│   │   ├── 2026_05_06_214855_create_enrollments_table.php
+│   │   └── 2026_05_06_214856_add_dni_phone_to_users_table.php
+│   ├── factories/
+│   │   └── UserFactory.php       (generación de datos de prueba)
 │   └── seeders/
-│       ├── DatabaseSeeder.php
-│       ├── RoleAndPermissionSeeder.php  SettingSeeder.php
-│       ├── CourseSeeder.php  DemoLmsSeeder.php
+│       └── DatabaseSeeder.php    (datos iniciales)
 │
 ├── public/                       ← Único directorio expuesto al navegador
-│   ├── index.php                 (punto de entrada HTTP)
-│   ├── css/site.css              (hoja de estilos principal)
-│   ├── img/                      (imágenes estáticas)
-│   ├── storage/                  (enlace simbólico a archivos públicos)
+│   ├── index.php                 (punto de entrada HTTP de toda la app)
+│   ├── css/
+│   │   └── site.css              (hoja de estilos principal — 1,542 líneas)
+│   ├── img/                      (imágenes estáticas del sitio)
 │   └── build/                    (assets compilados por Vite)
 │
 ├── resources/
 │   ├── js/
 │   │   ├── app.jsx               (punto de entrada de React)
-│   │   └── components/           (componentes React, p. ej. el chatbot)
-│   └── views/                    ← Plantillas Blade
-│       ├── layouts/              (app.blade.php, admin.blade.php)
-│       ├── auth/                 (login, register, inscripcion)
+│   │   └── components/           (componentes React de la interfaz)
+│   └── views/                    ← Plantillas Blade (HTML del servidor)
+│       ├── layouts/
+│       │   ├── app.blade.php     (layout principal: navbar + footer)
+│       │   └── admin.blade.php   (layout del panel administrativo)
+│       ├── auth/
+│       │   ├── login.blade.php
+│       │   ├── register.blade.php
+│       │   └── inscripcion.blade.php
 │       ├── admin/
-│       │   ├── dashboard.blade.php  users.blade.php  contacts.blade.php
-│       │   ├── courses/  (index, create, edit)
-│       │   ├── coupons/  (index, create, edit)
-│       │   ├── sales/    (index, show)
-│       │   ├── students/ (index, show)
-│       │   ├── roles/    (index, show)
-│       │   ├── settings/ (index)
-│       │   ├── audit/    (index)
-│       │   └── users/    (edit)
-│       ├── student/
-│       │   └── aula.blade.php    (aula virtual del estudiante)
-│       ├── inicio.blade.php  nosotros.blade.php  contacto.blade.php
-│       ├── cursos.blade.php  curso-detalle.blade.php
-│       ├── mi-cuenta.blade.php  checkout.blade.php  pago-exito.blade.php
+│       │   ├── dashboard.blade.php
+│       │   ├── users.blade.php
+│       │   └── contacts.blade.php
+│       ├── inicio.blade.php
+│       ├── nosotros.blade.php
+│       ├── cursos.blade.php
+│       ├── contacto.blade.php
+│       ├── mi-cuenta.blade.php
+│       ├── checkout.blade.php
+│       └── pago-exito.blade.php
 │
 ├── routes/
 │   ├── web.php                   ← Rutas del sitio web (HTML)
-│   ├── api.php                   ← Rutas de la API (JSON, chatbot)
-│   └── console.php
+│   ├── api.php                   ← Rutas de la API (JSON)
+│   └── console.php               (comandos de Artisan)
 │
-├── storage/                      ← Archivos en tiempo de ejecución
-│   ├── app/private/materials/    (materiales privados de cursos)
-│   ├── app/public/               (archivos públicos enlazados)
-│   ├── framework/                (caché, sesiones, vistas compiladas)
-│   └── logs/
+├── storage/                      ← Archivos generados en tiempo de ejecución
+│   ├── app/                      (archivos subidos por usuarios)
+│   ├── framework/cache/          (caché del framework)
+│   ├── framework/sessions/       (sesiones de usuario)
+│   └── logs/                     (registros del sistema)
 │
 ├── tests/
-│   ├── Feature/                  (PublicCourseCatalog, AdminCourseCrud,
-│   │                              AdminCourseMaterial, AdminSalesAndCoupons,
-│   │                              AdminDashboardAnalytics, AdminSecurityAndRoles,
-│   │                              PermissionMiddleware, StudentCourseAccess,
-│   │                              LmsReleaseReadiness, ...)
-│   └── Unit/                     (CoursePublishingService, LmsRelationships,
-│                                  VideoEmbedService, ...)
+│   ├── Feature/                  (pruebas de integración)
+│   └── Unit/                     (pruebas unitarias)
 │
-├── .env / .env.example           ← Variables de entorno
+├── .env                          ← Variables de entorno (no se sube al repositorio)
+├── .env.example                  (plantilla de variables de entorno)
 ├── artisan                       ← CLI de Laravel
-├── composer.json                 (dependencias PHP, incl. stripe/stripe-php)
-├── package.json                  (dependencias JS, incl. chart.js, quill, sortablejs)
+├── composer.json                 (dependencias PHP)
+├── package.json                  (dependencias JavaScript)
 └── vite.config.js                (configuración del bundler)
 ```
 
@@ -179,7 +147,7 @@ Navegador
 [Controller]                  ← Procesa la lógica, consulta el Model si es necesario
     │
     ▼
-[Model / Eloquent ORM]        ← Interactúa con la base de datos MySQL
+[Model / Eloquent ORM]        ← Interactúa con la base de datos SQLite
     │
     ▼
 [Controller → View]           ← Pasa los datos al archivo Blade correspondiente
@@ -367,7 +335,7 @@ Esta separación permite que en el futuro se pueda desarrollar una app móvil o 
 | Capa MVC | Archivo | Acción |
 |---|---|---|
 | **Router** | `routes/web.php` | `GET /admin/contacts` → `ContactsController@index` |
-| **Middleware** | `PermissionMiddleware`, `RoleMiddleware`, `AdminMiddleware`, `SecurityHeadersMiddleware` | Validan acceso por permiso/rol (RBAC) y aplican cabeceras de seguridad; bloquean con 403 si no |
+| **Middleware** | `AdminMiddleware.php` | Verifica `is_admin = true`, bloquea si no |
 | **Controller** | `Admin/ContactsController.php` | `Contact::orderBy('created_at', 'desc')->get()` |
 | **Model** | `Contact.php` | Retorna la colección de mensajes |
 | **View** | `admin/contacts.blade.php` | Renderiza la tabla con los mensajes |
@@ -410,19 +378,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/pago', [PaymentController::class, 'process']);
 });
 
-// Dominio administrativo — requiere autenticación + permiso por acción (RBAC)
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])
-        ->middleware('permission:dashboard.view');
-    Route::get('/courses', [AdminCourseController::class, 'index'])
-        ->middleware('permission:courses.view');
-    Route::post('/courses', [AdminCourseController::class, 'store'])
-        ->middleware('permission:courses.create');
-    // ... materiales, ventas, cupones, roles, settings, auditoría, etc.
+// Dominio administrativo — requiere ser admin
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/contacts', [ContactsController::class, 'index']);
 });
 ```
 
-Un usuario sin el permiso requerido es bloqueado por `PermissionMiddleware` (HTTP 403) antes de que su solicitud llegue a cualquier controlador. El antiguo `AdminMiddleware` se conserva por compatibilidad y deriva el acceso del rol mediante `isAdmin()`.
+Un usuario normal que intente acceder a `/admin` es bloqueado por `AdminMiddleware` antes de que su solicitud llegue a cualquier controlador.
 
 **Namespacing de controllers por dominio**
 
@@ -441,31 +405,24 @@ Los controladores del dominio administrativo viven en su propio namespace `App\H
 ┌──────────────────────────▼────────────────────────────────┐
 │                      CAPA DE ENRUTAMIENTO                 │
 │   routes/web.php (HTML)   +   routes/api.php (JSON)       │
-│   Middleware: guest │ auth │ role │ permission │ headers  │
+│   Middleware: guest │ auth │ admin                        │
 └──────────────────────────┬────────────────────────────────┘
                            │  Dispatch al Controller
 ┌──────────────────────────▼────────────────────────────────┐
 │                   CAPA DE CONTROLADORES (MVC-C)           │
-│ Público │ Auth │ Estudiante │ Admin LMS │ API (chat) │
-│ (catálogo, detalle) · (aula, progreso) · (cursos,        │
-│ módulos, materiales, ventas, cupones, roles, settings,   │
-│ auditoría) — con Form Requests y capa de Servicios       │
+│  Público    │  Auth    │  Estudiante  │  Admin  │  API    │
+│  (inicio,   │  (login, │  (mi-cuenta, │  (dash- │  (chat) │
+│  cursos...) │  register│  carrito...) │  board) │        │
 └──────────────────────────┬────────────────────────────────┘
                            │  Consultas Eloquent ORM
 ┌──────────────────────────▼────────────────────────────────┐
 │                    CAPA DE MODELOS (MVC-M)                │
-│  User · Role · Permission · Category · Course · Module ·  │
-│  Material · Enrollment · Coupon · Sale · SaleItem ·       │
-│  AuditLog · Setting · Contact                            │
+│          User  │  Enrollment  │  Contact                  │
 └──────────────────────────┬────────────────────────────────┘
                            │
 ┌──────────────────────────▼────────────────────────────────┐
-│                BASE DE DATOS MySQL (jm_js_alimentos)      │
-│  users · roles · permissions · categories · courses ·     │
-│  course_modules · course_materials · enrollments ·        │
-│  coupons · sales · sale_items · audit_logs · settings ·   │
-│  contacts · sessions · cache · jobs                       │
-│  (SQLite en memoria en el entorno de pruebas)             │
+│                BASE DE DATOS SQLite                       │
+│  users │ enrollments │ contacts │ sessions │ cache │ jobs │
 └───────────────────────────────────────────────────────────┘
 
 Servicios externos:
@@ -476,7 +433,7 @@ Servicios externos:
 |---|---|---|
 | **MVC** | Toda la arquitectura backend | `Controllers/`, `Models/`, `views/` |
 | **CDD** | Frontend: layouts Blade + componentes React | `layouts/app.blade.php`, `resources/js/components/` |
-| **SDD** | Organización por dominios funcionales + capa de servicios | `routes/web.php` (grupos con `permission:*`), `Controllers/Admin/`, `Controllers/Api/`, `app/Services/`, `app/Http/Requests/` |
+| **SDD** | Organización por dominios funcionales | `routes/web.php` (grupos con middleware), `Controllers/Admin/`, `Controllers/Api/` |
 
 ---
 
@@ -489,8 +446,8 @@ Los materiales se guardan en el disco local privado bajo el patrón:
 `private/materials/{course_id}/{module_id}/`
 
 ### 5.2 Control de Acceso
-El acceso a estos materiales se gestiona a través de `StudentCourseController@serveFile`, que valida la inscripción activa del usuario (o el rol de administrador/instructor) antes de servir el archivo, impidiendo el acceso directo y no autorizado.
+El acceso a estos materiales se gestionará a través de un controlador específico que validará la inscripción activa del usuario (o el rol de administrador/instructor) antes de iniciar la descarga o transmisión del archivo, impidiendo el acceso directo y no autorizado.
 
 ---
 
-*Documentación de arquitectura — JM y JS Alimentos — Actualizada a junio de 2026 (plataforma LMS, MySQL, RBAC)*
+*Documentación de arquitectura — JM y JS Alimentos — Mayo 2026*

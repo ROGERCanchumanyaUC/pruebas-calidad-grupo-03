@@ -7,9 +7,7 @@
 
 ### 1.1 Descripción
 
-El proyecto adoptó la **metodología de Desarrollo Iterativo e Incremental**, con prácticas ágiles inspiradas en **Scrum**. Este enfoque divide el desarrollo en ciclos cortos, donde cada ciclo produce una versión funcional del sistema que se enriquece progresivamente.
-
-El desarrollo se dio en **dos etapas**: una **primera etapa** de prototipo (4 iteraciones, mayo 2026) que construyó el sitio de e-learning base, y una **segunda etapa** de evolución a **plataforma LMS** (junio 2026) organizada formalmente en **sprints** mediante un tablero Kanban (`documentacion/KANBAN.md`). Este documento describe ambas etapas.
+El proyecto adoptó la **metodología de Desarrollo Iterativo e Incremental**, con prácticas ágiles inspiradas en **Scrum**. Este enfoque divide el desarrollo en ciclos cortos (iteraciones), donde cada ciclo produce una versión funcional del sistema que se enriquece progresivamente hasta alcanzar el producto final.
 
 A diferencia del modelo en cascada (Waterfall), donde todas las fases se completan de forma estrictamente secuencial, el modelo iterativo permite:
 
@@ -32,7 +30,7 @@ A diferencia del modelo en cascada (Waterfall), donde todas las fases se complet
 
 ## 2. Fases de la Metodología
 
-La **primera etapa** (prototipo) se organizó en **4 iteraciones principales** (versiones), precedidas por una fase de planificación y cerradas con documentación. La **segunda etapa** (LMS) se organizó en 10 sprints (ver sección 3.1).
+El ciclo de vida del proyecto se organizó en **4 iteraciones principales** (versiones), precedidas por una fase de planificación y cerradas con una fase de documentación.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -61,14 +59,8 @@ La **primera etapa** (prototipo) se organizó en **4 iteraciones principales** (
 └──────────────────────────┬──────────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
-│  FASE FINAL (prototipo) — Documentación y entrega           │
-│  Documentos técnicos del prototipo                          │
-└──────────────────────────┬──────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│  ETAPA 2 — Plataforma LMS (Sprints 0 a 9)                   │
-│  Arquitectura LMS, catálogo dinámico, CRUD, aula, ventas,   │
-│  RBAC, dashboard, auditoría, QA y release (ver sección 3.1) │
+│  FASE FINAL — Documentación y entrega                       │
+│  Generación de los 7 documentos técnicos del proyecto       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -85,7 +77,7 @@ La **primera etapa** (prototipo) se organizó en **4 iteraciones principales** (
 | Levantamiento de requisitos | Lista de funcionalidades priorizadas |
 | Definición de actores | Visitante, Estudiante, Administrador |
 | Diseño de la base de datos | Schema de `users`, `enrollments`, `contacts` |
-| Definición del stack tecnológico | Laravel 12, React 19, Vite 7, SQLite (migrado a MySQL en la etapa LMS) |
+| Definición del stack tecnológico | Laravel 12, React 19, Vite 7, SQLite |
 | Diseño visual (wireframes) | Paleta de colores, tipografía Poppins, estructura de páginas |
 | Configuración del repositorio | Repositorio Git en GitHub (`pruebas-calidad-grupo-03`) |
 
@@ -134,7 +126,7 @@ La **primera etapa** (prototipo) se organizó en **4 iteraciones principales** (
 **Criterios de aceptación verificados:**
 - ✓ Un usuario puede registrarse e iniciar sesión
 - ✓ El carrito acepta múltiples cursos y previene duplicados
-- ✓ El pago crea inscripciones (en la etapa LMS, además, registros de venta)
+- ✓ El pago crea inscripciones con estado `pagado`
 - ✓ Mi Cuenta muestra correctamente los cursos inscritos
 - ✓ Los logros se desbloquean automáticamente según condiciones
 
@@ -189,46 +181,21 @@ La **primera etapa** (prototipo) se organizó en **4 iteraciones principales** (
 
 **Objetivo:** Generar toda la documentación técnica y académica del proyecto.
 
-**Documentos generados en la carpeta `documentacion/`** (la etapa LMS sumó documentos operativos hasta un total de 13):
+**Documentos generados en la carpeta `documentacion/`:**
 
 | Documento | Contenido |
 |---|---|
 | `DOCUMENTACION_GENERAL.md` | Objetivos, requerimientos, actores y alcance |
 | `DOCUMENTACION_FUNCIONAL.md` | Flujo de pantallas, diseño de páginas y procesos automatizados |
 | `ARQUITECTURA.md` | Estructura de carpetas, paradigmas MVC, CDD y SDD |
-| `PRUEBAS_CALIDAD.md` | Diseño de casos de caja negra/blanca + suite automatizada del LMS |
+| `PRUEBAS_CALIDAD.md` | 59 casos de prueba de caja negra y blanca |
 | `IMPLEMENTACION.md` | Especificaciones técnicas, requisitos y plan de implementación |
 | `ESTADO_DEL_ARTE.md` | Análisis del contexto tecnológico y educativo del proyecto |
 | `METODOLOGIA.md` | Este documento |
-| `PROCESOS.md` | SDD: procesos de negocio del sistema |
-| `KANBAN.md` | Tablero de sprints de la etapa LMS |
-| `AUDITORIA_LMS_2026_06_07.md` | Auditoría del estado del proyecto |
-| `MANUAL_ADMIN_LMS.md` | Manual del administrador del LMS |
-| `CHECKLIST_DEPLOY_LMS.md` | Checklist de despliegue |
-| `documentacion_proyecto_jm_js_alimentos.md` | Documento consolidado del proyecto |
 
 ---
 
-## 3.1 Etapa 2 — Evolución a Plataforma LMS (sprints)
-
-Tras el prototipo, el proyecto evolucionó hacia una **plataforma LMS** completa. Esta etapa se organizó formalmente en **10 sprints (Sprint 0 a Sprint 9)** gestionados mediante un tablero Kanban (`documentacion/KANBAN.md`), con su propia *Definition of Done*, backlog y matriz de dependencias entre sprints.
-
-| Sprint | Foco | Resultado principal |
-|---|---|---|
-| **Sprint 0** | Estabilización, auditoría y preparación | Auditoría del estado, migración a MySQL, base para el LMS |
-| **Sprint 1** | Fundamentos de arquitectura LMS | Modelos y migraciones de cursos, categorías, roles, permisos, ventas, etc. |
-| **Sprint 2** | Catálogo público dinámico y detalle | `/cursos` desde BD con filtros y página `/cursos/{slug}` |
-| **Sprint 3** | CRUD administrativo de cursos | Gestión completa de cursos con publicación/despublicación y duplicación |
-| **Sprint 4** | Constructor de módulos y materiales | Módulos reordenables y materiales (video, documento, presentación, texto, recurso) con validación de archivos |
-| **Sprint 5** | Experiencia del estudiante y progreso | Aula virtual, consumo de materiales y seguimiento de progreso |
-| **Sprint 6** | Estudiantes, ventas, cupones y checkout | Gestión de estudiantes, registro de ventas (`sales`/`sale_items`), cupones y checkout |
-| **Sprint 7** | Dashboard ejecutivo y analítica | KPIs reales y gráficos (Chart.js) con caché de métricas |
-| **Sprint 8** | Roles, settings, auditoría y seguridad | RBAC por permisos, settings, `audit_logs`, rate limiting y cabeceras de seguridad |
-| **Sprint 9** | QA, rendimiento, documentación y release | Factories, seeder demo, suite automatizada, manual y checklist de despliegue |
-
-**Prácticas de esta etapa:** definición de estados y *Definition of Done* por tarea, paquetes de trabajo por sprint, criterios de aceptación verificables y pruebas automatizadas como parte del cierre de cada sprint.
-
-
+## 4. Prácticas Ágiles Aplicadas
 
 ### 4.1 Control de versiones con Git
 
@@ -249,12 +216,12 @@ c7946e6  4ta version          ← Iteración 4
 
 ### 4.2 Pruebas por iteración
 
-Cada iteración incluyó verificación manual de los criterios de aceptación. En la etapa LMS, esto se reforzó con una **suite automatizada de PHPUnit** (72 métodos en 14 archivos, Feature + Unit) apoyada en factories y un seeder de datos demo, detallada en `PRUEBAS_CALIDAD.md`.
+Cada iteración incluyó verificación manual de los criterios de aceptación antes de ser registrada como commit. La suite de pruebas automatizadas (`phpunit`) valida el comportamiento de las rutas públicas y la integridad del sistema.
 
 ### 4.3 Separación de entornos
 
 Se mantuvo una separación clara entre:
-- **Entorno de desarrollo:** Variables en `.env`, base de datos local MySQL (XAMPP)
+- **Entorno de desarrollo:** Variables en `.env`, base de datos local SQLite
 - **Entorno de pruebas:** Variables en `phpunit.xml`, SQLite en memoria (`:memory:`)
 
 ### 4.4 Integración continua de funcionalidades
@@ -271,7 +238,7 @@ Cada funcionalidad nueva se integró de forma que no rompiera las anteriores. El
 | **Diseñador UX/UI** | Definición de la paleta, tipografía, layouts y experiencia de usuario |
 | **Arquitecto de software** | Decisiones de stack, estructura de carpetas y paradigmas (MVC, CDD, SDD) |
 | **Tester** | Diseño y ejecución de pruebas de caja negra y caja blanca |
-| **Documentador técnico** | Redacción de los documentos técnicos y operativos del proyecto (13 en total) |
+| **Documentador técnico** | Redacción de los 7 documentos técnicos del proyecto |
 
 > En un equipo pequeño, un mismo integrante puede asumir múltiples roles según la iteración en curso.
 
@@ -303,9 +270,7 @@ Cada funcionalidad nueva se integró de forma que no rompiera las anteriores. El
 | **Adaptación a cambios** | Costosa | Natural | Natural |
 | **Adecuado para equipo pequeño** | No | Sí | Sí |
 | **Trazabilidad** | Alta | Media (depende del tablero) | Alta (commits Git) |
-| **Aplicado en este proyecto** | No | Sí, en la etapa LMS (sprints + tablero Kanban) | Sí, en la etapa de prototipo |
-
-> La primera etapa siguió el modelo iterativo; la segunda etapa adoptó explícitamente sprints (Scrum) para construir el LMS, manteniendo Git como mecanismo de trazabilidad.
+| **Aplicado en este proyecto** | No | Parcialmente | Sí |
 
 ---
 
@@ -329,15 +294,10 @@ Mayo 2026
 ├── Semana 4 — Iteración 4
 │   └── Refinamiento visual, correcciones, ajustes UX
 │
-├── Semana 4 — Documentación
-│   └── Documentos técnicos del prototipo
-│
-└── Junio 2026 — Etapa LMS (Sprints 0 a 9)
-    └── Arquitectura LMS, catálogo dinámico, CRUD de cursos, módulos y
-        materiales, aula del estudiante, ventas y cupones, dashboard
-        analítico, RBAC, settings, auditoría, QA y release
+└── Semana 4 — Documentación
+    └── 7 documentos técnicos generados y subidos al repositorio
 ```
 
 ---
 
-*Metodología de Desarrollo — JM y JS Alimentos — Actualizada a junio de 2026 (incluye la etapa LMS por sprints)*
+*Metodología de Desarrollo — JM y JS Alimentos — Mayo 2026*

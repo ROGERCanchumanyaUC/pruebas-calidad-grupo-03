@@ -150,16 +150,16 @@ En este proyecto, React se usa de forma selectiva para el componente del chatbot
 - Hot Module Replacement (HMR) instantáneo
 - Integración nativa con Laravel desde la versión 9
 
-### 6.4 Base de datos: de SQLite a MySQL
+### 6.4 SQLite como base de datos
 
-En su etapa de prototipo, el proyecto usó **SQLite** por su simplicidad (cero configuración, archivo portátil, soporte completo en Eloquent), ideal para arrancar rápido y para pruebas.
+**SQLite** es la base de datos más desplegada del mundo (presente en cada smartphone Android e iOS, cada navegador web y miles de aplicaciones de escritorio). Para este proyecto es la elección correcta porque:
 
-Al evolucionar a una **plataforma LMS** con más entidades y concurrencia (cursos, módulos, materiales, ventas, auditoría, roles), se migró el entorno de desarrollo/producción local a **MySQL** (servido por XAMPP). Gracias a que Eloquent abstrae el motor de base de datos, la migración consistió esencialmente en ajustar la conexión en `.env` (`DB_CONNECTION=mysql`) sin reescribir la lógica de acceso a datos.
+- No requiere servidor de base de datos separado (cero configuración)
+- El archivo `database.sqlite` es portátil y fácil de respaldar
+- Rendimiento suficiente para el volumen de datos esperado (cientos de usuarios, no millones)
+- Soporte completo en Laravel con Eloquent ORM
 
-- **MySQL (XAMPP)** es el motor en desarrollo/producción local: maneja la única fuente de verdad del sistema (usuarios, catálogo, ventas, auditoría).
-- **SQLite en memoria** se conserva para el **entorno de pruebas automatizadas**, por su rapidez y aislamiento.
-
-Ambos motores son ampliamente usados y cuentan con soporte de primer nivel en Laravel; esta combinación aprovecha lo mejor de cada uno según el contexto.
+**Cuándo escalar:** Si el proyecto crece significativamente en usuarios, la migración a MySQL o PostgreSQL en Laravel implica cambiar una sola línea en `.env` (`DB_CONNECTION=mysql`), dado que Eloquent abstrae el motor de BD.
 
 ### 6.5 Tailwind CSS
 
@@ -215,7 +215,7 @@ El análisis del estado del arte evidencia que:
 
 1. **Existe un nicho no atendido:** No hay plataformas digitales especializadas en capacitación alimentaria en el Perú, lo que posiciona a JM y JS Alimentos como pioneros en este segmento.
 
-2. **Las tecnologías elegidas son las adecuadas:** Laravel, React, Vite y MySQL (con SQLite para pruebas) son herramientas estándar de la industria para proyectos de esta escala, con amplio soporte, documentación y comunidad.
+2. **Las tecnologías elegidas son las adecuadas:** Laravel, React, Vite y SQLite son las herramientas estándar de la industria para proyectos de esta escala, con amplio soporte, documentación y comunidad.
 
 3. **La integración de IA es una ventaja competitiva:** El chatbot con Google Gemini 2.5 Flash coloca a la plataforma al nivel de las tendencias más avanzadas en e-learning, siendo aún una característica diferencial en el mercado local.
 
@@ -225,4 +225,4 @@ El análisis del estado del arte evidencia que:
 
 ---
 
-*Estado del Arte — JM y JS Alimentos — Actualizada a junio de 2026*
+*Estado del Arte — JM y JS Alimentos — Mayo 2026*

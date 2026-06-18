@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Sale;
 use App\Models\User;
+use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 use Tests\TestCase;
 
 class PublicCourseCatalogTest extends TestCase
@@ -172,23 +175,39 @@ class PublicCourseCatalogTest extends TestCase
         // Add published course to cart
         $this->actingAs($user)->postJson('/cart/add', ['course_id' => $this->publishedCourse->id]);
 
-        // Process payment
-        $response = $this->actingAs($user)->post(route('pago.procesar'), [
-            'card_name' => 'John Doe',
-            'card_number' => '1111222233334444',
-            'card_exp' => '12/28',
-            'card_cvc' => '123',
-        ]);
+        // Stripe Checkout: simula sesión creada y luego confirmada como pagada
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')
+                ->andReturn('https://checkout.stripe.com/c/pay/cs_test_enroll');
+            $mock->shouldReceive('retrieveSession')
+                ->andReturnUsing(function () {
+                    $sale = Sale::where('payment_status', 'pendiente')->latest('id')->first();
 
+                    return StripeCheckoutSession::constructFrom([
+                        'id' => 'cs_test_enroll',
+                        'object' => 'checkout.session',
+                        'payment_status' => 'paid',
+                        'metadata' => ['sale_id' => (string) $sale->id],
+                    ]);
+                });
+        });
+
+        // 1. Process payment: crea la venta "pendiente" y redirige a Stripe
+        $response = $this->actingAs($user)->post(route('pago.procesar'));
+        $response->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_enroll');
+
+        // 2. El navegador vuelve desde Stripe tras un pago exitoso
+        $response = $this->actingAs($user)->get(route('pago.confirmar', ['session_id' => 'cs_test_enroll']));
         $response->assertRedirect(route('pago.exito'));
-        
+
         // Assert enrollment is active and correct
         $this->assertDatabaseHas('enrollments', [
             'user_id' => $user->id,
             'course_id' => $this->publishedCourse->id,
             'status' => 'activo',
         ]);
-        
+
         // Assert cart was cleared
         $this->assertEmpty(session()->get('cart'));
     }

@@ -15,18 +15,14 @@ Desarrollar una plataforma web de e-learning para la empresa **JM y JS Alimentos
 
 | # | Objetivo | Indicador de cumplimiento |
 |---|---|---|
-| OE-01 | Publicar un catálogo dinámico de cursos administrado desde base de datos, organizado por categoría y nivel (Básico, Intermedio, Avanzado) con información de duración, precio y certificación | El usuario puede ver, filtrar (por nivel, categoría y búsqueda) y seleccionar cursos publicados desde `/cursos`, con detalle por curso en `/cursos/{slug}` |
+| OE-01 | Publicar un catálogo de 9 cursos organizados por nivel (Básico, Intermedio, Avanzado) con información de duración, precio y certificación | El usuario puede ver, filtrar y seleccionar cursos desde `/cursos` |
 | OE-02 | Implementar un sistema de registro e inicio de sesión seguro para estudiantes | Los usuarios pueden crear una cuenta, autenticarse y acceder a su panel personal |
-| OE-03 | Habilitar un carrito de compras y flujo de checkout que registre la venta y genere inscripciones automáticamente | El checkout crea un registro en `sales` (con `sale_items`) y una inscripción en `enrollments` con estado `activo` por cada curso |
-| OE-04 | Proveer un aula virtual y un panel personal donde el estudiante consuma el contenido y visualice su progreso | El estudiante accede a los módulos y materiales de sus cursos inscritos y `/mi-cuenta` muestra inscripciones, progreso y estadísticas en tiempo real |
+| OE-03 | Habilitar un carrito de compras y flujo de pago que genere inscripciones automáticamente | El pago exitoso crea registros en la tabla `enrollments` con estado `pagado` |
+| OE-04 | Proveer un panel personal al estudiante donde visualice sus cursos, perfil y logros | La página `/mi-cuenta` muestra inscripciones, progreso y estadísticas en tiempo real |
 | OE-05 | Implementar un sistema de contacto asíncrono para consultas de los visitantes | Los mensajes se guardan en la BD y el administrador los gestiona desde `/admin/contacts` |
-| OE-06 | Crear un panel de administración LMS con gestión de cursos, módulos, materiales, estudiantes, ventas, cupones, roles, configuración y auditoría | El administrador accede a estadísticas (KPIs y gráficos) y a los módulos de gestión bajo `/admin` |
+| OE-06 | Crear un panel de administración con control de usuarios, mensajes e inscripciones | El administrador accede a estadísticas y puede gestionar usuarios y contactos desde `/admin` |
 | OE-07 | Integrar un asistente virtual con IA para orientación en tiempo real | El chatbot responde consultas sobre cursos y servicios usando Google Gemini |
 | OE-08 | Garantizar que la plataforma sea responsive y funcional en dispositivos móviles | El diseño se adapta a pantallas desde 320px sin pérdida de funcionalidad |
-| OE-09 | Implementar control de acceso basado en roles y permisos (RBAC) | El acceso a cada acción administrativa se valida por permiso (`permission:*`) según el rol del usuario (administrador, instructor, soporte, estudiante) |
-| OE-10 | Habilitar la gestión comercial con ventas y cupones de descuento | El administrador gestiona cupones (vigencia, límite, estado) y consulta las ventas registradas; el cupón aplica descuento validado en el checkout |
-| OE-11 | Registrar auditoría de las operaciones sensibles de administración | Las acciones de crear, editar, publicar y eliminar quedan registradas en `audit_logs` con usuario, IP y datos previos/nuevos |
-| OE-12 | Centralizar la configuración del sistema en parámetros editables | El administrador edita ajustes (empresa, contacto, etc.) desde `/admin/settings`, leídos por la aplicación mediante el helper `setting()` con caché |
 
 ---
 
@@ -52,10 +48,9 @@ Los requerimientos funcionales describen **qué debe hacer** el sistema.
 
 | ID | Descripción |
 |---|---|
-| RF-02.1 | El sistema debe mostrar el catálogo de cursos **publicados** desde la base de datos, con nombre, categoría, nivel, duración, precio y si incluye certificación |
-| RF-02.2 | El sistema debe permitir filtrar los cursos por nivel (Básico, Intermedio, Avanzado), por categoría y por término de búsqueda |
+| RF-02.1 | El sistema debe mostrar los 9 cursos disponibles con nombre, nivel, duración, precio y si incluye certificación |
+| RF-02.2 | El sistema debe permitir filtrar los cursos por nivel (Básico, Intermedio, Avanzado) |
 | RF-02.3 | El sistema debe mostrar un curso destacado en la sección hero de la página de cursos |
-| RF-02.4 | El sistema debe ofrecer una página de detalle por curso (`/cursos/{slug}`) con su descripción, módulos y materiales; los cursos en borrador solo son visibles para administradores |
 
 #### RF-03 — Carrito de compras
 
@@ -72,14 +67,12 @@ Los requerimientos funcionales describen **qué debe hacer** el sistema.
 
 | ID | Descripción |
 |---|---|
-| RF-04.1 | El sistema debe validar los datos de la tarjeta (nombre, número mínimo de 16 dígitos, expiración, CVC mínimo de 3 dígitos) en el checkout |
-| RF-04.2 | El sistema debe registrar la operación creando un registro en `sales` con sus `sale_items`, y una inscripción en `enrollments` con estado `activo` por cada curso del carrito |
-| RF-04.3 | El sistema debe permitir aplicar un cupón de descuento válido (vigencia y límite de usos) sobre el subtotal antes de calcular el total |
-| RF-04.4 | El sistema debe impedir la inscripción duplicada si el usuario ya está inscrito en un curso del carrito (reactivando la inscripción si estaba pendiente o suspendida) |
-| RF-04.5 | El sistema debe vaciar el carrito y el cupón aplicado inmediatamente después de procesar el pago, e invalidar la caché de métricas del dashboard |
-| RF-04.6 | El sistema debe redirigir al usuario a una página de confirmación tras el pago exitoso |
-| RF-04.7 | El sistema debe redirigir al catálogo de cursos si se intenta pagar con el carrito vacío |
-| RF-04.8 | El cobro se procesa actualmente de forma **simulada**; la integración con Stripe está preparada a nivel de infraestructura (`config/stripe.php`, `StripeService` y la columna `sales.stripe_payment_id`) para activarse a futuro sin rehacer el flujo |
+| RF-04.1 | El sistema debe validar los datos de la tarjeta (nombre, número mínimo de 16 dígitos, expiración, CVC mínimo de 3 dígitos) |
+| RF-04.2 | El sistema debe crear una inscripción con estado `pagado` por cada curso en el carrito al confirmar el pago |
+| RF-04.3 | El sistema debe impedir la inscripción duplicada si el usuario ya está inscrito en un curso del carrito |
+| RF-04.4 | El sistema debe vaciar el carrito inmediatamente después de procesar el pago |
+| RF-04.5 | El sistema debe redirigir al usuario a una página de confirmación tras el pago exitoso |
+| RF-04.6 | El sistema debe redirigir al catálogo de cursos si se intenta pagar con el carrito vacío |
 
 #### RF-05 — Panel del estudiante
 
@@ -103,9 +96,9 @@ Los requerimientos funcionales describen **qué debe hacer** el sistema.
 
 | ID | Descripción |
 |---|---|
-| RF-07.1 | El sistema debe restringir cada acción del panel admin mediante permisos (`permission:*`) evaluados según el rol del usuario; las rutas administrativas requieren autenticación más el permiso correspondiente |
-| RF-07.2 | El sistema debe mostrar un dashboard con KPIs reales (cursos, estudiantes, ventas e ingresos, tasa de finalización) y gráficos de ventas e inscripciones mensuales (Chart.js), con caché de métricas |
-| RF-07.3 | El sistema debe permitir la gestión de roles y la asignación de roles a usuarios (sin depender del flag heredado `is_admin`) |
+| RF-07.1 | El sistema debe restringir el acceso al panel admin exclusivamente a usuarios con rol `is_admin = true` |
+| RF-07.2 | El sistema debe mostrar estadísticas generales: total de usuarios, nuevos registros, mensajes y inscripciones |
+| RF-07.3 | El sistema debe permitir al administrador alternar el rol de administrador de cualquier usuario |
 | RF-07.4 | El sistema debe mostrar los mensajes de contacto con distinción visual entre leídos y no leídos |
 | RF-07.5 | El sistema debe permitir al administrador marcar mensajes como leídos y eliminarlos |
 
@@ -116,49 +109,6 @@ Los requerimientos funcionales describen **qué debe hacer** el sistema.
 | RF-08.1 | El sistema debe integrar un chatbot accesible desde cualquier página de la plataforma |
 | RF-08.2 | El chatbot debe responder preguntas sobre los cursos, servicios y empresa usando Google Gemini |
 | RF-08.3 | El sistema debe manejar errores de la API de IA con mensajes descriptivos al usuario |
-
-#### RF-09 — Gestión de cursos (administración)
-
-| ID | Descripción |
-|---|---|
-| RF-09.1 | El sistema debe permitir el CRUD de cursos (general, comercial y SEO), preservando la imagen de portada si no se reemplaza |
-| RF-09.2 | El sistema debe permitir publicar/despublicar un curso, validando contenido mínimo antes de publicar y registrando la acción en auditoría |
-| RF-09.3 | El sistema debe permitir duplicar un curso (con sus módulos y materiales) en estado borrador |
-| RF-09.4 | El sistema debe impedir eliminar un curso con inscripciones activas sin una confirmación reforzada |
-
-#### RF-10 — Módulos y materiales
-
-| ID | Descripción |
-|---|---|
-| RF-10.1 | El sistema debe permitir el CRUD de módulos dentro de un curso y su reordenamiento mediante arrastrar y soltar (persistiendo el campo `order`) |
-| RF-10.2 | El sistema debe permitir el CRUD de materiales por módulo, con formulario dinámico según el tipo (video, documento, presentación, texto enriquecido o recurso descargable) |
-| RF-10.3 | El sistema debe soportar video por URL (YouTube/Vimeo, con embed seguro) y video subido (MP4/WebM con reproductor HTML5) |
-| RF-10.4 | El sistema debe validar los archivos por extensión, MIME y tamaño según los límites definidos en `config/lms.php`, y eliminar archivos huérfanos al reemplazar o borrar un material |
-| RF-10.5 | El sistema debe sanitizar el HTML del texto enriquecido (editor Quill) antes de almacenarlo y mostrarlo |
-
-#### RF-11 — Aula virtual y progreso del estudiante
-
-| ID | Descripción |
-|---|---|
-| RF-11.1 | El sistema debe ofrecer un aula (`/mi-cuenta/cursos/{course}`) accesible solo para estudiantes con inscripción **activa** en el curso |
-| RF-11.2 | El sistema debe permitir marcar materiales como completados, actualizando el progreso del curso y la última fecha de acceso |
-| RF-11.3 | El sistema debe servir los archivos privados de los materiales solo a usuarios autorizados (inscritos, instructor o administrador), impidiendo el acceso directo no autorizado |
-
-#### RF-12 — Roles, permisos y configuración
-
-| ID | Descripción |
-|---|---|
-| RF-12.1 | El sistema debe definir roles (administrador, instructor, soporte, estudiante) y permisos por módulo, y validar el acceso por permiso |
-| RF-12.2 | El sistema debe permitir gestionar la configuración del sistema (parámetros clave/valor) leída mediante el helper `setting()` con caché |
-
-#### RF-13 — Ventas, cupones y auditoría
-
-| ID | Descripción |
-|---|---|
-| RF-13.1 | El sistema debe permitir el CRUD de cupones (código, tipo, valor, vigencia, límite de usos y estado) |
-| RF-13.2 | El sistema debe listar y mostrar el detalle de las ventas registradas |
-| RF-13.3 | El sistema debe permitir la gestión de estudiantes (suspender, reactivar y reiniciar progreso de inscripciones), auditando cada acción |
-| RF-13.4 | El sistema debe registrar en `audit_logs` las operaciones sensibles (usuario, acción, entidad, valores previos/nuevos, IP y user-agent), consultables con filtros |
 
 ---
 
@@ -173,9 +123,8 @@ Los requerimientos no funcionales describen **cómo debe comportarse** el sistem
 | RNF-01 | Las contraseñas deben almacenarse como hash bcrypt con mínimo 12 rondas |
 | RNF-02 | El sistema debe regenerar el ID de sesión tras cada inicio de sesión para prevenir session fixation |
 | RNF-03 | Todas las rutas POST deben estar protegidas por tokens CSRF |
-| RNF-04 | Las rutas del panel admin deben validarse por permiso; un usuario sin el permiso requerido recibe HTTP 403 |
-| RNF-05 | Las claves de API (Gemini, Stripe) deben almacenarse en variables de entorno, nunca en el código fuente |
-| RNF-05.1 | El login y el endpoint del chatbot (`/api/chat`) deben aplicar limitación de tasa (rate limiting); las respuestas deben incluir cabeceras de seguridad (`SecurityHeadersMiddleware`) |
+| RNF-04 | Las rutas del panel admin deben ser inaccesibles para usuarios sin rol de administrador (HTTP 403) |
+| RNF-05 | La clave de API de Gemini debe almacenarse en variables de entorno, nunca en el código fuente |
 
 #### Rendimiento
 
@@ -213,7 +162,7 @@ Los requerimientos no funcionales describen **cómo debe comportarse** el sistem
 
 ## 3. Actores Involucrados
 
-El sistema define los siguientes actores con distintos niveles de acceso. El acceso administrativo ya no depende de un único flag, sino de un modelo de **roles y permisos**: existen los roles **administrador**, **instructor**, **soporte** y **estudiante**, y cada acción se valida por permiso. A continuación se describen los perfiles principales.
+El sistema define tres actores con distintos niveles de acceso y responsabilidades.
 
 ---
 
@@ -282,41 +231,27 @@ El sistema define los siguientes actores con distintos niveles de acceso. El acc
 ```
 ┌────────────────────────────────────────────────────────┐
 │  ADMINISTRADOR                                         │
-│  Perfil: Usuario con el rol "administrador". General-  │
-│          mente el equipo interno de JM y JS Alimentos  │
+│  Perfil: Usuario con is_admin = true. Generalmente     │
+│          el equipo interno de JM y JS Alimentos        │
 │          encargado de la operación del sitio.            │
 │                                                        │
 │  Puede hacer (todo lo del Estudiante, más):            │
 │  ✓ Acceder al panel de administración (/admin)         │
-│  ✓ Ver el dashboard con KPIs y gráficos                │
-│  ✓ Gestionar cursos, módulos y materiales (CRUD)       │
-│  ✓ Publicar/despublicar y duplicar cursos              │
-│  ✓ Gestionar estudiantes e inscripciones               │
-│  ✓ Gestionar ventas y cupones                          │
-│  ✓ Gestionar roles, permisos y usuarios                │
-│  ✓ Editar la configuración del sistema (settings)      │
-│  ✓ Consultar los registros de auditoría                │
-│  ✓ Gestionar los mensajes de contacto                  │
+│  ✓ Ver estadísticas globales de la plataforma          │
+│  ✓ Listar todos los usuarios registrados               │
+│  ✓ Elevar o remover el rol de administrador a usuarios │
+│  ✓ Ver todos los mensajes de contacto recibidos        │
+│  ✓ Marcar mensajes como leídos                         │
+│  ✓ Eliminar mensajes de contacto                       │
+│  ✓ Ver las inscripciones más recientes                 │
 │                                                        │
-│  Notas:                                                │
-│  • El acceso a cada acción se valida por permiso.      │
-│  • El antiguo flag is_admin se mantiene sincronizado   │
-│    con el rol, por compatibilidad.                     │
+│  No puede hacer (restricciones de diseño):             │
+│  ✗ Remocionarse a sí mismo el rol de administrador     │
+│    (protección contra quedarse sin acceso)             │
 └────────────────────────────────────────────────────────┘
 ```
 
 **Ejemplo de usuario real:** El coordinador académico de JM y JS que revisa cada mañana los mensajes nuevos de contacto, responde consultas sobre cursos y monitorea cuántos estudiantes se inscribieron en la semana.
-
----
-
-### Roles adicionales — Instructor y Soporte
-
-Además de administrador y estudiante, el modelo de roles incluye dos perfiles administrativos acotados:
-
-- **Instructor:** gestiona el contenido de sus propios cursos (módulos y materiales), sin acceso a la administración global de la plataforma.
-- **Soporte:** accede únicamente a las áreas de soporte/operación habilitadas por sus permisos (por ejemplo, mensajes de contacto), sin permisos de gestión de cursos, ventas ni roles.
-
-Los permisos efectivos de cada rol se definen en `database/seeders/RoleAndPermissionSeeder.php`.
 
 ---
 
@@ -345,21 +280,17 @@ Los permisos efectivos de cada rol se definen en `database/seeders/RoleAndPermis
 
 | Área | Funcionalidades incluidas |
 |---|---|
-| **Sitio público** | Páginas de inicio, nosotros, cursos (catálogo dinámico) y contacto con diseño responsivo completo |
-| **Autenticación** | Registro, login, logout y sesiones seguras con control de acceso por roles y permisos (RBAC) |
-| **Catálogo** | Catálogo dinámico administrado desde BD, con categorías, filtros por nivel/categoría/búsqueda, página de detalle por curso, precios en soles e información de certificación |
-| **Gestión de cursos (LMS)** | CRUD de cursos, módulos y materiales; publicación/despublicación con validación de contenido; duplicación; tipos de material (video URL/subido, documento, presentación, texto enriquecido, recurso) con límites de archivo |
-| **Aula y progreso** | Aula del estudiante con consumo de materiales, seguimiento de progreso por material y entrega protegida de archivos privados |
-| **Comercio** | Carrito en sesión, checkout con validación de tarjeta, cupones de descuento, registro de ventas (`sales`/`sale_items`) e inscripciones automáticas |
-| **Panel de estudiante** | Historial de inscripciones, progreso, estadísticas personales, perfil y sistema de logros |
+| **Sitio público** | Páginas de inicio, nosotros, cursos y contacto con diseño responsivo completo |
+| **Autenticación** | Registro, login, logout y sesiones seguras con manejo de roles |
+| **Catálogo** | 9 cursos con filtros por nivel, precios en soles peruanos e información de certificación |
+| **Comercio** | Carrito de compras en sesión, checkout con validación de tarjeta e inscripciones automáticas |
+| **Panel de estudiante** | Historial de inscripciones, estadísticas personales, perfil y sistema de logros |
 | **Contacto** | Formulario asíncrono con campos dinámicos y almacenamiento en base de datos |
-| **Administración** | Dashboard con KPIs y gráficos; gestión de cursos, estudiantes, ventas, cupones, roles, configuración y usuarios |
-| **Seguridad y auditoría** | Roles/permisos, middleware de permisos, rate limiting (login y chatbot), cabeceras de seguridad y registro de auditoría |
+| **Administración** | Dashboard con estadísticas, gestión de usuarios y gestión de mensajes |
 | **IA** | Chatbot integrado con Google Gemini con system prompt especializado en la empresa |
-| **Pagos** | Checkout simulado en operación, con la integración de **Stripe preparada** a nivel de infraestructura (paquete, configuración y servicio) |
-| **Base de datos** | MySQL (XAMPP) en desarrollo/producción local; SQLite en memoria para el entorno de pruebas; cambios gestionados por migraciones versionadas |
-| **Frontend** | CSS personalizado, React (chatbot), Tailwind CSS, Chart.js (gráficos), Quill (texto enriquecido) y SortableJS (reordenamiento); diseño mobile-first |
-| **Pruebas** | Suite automatizada con PHPUnit (Feature + Unit), factories y seeder de datos demo, BD en memoria para tests |
+| **Base de datos** | SQLite local con migraciones versionadas y relaciones entre modelos |
+| **Frontend** | CSS personalizado, React para el chatbot, Tailwind CSS disponible, diseño mobile-first |
+| **Pruebas** | Suite de pruebas con PHPUnit (Feature + Unit), BD en memoria para tests |
 
 ---
 
@@ -367,16 +298,18 @@ Los permisos efectivos de cada rol se definen en `database/seeders/RoleAndPermis
 
 | Área | Descripción |
 |---|---|
-| **Cobro real con tarjeta** | El checkout procesa los pagos de forma simulada. La integración con Stripe está preparada (paquete `stripe/stripe-php`, `config/stripe.php` y `StripeService`), pero el cobro real y el webhook aún **no están activados** |
-| **Sistema de correo electrónico** | No se envían correos de confirmación, recuperación de contraseña ni notificaciones por email (el mailer está en modo `log`/`array`) |
+| **Pasarela de pago real** | El pago es una simulación de validación de formulario. No se integra Stripe, Culqi, PayU ni ninguna pasarela real |
+| **Streaming de video** | Los cursos no incluyen reproducción de contenido multimedia; la plataforma gestiona inscripciones, no la entrega del contenido |
+| **Sistema de correo electrónico** | No se envían correos de confirmación, recuperación de contraseña ni notificaciones por email (el mailer está en modo `log`) |
 | **Recuperación de contraseña** | No existe el flujo de "olvidé mi contraseña" con envío de enlace al email |
 | **Pagos recurrentes o suscripciones** | El modelo de negocio es pago único por curso, sin planes de membresía |
 | **App móvil nativa** | La plataforma es web responsiva; no hay apps para iOS ni Android |
 | **Integración con LMS externo** | No se conecta con Moodle, Canvas ni otras plataformas de gestión de aprendizaje |
-| **Certificados digitales** | El sistema registra el progreso y la finalización de un curso (con el dato preparado para certificación), pero aún no genera ni emite certificados en PDF |
+| **Certificados digitales** | El sistema registra que un curso está "completado" pero no genera ni emite certificados en PDF |
 | **Múltiples idiomas** | La plataforma está diseñada exclusivamente en español |
-| **Analítica externa** | El dashboard incluye KPIs y gráficos propios, pero no se integra Google Analytics, Hotjar ni herramientas de métricas externas |
-| **Despliegue en nube** | El sistema está diseñado para entorno local (XAMPP con MySQL). No incluye configuración para AWS, DigitalOcean, Heroku, etc. |
+| **Roles intermedios** | Solo existen dos roles: usuario regular y administrador. No hay roles de instructor, moderador, etc. |
+| **Analítica avanzada** | No se integra Google Analytics, Hotjar ni herramientas de métricas externas |
+| **Despliegue en nube** | El sistema está diseñado para entorno local (XAMPP). No incluye configuración para AWS, DigitalOcean, Heroku, etc. |
 
 ---
 
@@ -385,10 +318,10 @@ Los permisos efectivos de cada rol se definen en `database/seeders/RoleAndPermis
 | Restricción | Detalle |
 |---|---|
 | **Tecnológica** | El sistema debe construirse con Laravel (PHP) como framework principal |
-| **De datos** | La base de datos de desarrollo/producción local debe ser MySQL (XAMPP); el entorno de pruebas usa SQLite en memoria |
-| **De entorno** | El sistema debe funcionar sobre XAMPP (Apache + PHP + MySQL) sin requerir Docker ni servicios adicionales |
+| **De datos** | La base de datos debe ser SQLite en el entorno de desarrollo local |
+| **De entorno** | El sistema debe funcionar sobre XAMPP sin requerir Docker ni servicios adicionales |
 | **De idioma** | Toda la interfaz, mensajes de error y documentación deben estar en español |
-| **De pago** | El flujo de pago opera de forma simulada; el cobro real con Stripe queda preparado pero desactivado |
+| **De pago** | No se procesarán pagos reales; el flujo de pago es una simulación con validación de formulario |
 | **De IA** | La inteligencia artificial depende de un servicio externo (Google Gemini); su disponibilidad está sujeta a la cuota gratuita de la API |
 
 ---
@@ -397,9 +330,9 @@ Los permisos efectivos de cada rol se definen en `database/seeders/RoleAndPermis
 
 - Los usuarios tienen acceso a un navegador web moderno (Chrome 90+, Firefox 90+, Edge 90+).
 - La empresa JM y JS Alimentos proporcionará su propia clave de API de Google AI Studio para el chatbot.
-- El contenido de los cursos (videos, documentos, presentaciones y recursos) se gestiona y entrega **dentro de la plataforma** a través de los materiales de cada módulo.
+- El contenido de los cursos (videos, materiales) se entregará por canales externos; la plataforma solo gestiona las inscripciones.
 - Un único administrador técnico será responsable de mantener la aplicación en el servidor XAMPP local.
 
 ---
 
-*Documentación general — JM y JS Alimentos — Actualizada a junio de 2026 (plataforma LMS)*
+*Documentación general — JM y JS Alimentos — Mayo 2026*

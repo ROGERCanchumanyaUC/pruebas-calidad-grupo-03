@@ -223,6 +223,12 @@
                 </div>
             @endif
 
+            @if (session('status'))
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 16px;color:#1d4ed8;font-size:13px;">
+                    {{ session('status') }}
+                </div>
+            @endif
+
             {{-- Métodos de pago --}}
             <div class="payment-methods">
                 <label class="payment-method is-active" id="pm-card">
@@ -243,49 +249,22 @@
                 </label>
             </div>
 
-            {{-- Formulario de tarjeta --}}
+            {{-- Formulario de pago: redirige a Stripe Checkout --}}
             @if (!empty($cart))
             <form id="payment-form" method="POST" action="{{ route('pago.procesar') }}">
                 @csrf
                 <div class="card-panel">
-                    <div class="checkout-field">
-                        <label for="card_name">Nombre en la Tarjeta</label>
-                        <input id="card_name" name="card_name" type="text"
-                               placeholder="Ej. Giancarlo Guerreros" autocomplete="cc-name"
-                               value="{{ old('card_name') }}"
-                               class="{{ $errors->has('card_name') ? 'is-invalid' : '' }}">
-                        @error('card_name')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="checkout-field">
-                        <label for="card_number">Número de Tarjeta</label>
-                        <div class="input-icon">
-                            <input id="card_number" name="card_number" type="text"
-                                   placeholder="0000 0000 0000 0000" autocomplete="cc-number"
-                                   maxlength="19"
-                                   class="{{ $errors->has('card_number') ? 'is-invalid' : '' }}">
-                            <span class="material-symbols-outlined">credit_card</span>
-                        </div>
-                        @error('card_number')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
-
-                    <div class="field-grid">
-                        <div class="checkout-field">
-                            <label for="card_exp">Expiración (MM/AA)</label>
-                            <input id="card_exp" name="card_exp" type="text"
-                                   placeholder="MM/AA" maxlength="5" autocomplete="cc-exp"
-                                   class="{{ $errors->has('card_exp') ? 'is-invalid' : '' }}">
-                            @error('card_exp')<span class="field-error">{{ $message }}</span>@enderror
-                        </div>
-                        <div class="checkout-field">
-                            <label for="card_cvc">CVC / CVV</label>
-                            <div class="input-help">
-                                <input id="card_cvc" name="card_cvc" type="text"
-                                       placeholder="123" maxlength="4" autocomplete="cc-csc"
-                                       class="{{ $errors->has('card_cvc') ? 'is-invalid' : '' }}">
-                                <span class="material-symbols-outlined" title="3 dígitos en el reverso">help</span>
-                            </div>
-                            @error('card_cvc')<span class="field-error">{{ $message }}</span>@enderror
+                    <div style="display:flex; align-items:flex-start; gap:14px;">
+                        <span class="material-symbols-outlined" style="color:#0284c7;font-size:30px;">lock</span>
+                        <div>
+                            <strong style="display:block;color:#0b2538;font-size:15px;font-weight:700;margin-bottom:6px;">
+                                Pago seguro con Stripe
+                            </strong>
+                            <span style="display:block;color:#587082;font-size:13px;line-height:1.6;">
+                                Al hacer clic en "Pagar" serás redirigido a la pasarela de pago segura de Stripe
+                                para completar tu compra con tarjeta de crédito o débito.
+                                JM y JS Alimentos no almacena ni procesa los datos de tu tarjeta.
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -407,17 +386,6 @@ function toggleMethod(method) {
     document.getElementById('pm-card').classList.toggle('is-active', method === 'card');
     document.getElementById('pm-wallet').classList.toggle('is-active', method === 'wallet');
 }
-
-// Formato tarjeta
-document.getElementById('card_number')?.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim().slice(0, 19);
-});
-document.getElementById('card_exp')?.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5);
-});
-document.getElementById('card_cvc')?.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 4);
-});
 
 // Quitar item del carrito
 async function removeItem(courseId) {

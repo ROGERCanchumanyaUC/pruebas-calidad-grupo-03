@@ -6,36 +6,70 @@
 @section('content')
 <main class="page">
     {{-- ── Hero del Detalle ── --}}
+    <style>
+        @keyframes cdCurtain {
+            from { transform: translateY(110%); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .cd-reveal-wrap { overflow: hidden; }
+        .cd-reveal {
+            display: block;
+            animation: cdCurtain 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .cd-reveal-d1 { animation-delay: 0.05s; }
+        .cd-reveal-d2 { animation-delay: 0.20s; }
+        .cd-reveal-d3 { animation-delay: 0.40s; }
+        .cd-reveal-d4 { animation-delay: 0.58s; }
+        .cd-hero-title {
+            font-family: 'Noto Serif', serif;
+            font-size: clamp(28px, 3.5vw, 48px);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 2px 24px rgba(0,0,0,0.45);
+        }
+    </style>
+
     <section class="cd-hero" style="position: relative; background: #07172e; color: #fff; overflow: hidden; padding: 80px 0;">
         <div class="cd-overlay" style="position: absolute; inset: 0; background: linear-gradient(115deg, rgba(5,15,50,.95) 0%, rgba(10,30,90,.8) 100%); z-index: 1;"></div>
-        
+
         <div class="container" style="position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: center;">
             <div class="cd-hero-left">
-                <span class="cd-category" style="display: inline-block; background: rgba(37, 99, 235, 0.2); border: 1px solid rgba(96, 165, 250, 0.3); color: #93c5fd; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px;">
-                    {{ $course->category?->name }}
-                </span>
-                <h1 style="font-family: 'Noto Serif', serif; font-size: clamp(28px, 3.5vw, 48px); font-weight: 700; line-height: 1.15; margin-bottom: 15px;">
+
+                <div class="cd-reveal-wrap">
+                    <span class="cd-reveal cd-reveal-d1" style="display: inline-block; background: rgba(37,99,235,0.2); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px;">
+                        {{ $course->category?->name }}
+                    </span>
+                </div>
+
+                <h1 class="cd-hero-title">
                     {{ $course->name }}
                 </h1>
-                <p style="font-size: 16px; color: rgba(255, 255, 255, 0.75); line-height: 1.6; margin-bottom: 25px; max-width: 680px;">
+
+                <p class="cd-reveal cd-reveal-d2" style="font-size: 16px; color: rgba(255,255,255,0.80); line-height: 1.6; margin-bottom: 25px; max-width: 680px;">
                     {{ $course->short_description }}
                 </p>
-                <div class="cd-meta-row" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255, 255, 255, 0.85);">
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        Duración: {{ $course->duration_weeks }} semanas
-                    </span>
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Nivel: {{ ucfirst($course->level) }}
-                    </span>
-                    @if($course->instructor)
-                    <span style="display: inline-flex; align-items: center; gap: 6px;">
-                        <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Instructor: {{ $course->instructor->name }}
-                    </span>
-                    @endif
+
+                <div class="cd-reveal-wrap">
+                    <div class="cd-reveal cd-reveal-d4" style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,0.85);">
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Duración: {{ $course->duration_weeks }} semanas
+                        </span>
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Nivel: {{ ucfirst($course->level) }}
+                        </span>
+                        @if($course->instructor)
+                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                            <svg width="15" height="15" fill="none" stroke="#7dd3fc" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Instructor: {{ $course->instructor->name }}
+                        </span>
+                        @endif
+                    </div>
                 </div>
+
             </div>
             <div class="cd-hero-right">
                 {{-- Espacio para tarjeta de compra --}}

@@ -16,16 +16,20 @@
         <div class="ch-inner">
             {{-- Columna izquierda --}}
             <div class="ch-left">
-                <span class="ch-eyebrow">
-                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    Capacitaciones · Sector Alimentario
-                </span>
+                <div class="rv-wrap">
+                    <span class="ch-eyebrow rv rv-d1">
+                        <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        Capacitaciones · Sector Alimentario
+                    </span>
+                </div>
 
-                <h1 class="ch-title">
-                    Fórmate con los <em>mejores expertos</em> en calidad alimentaria del Perú.
-                </h1>
+                <div class="rv-wrap">
+                    <h1 class="ch-title rv rv-d2">
+                        Fórmate con los <em>mejores expertos</em> en calidad alimentaria del Perú.
+                    </h1>
+                </div>
 
-                <p class="ch-lead">
+                <p class="ch-lead curtain-text">
                     Programas certificados en BPM, HACCP e ISO. Diseñados para técnicos, jefes de planta y emprendedores del sector alimentario. Aprende a tu ritmo, aplica desde el primer módulo.
                 </p>
 

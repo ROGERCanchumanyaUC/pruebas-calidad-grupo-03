@@ -12,20 +12,12 @@ Las pruebas de calidad del sistema se organizan en dos enfoques complementarios:
 | **Caja Negra** | Comportamiento externo del sistema | No requerido |
 | **Caja Blanca** | Lógica interna, caminos de ejecución | Requerido |
 
-**Entorno de ejecución vs. entorno de pruebas:**
-- En **desarrollo/producción local** la aplicación usa **MySQL** (servido por XAMPP, base `jm_js_alimentos`).
-- El **entorno de pruebas automatizadas** usa **SQLite en memoria**, aislado e independiente del MySQL de desarrollo. Las migraciones son compatibles con ambos motores.
-
 **Entorno de pruebas (phpunit.xml):**
 - Base de datos: SQLite en memoria (`:memory:`) — se crea y destruye en cada ejecución
 - Sesiones: Driver `array` — aisladas por test
 - Caché: Driver `array` — sin persistencia
 - Colas: `sync` — ejecución inmediata sin workers
 - Rondas bcrypt: `4` — hashing acelerado para no ralentizar los tests
-
-> **Nota sobre el control de acceso:** el sistema evolucionó de un único flag `is_admin` a un modelo de **roles y permisos (RBAC)**. Las rutas administrativas se protegen ahora con `middleware('permission:*')`. Donde los casos de prueba de diseño (secciones 2 y 3) mencionan `is_admin`, debe entenderse como el rol/permiso equivalente; el flag `is_admin` se mantiene **sincronizado** con el rol por compatibilidad. La cobertura automatizada del modelo RBAC se documenta en la **sección 8**.
-
-> **Alcance de las secciones 2 a 6:** documentan el **diseño** de pruebas de caja negra y blanca de los módulos base (autenticación, carrito, pagos, contacto, administración y chatbot). La plataforma se amplió a un **LMS** (cursos, módulos, materiales, ventas, cupones, roles y auditoría); la **suite automatizada efectivamente implementada** para todo el sistema —incluido el LMS— se detalla en la **sección 8**.
 
 ---
 
@@ -749,9 +741,7 @@ La prueba PCN-CHAT-01 es la más crítica: valida que el ciclo completo frontend
 
 ---
 
-## 7. Resumen de Cobertura — Diseño de Pruebas (módulos base)
-
-La siguiente tabla resume el **diseño** de casos de caja negra y blanca de los módulos base descritos en las secciones 2 y 3:
+## 7. Resumen de Cobertura de Pruebas
 
 | Módulo | Caja Negra | Caja Blanca | Total |
 |---|---|---|---|
@@ -769,44 +759,4 @@ La siguiente tabla resume el **diseño** de casos de caja negra y blanca de los 
 
 ---
 
-## 8. Suite de Pruebas Automatizadas Implementadas (LMS)
-
-Además del diseño anterior, el proyecto cuenta con una **suite automatizada ejecutable con PHPUnit** que cubre el LMS completo. Se ejecuta con `php artisan test` sobre SQLite en memoria, apoyada en **factories** de todos los modelos y un **seeder de datos demo** (`DemoLmsSeeder`).
-
-### 8.1 Pruebas de Feature (HTTP / integración)
-
-| Archivo | Métodos | Qué valida |
-|---|---:|---|
-| `PublicCourseCatalogTest` | 10 | Catálogo público: lista solo cursos publicados; filtros por nivel, categoría y búsqueda; detalle de curso publicado vs. borrador (este último solo visible para admin); operaciones de carrito por `course_id`; rechazo de cursos no publicados; checkout que genera las inscripciones correctas |
-| `AdminCourseCrudTest` | 8 | CRUD de cursos por admin; bloqueo a no-admin; crear/actualizar/duplicar; publicar/despublicar; impedir borrar curso con inscripciones activas y permitirlo sin ellas |
-| `AdminCourseMaterialTest` | 8 | CRUD y reordenamiento de módulos; materiales de video por URL y por subida; validación de límites de archivo; sanitización de texto enriquecido (Quill); limpieza de archivos al reemplazar/eliminar |
-| `AdminSalesAndCouponsTest` | 5 | Acceso restringido; gestión de estudiantes e inscripciones; CRUD de cupones; reglas de aplicación de cupón en el carrito; checkout con cupón |
-| `AdminDashboardAnalyticsTest` | 3 | Acceso restringido; KPIs del dashboard; caché de métricas e invalidación |
-| `AdminSecurityAndRolesTest` | 11 | Cabeceras de seguridad; rate limiting en login y chatbot; sanitización del chatbot; caché del helper `setting()`; protección de rutas por rol; acceso admin sin el flag legacy; alcances de los roles soporte e instructor; sincronización de roles con `is_admin`; auditoría y filtros |
-| `PermissionMiddlewareTest` | 4 | Invitado no autorizado; admin omite la verificación; usuario sin permiso recibe 403; usuario con permiso accede |
-| `StudentCourseAccessTest` | 8 | Acceso al aula según estado de inscripción (invitado, sin inscripción, pendiente, suspendida, activa); marcar material completado actualiza el progreso; descarga de archivos privados solo para autorizados |
-| `LmsReleaseReadinessTest` | 2 | Las factories arman el grafo completo compra→curso→módulo→material→venta→inscripción; el seeder produce datos demo idempotentes y consistentes |
-| `ExampleTest` | 1 | Páginas públicas responden 200 y `/checkout` redirige a login |
-
-### 8.2 Pruebas Unitarias (lógica de servicios y modelos)
-
-| Archivo | Métodos | Qué valida |
-|---|---:|---|
-| `CoursePublishingServiceTest` | 4 | Reglas de publicación: no publicar sin campos básicos, sin módulos activos o con módulo activo sin materiales; publicar cuando se cumplen todos los criterios |
-| `LmsRelationshipsTest` | 3 | Relaciones Eloquent de cursos, inscripciones y roles/permisos |
-| `VideoEmbedServiceTest` | 4 | Conversión de URLs de YouTube y Vimeo a embed; subida devuelve la entrada; URLs inválidas devuelven `null` |
-| `ExampleTest` | 1 | Caso base del framework |
-
-### 8.3 Resumen de la suite implementada
-
-| Suite | Archivos | Métodos de prueba |
-|---|---:|---:|
-| Feature | 10 | 60 |
-| Unit | 4 | 12 |
-| **TOTAL** | **14** | **72** |
-
-> Estas pruebas reemplazan, en la práctica, la cobertura que antes solo existía a nivel de diseño. El diseño de las secciones 2–6 sigue siendo válido como especificación de los módulos base.
-
----
-
-*Documentación de pruebas de calidad — JM y JS Alimentos — Actualizada a junio de 2026 (plataforma LMS, RBAC, MySQL en runtime / SQLite en pruebas)*
+*Documentación de pruebas de calidad — JM y JS Alimentos — Mayo 2026*

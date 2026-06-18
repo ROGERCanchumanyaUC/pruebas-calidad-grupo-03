@@ -3,331 +3,401 @@
 @section('title', 'Mi Cuenta')
 
 @push('styles')
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* ══════════════ LAYOUT BASE ══════════════ */
-.mcu {
-    background: #f1f5f9;
-    min-height: calc(100vh - 76px);
-    font-family: 'Poppins', sans-serif;
-    color: #0f172a;
+/* ══════ VARIABLES ══════ */
+:root {
+    --mcu-navy:  #060f2e;
+    --mcu-blue:  #1a3bbd;
+    --mcu-sky:   #0ea5e9;
+    --mcu-light: #f0f4ff;
+    --mcu-slate: #64748b;
+    --mcu-text:  #0f172a;
+    --mcu-card-border: #e2e8f0;
 }
 
-/* ══════════════ HERO BANNER ══════════════ */
+/* ══════ BASE ══════ */
+.mcu {
+    background: #f0f4ff;
+    min-height: calc(100vh - 76px);
+    font-family: 'Poppins', sans-serif;
+    color: var(--mcu-text);
+}
+
+/* ══════ HERO ══════ */
 .mcu-hero {
-    background: linear-gradient(125deg, #0f1e5e 0%, #1e40af 45%, #0ea5e9 100%);
-    padding: 52px 0 80px;
+    background: linear-gradient(130deg, #040d1f 0%, #0c1d5c 50%, #0a3280 100%);
+    padding: calc(76px + 44px) 0 90px;
     position: relative;
     overflow: hidden;
 }
 .mcu-hero::before {
     content: '';
     position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.035'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 .mcu-hero-blob {
     position: absolute; border-radius: 50%;
-    filter: blur(80px); opacity: .2; pointer-events: none;
+    filter: blur(90px); opacity: .18; pointer-events: none;
 }
-.mcu-hero-blob-1 { width: 400px; height: 400px; background: #60a5fa; top: -120px; right: -60px; }
-.mcu-hero-blob-2 { width: 300px; height: 300px; background: #38bdf8; bottom: -80px; left: 10%; }
+.mcu-hero-blob-1 { width: 500px; height: 500px; background: #3b82f6; top: -180px; right: -80px; }
+.mcu-hero-blob-2 { width: 340px; height: 340px; background: #06b6d4; bottom: -100px; left: 8%; }
+.mcu-hero-blob-3 { width: 200px; height: 200px; background: #818cf8; top: 40%; left: 40%; }
 
 .mcu-hero-inner {
-    max-width: 1160px; margin: 0 auto; padding: 0 32px;
+    max-width: 1180px; margin: 0 auto; padding: 0 36px;
     position: relative; z-index: 1;
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 24px; flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; flex-wrap: wrap;
 }
-.mcu-hero-left { display: flex; align-items: center; gap: 24px; }
+.mcu-hero-left { display: flex; align-items: center; gap: 28px; }
 
+/* Avatar ring */
+.mcu-avatar-ring {
+    position: relative; flex-shrink: 0;
+}
+.mcu-avatar-ring::before {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #60a5fa, #818cf8, #0ea5e9, #60a5fa);
+    animation: mcuSpin 6s linear infinite;
+}
+@keyframes mcuSpin { to { transform: rotate(360deg); } }
 .mcu-avatar {
-    width: 88px; height: 88px; border-radius: 50%;
-    background: rgba(255,255,255,.2);
-    border: 3px solid rgba(255,255,255,.5);
+    position: relative; z-index: 1;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+    border: 2px solid rgba(255,255,255,.55);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Noto Serif', serif;
-    font-size: 32px; font-weight: 700; color: #fff;
-    flex-shrink: 0;
-    box-shadow: 0 12px 32px rgba(0,0,0,.2);
+    font-size: 34px; font-weight: 700; color: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
 }
+
+/* Hero info */
 .mcu-hero-info { color: #fff; }
+.mcu-hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: #93c5fd;
+    background: rgba(147,197,253,.12); border: 1px solid rgba(147,197,253,.25);
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+}
 .mcu-hero-name {
     font-family: 'Noto Serif', serif;
-    font-size: clamp(22px, 3vw, 30px);
-    font-weight: 700; line-height: 1.15; margin-bottom: 5px;
+    font-size: clamp(24px, 3.2vw, 34px);
+    font-weight: 700; line-height: 1.1; margin-bottom: 6px;
 }
-.mcu-hero-sub  { font-size: 13.5px; opacity: .75; margin-bottom: 12px; }
+.mcu-hero-sub  { font-size: 13px; opacity: .65; margin-bottom: 14px; }
 .mcu-hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
 .mcu-hero-tag  {
     display: inline-flex; align-items: center; gap: 5px;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.25);
-    color: rgba(255,255,255,.9);
-    font-size: 11.5px; font-weight: 600;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    color: rgba(255,255,255,.88);
+    font-size: 11px; font-weight: 600;
     padding: 4px 12px; border-radius: 20px;
+    backdrop-filter: blur(8px);
 }
 
-.mcu-hero-right { display: flex; gap: 14px; }
-.mcu-hero-stat  {
+/* Hero stats */
+.mcu-hero-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.mcu-hero-stat {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 16px;
+    padding: 16px 20px;
+    backdrop-filter: blur(12px);
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    min-width: 110px;
+    transition: background .2s;
+}
+.mcu-hero-stat:hover { background: rgba(255,255,255,.14); }
+.mcu-stat-icon {
+    width: 32px; height: 32px; border-radius: 9px;
     background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.18);
-    border-radius: 14px; padding: 16px 22px; text-align: center;
-    backdrop-filter: blur(8px); min-width: 90px;
+    display: flex; align-items: center; justify-content: center;
+    color: #93c5fd;
 }
-.mcu-hero-stat strong { display: block; font-size: 28px; font-weight: 800; color: #fff; line-height: 1; }
-.mcu-hero-stat span   { font-size: 11px; color: rgba(255,255,255,.65); margin-top: 4px; display: block; }
+.mcu-hero-stat strong {
+    display: block;
+    font-size: clamp(20px, 2.2vw, 26px);
+    font-weight: 800; color: #fff; line-height: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+}
+.mcu-hero-stat span { font-size: 11px; color: rgba(255,255,255,.55); display: block; }
 
-/* ══════════════ MAIN CONTENT ══════════════ */
+/* ══════ MAIN GRID ══════ */
 .mcu-main {
-    max-width: 1160px; margin: -40px auto 0;
-    padding: 0 32px 80px;
+    max-width: 1180px; margin: -48px auto 0;
+    padding: 0 36px 80px;
     position: relative; z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 300px;
+    grid-template-columns: 1fr 304px;
     gap: 24px;
     align-items: start;
 }
 
-/* ══════════════ TABS ══════════════ */
+/* ══════ TABS ══════ */
 .mcu-tabs-bar {
-    display: flex; gap: 4px;
+    display: flex; gap: 0;
     background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
+    border: 1px solid var(--mcu-card-border);
+    border-radius: 16px;
     padding: 6px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(10,30,90,.07);
 }
 .mcu-tab {
-    flex: 1; padding: 10px 16px;
-    border: none; border-radius: 10px;
+    flex: 1; padding: 11px 16px;
+    border: none; border-radius: 12px;
     background: transparent; cursor: pointer;
-    font-family: inherit; font-size: 13.5px; font-weight: 600;
-    color: #64748b; display: flex; align-items: center; justify-content: center;
-    gap: 7px; transition: all .2s;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: #94a3b8; display: flex; align-items: center; justify-content: center;
+    gap: 7px; transition: all .22s; position: relative;
 }
-.mcu-tab:hover   { background: #f1f5f9; color: #1e40af; }
-.mcu-tab.active  { background: #1e40af; color: #fff; box-shadow: 0 4px 14px rgba(30,64,175,.3); }
+.mcu-tab:hover { background: #f0f4ff; color: var(--mcu-blue); }
+.mcu-tab.active {
+    background: linear-gradient(135deg, #1a3bbd, #1e50e2);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(26,59,189,.35);
+}
 .mcu-tab .tab-badge {
-    background: rgba(255,255,255,.3); color: inherit;
+    background: rgba(255,255,255,.25); color: inherit;
     font-size: 10px; font-weight: 700;
-    padding: 1px 7px; border-radius: 20px;
+    padding: 1px 7px; border-radius: 20px; min-width: 20px; text-align: center;
 }
-.mcu-tab:not(.active) .tab-badge { background: #e2e8f0; color: #64748b; }
+.mcu-tab:not(.active) .tab-badge { background: #e8edff; color: var(--mcu-blue); }
 
-/* Tab panels */
 .mcu-panel { display: none; }
 .mcu-panel.active { display: block; }
 
-/* ══════════════ COURSE CARDS ══════════════ */
+/* ══════ COURSE CARDS ══════ */
 .mcu-courses-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
     gap: 20px;
 }
 .mcu-course-card {
     background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
+    border: 1px solid var(--mcu-card-border);
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,.05);
-    transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 2px 16px rgba(10,30,90,.06);
+    transition: transform .28s cubic-bezier(.22,1,.36,1), box-shadow .28s;
     display: flex; flex-direction: column;
 }
-.mcu-course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
+.mcu-course-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(10,30,90,.13); }
 
 .mcu-course-img {
-    position: relative; height: 150px; overflow: hidden;
-    background: linear-gradient(135deg, #1e40af, #0ea5e9);
+    position: relative; height: 148px; overflow: hidden;
+    background: linear-gradient(135deg, #1a3bbd, #0ea5e9);
 }
-.mcu-course-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
-.mcu-course-card:hover .mcu-course-img img { transform: scale(1.06); }
+.mcu-course-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s; }
+.mcu-course-card:hover .mcu-course-img img { transform: scale(1.07); }
 .mcu-course-img::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(15,23,42,.55));
+    background: linear-gradient(180deg, transparent 35%, rgba(6,9,30,.6));
 }
 .mcu-course-status-badge {
     position: absolute; top: 10px; right: 10px; z-index: 1;
-    font-size: 10.5px; font-weight: 700; padding: 3px 10px;
-    border-radius: 20px; text-transform: uppercase; letter-spacing: .4px;
+    font-size: 10px; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; text-transform: uppercase; letter-spacing: .5px;
 }
 .mcu-course-status-badge.pagado     { background: #dcfce7; color: #15803d; }
+.mcu-course-status-badge.activo     { background: #dcfce7; color: #15803d; }
 .mcu-course-status-badge.pendiente  { background: #fef3c7; color: #92400e; }
 .mcu-course-status-badge.completado { background: #dbeafe; color: #1e40af; }
+.mcu-course-status-badge.suspendido { background: #fee2e2; color: #991b1b; }
 
 .mcu-course-body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
 .mcu-course-level {
-    display: inline-block; font-size: 10.5px; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px; margin-bottom: 8px;
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; letter-spacing: .3px;
 }
 .mcu-course-level.basico     { background: #dcfce7; color: #15803d; }
 .mcu-course-level.intermedio { background: #fef3c7; color: #92400e; }
 .mcu-course-level.avanzado   { background: #fee2e2; color: #991b1b; }
 
-.mcu-course-name { font-size: 14.5px; font-weight: 700; color: #0f172a; line-height: 1.35; margin-bottom: 10px; flex: 1; }
+.mcu-course-name { font-size: 14px; font-weight: 700; color: var(--mcu-text); line-height: 1.35; margin-bottom: 12px; flex: 1; }
 
-/* Barra de progreso */
 .mcu-progress-wrap { margin-bottom: 14px; }
 .mcu-progress-label {
     display: flex; justify-content: space-between;
-    font-size: 11px; color: #64748b; font-weight: 600; margin-bottom: 5px;
+    font-size: 11px; color: var(--mcu-slate); font-weight: 600; margin-bottom: 5px;
 }
-.mcu-progress-bar {
-    height: 5px; background: #f1f5f9; border-radius: 10px; overflow: hidden;
-}
+.mcu-progress-bar  { height: 5px; background: #e8edff; border-radius: 10px; overflow: hidden; }
 .mcu-progress-fill {
     height: 100%; border-radius: 10px;
-    background: linear-gradient(90deg, #2563eb, #0ea5e9);
+    background: linear-gradient(90deg, #1a3bbd, #0ea5e9);
     transition: width .6s ease;
 }
 
 .mcu-course-footer {
     display: flex; align-items: center; justify-content: space-between;
-    padding-top: 12px; border-top: 1px solid #f1f5f9;
+    padding-top: 12px; border-top: 1px solid #f0f4ff;
 }
-.mcu-course-price { font-size: 18px; font-weight: 800; color: #0f172a; }
+.mcu-course-price { font-size: 17px; font-weight: 800; color: var(--mcu-text); }
 .mcu-course-date  { font-size: 11px; color: #94a3b8; }
 
-/* Estado vacío */
+/* Empty state */
 .mcu-empty {
     grid-column: 1 / -1;
     background: #fff;
-    border: 2px dashed #e2e8f0;
-    border-radius: 16px;
-    padding: 64px 32px;
+    border: 2px dashed #c7d7ff;
+    border-radius: 18px;
+    padding: 72px 32px;
     text-align: center;
 }
 .mcu-empty-icon {
-    width: 72px; height: 72px; border-radius: 20px;
-    background: #dbeafe; color: #1e40af;
+    width: 76px; height: 76px; border-radius: 22px;
+    background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+    color: var(--mcu-blue);
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(26,59,189,.12);
 }
-.mcu-empty h3 { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-.mcu-empty p  { font-size: 14px; color: #64748b; margin-bottom: 24px; max-width: 340px; margin-left: auto; margin-right: auto; }
+.mcu-empty h3 { font-family: 'Noto Serif', serif; font-size: 19px; font-weight: 700; color: var(--mcu-text); margin-bottom: 8px; }
+.mcu-empty p  { font-size: 14px; color: var(--mcu-slate); margin-bottom: 26px; max-width: 340px; margin-left: auto; margin-right: auto; }
 .mcu-empty-btn {
     display: inline-flex; align-items: center; gap: 7px;
-    background: #1e40af; color: #fff;
-    padding: 12px 24px; border-radius: 10px;
+    background: linear-gradient(135deg, #1a3bbd, #1e50e2); color: #fff;
+    padding: 12px 26px; border-radius: 11px;
     font-size: 14px; font-weight: 700; text-decoration: none;
-    transition: background .18s;
+    box-shadow: 0 4px 18px rgba(26,59,189,.3);
+    transition: box-shadow .2s, transform .2s;
 }
-.mcu-empty-btn:hover { background: #0f2a5e; }
+.mcu-empty-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,59,189,.4); }
 
-/* ══════════════ SIDEBAR DERECHO ══════════════ */
-.mcu-sidebar { display: flex; flex-direction: column; gap: 18px; }
+/* ══════ SIDEBAR ══════ */
+.mcu-sidebar { display: flex; flex-direction: column; gap: 16px; }
 
 .mcu-card {
     background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    border: 1px solid var(--mcu-card-border);
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(10,30,90,.06);
     overflow: hidden;
 }
 .mcu-card-head {
-    padding: 16px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 14px; font-weight: 700; color: #0f172a;
+    padding: 15px 20px;
+    background: linear-gradient(90deg, #f0f4ff, #fff);
+    border-bottom: 1px solid #e8edff;
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13.5px; font-weight: 700; color: var(--mcu-text);
 }
-.mcu-card-head svg { color: #1e40af; }
+.mcu-card-head svg { color: var(--mcu-blue); }
 .mcu-card-body { padding: 18px 20px; }
 
-/* Perfil en sidebar */
+/* Profile sidebar */
 .mcu-profile-avatar {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: linear-gradient(135deg, #1e40af, #0ea5e9);
-    color: #fff; font-size: 22px; font-weight: 800;
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(135deg, #1a3bbd, #0ea5e9);
+    color: #fff; font-size: 24px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 14px; font-family: 'Noto Serif', serif;
+    margin: 0 auto 12px; font-family: 'Noto Serif', serif;
+    box-shadow: 0 6px 20px rgba(26,59,189,.25);
 }
-.mcu-profile-name  { font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 3px; }
-.mcu-profile-email { font-size: 12px; color: #64748b; text-align: center; margin-bottom: 18px; word-break: break-word; }
+.mcu-profile-name  { font-family: 'Noto Serif', serif; font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 3px; }
+.mcu-profile-email { font-size: 11.5px; color: var(--mcu-slate); text-align: center; margin-bottom: 16px; word-break: break-word; }
 
 .mcu-profile-row {
-    display: flex; align-items: flex-start;
-    padding: 9px 0; border-bottom: 1px solid #f8fafc;
-    font-size: 13px; gap: 10px;
+    display: flex; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid #f0f4ff;
+    font-size: 12.5px; gap: 10px;
 }
-.mcu-profile-row:last-child { border-bottom: none; }
-.mcu-profile-row svg { color: #94a3b8; flex-shrink: 0; margin-top: 1px; }
-.mcu-profile-key   { font-weight: 600; color: #64748b; min-width: 80px; flex-shrink: 0; font-size: 11.5px; }
-.mcu-profile-val   { color: #0f172a; word-break: break-word; }
+.mcu-profile-row:last-child { border-bottom: none; padding-bottom: 0; }
+.mcu-profile-row svg { color: #a5b4fc; flex-shrink: 0; }
+.mcu-profile-key   { font-weight: 600; color: #94a3b8; min-width: 68px; flex-shrink: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; }
+.mcu-profile-val   { color: var(--mcu-text); font-weight: 500; word-break: break-word; }
 
-/* Acciones rápidas */
+/* Quick actions */
 .mcu-quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .mcu-quick-btn  {
     display: flex; flex-direction: column; align-items: center;
-    gap: 8px; padding: 16px 10px; border-radius: 12px;
-    background: #f8fafc; border: 1px solid #e2e8f0;
+    gap: 8px; padding: 15px 10px; border-radius: 13px;
+    background: #f0f4ff; border: 1px solid #dde6ff;
     text-decoration: none; color: #334155;
-    font-size: 12px; font-weight: 600; text-align: center;
-    transition: all .2s;
+    font-size: 11.5px; font-weight: 600; text-align: center;
+    transition: all .22s;
 }
-.mcu-quick-btn:hover { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
-.mcu-quick-btn svg { width: 22px; height: 22px; }
+.mcu-quick-btn:hover { background: #dbeafe; border-color: #93c5fd; color: var(--mcu-blue); transform: translateY(-2px); }
+.mcu-quick-btn svg { width: 20px; height: 20px; color: var(--mcu-blue); }
 
-/* Logros */
+/* Achievements */
 .mcu-logro {
     display: flex; align-items: center; gap: 12px;
-    padding: 11px 0; border-bottom: 1px solid #f8fafc;
+    padding: 11px 0; border-bottom: 1px solid #f0f4ff;
 }
 .mcu-logro:last-child { border-bottom: none; padding-bottom: 0; }
 .mcu-logro-icon {
-    width: 38px; height: 38px; border-radius: 10px;
+    width: 40px; height: 40px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 18px;
+    flex-shrink: 0; font-size: 20px;
 }
-.mcu-logro-title { font-size: 13px; font-weight: 700; color: #0f172a; }
-.mcu-logro-desc  { font-size: 11.5px; color: #64748b; }
-.mcu-logro-lock  { opacity: .35; filter: grayscale(1); }
+.mcu-logro-title { font-size: 13px; font-weight: 700; color: var(--mcu-text); }
+.mcu-logro-desc  { font-size: 11px; color: var(--mcu-slate); }
+.mcu-logro-lock  { opacity: .3; filter: grayscale(1); }
 
-/* ══════════════ PANEL PERFIL (tab) ══════════════ */
+/* ══════ PERFIL TAB ══════ */
 .mcu-profile-full {
-    background: #fff; border: 1px solid #e2e8f0;
-    border-radius: 16px; overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    background: #fff; border: 1px solid var(--mcu-card-border);
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 2px 16px rgba(10,30,90,.06);
 }
 .mcu-profile-full-head {
-    background: linear-gradient(90deg, #1e40af, #0ea5e9);
-    padding: 28px 28px 0; display: flex; align-items: flex-end; gap: 20px;
+    background: linear-gradient(130deg, #040d1f 0%, #0c1d5c 50%, #0a3280 100%);
+    padding: 32px 32px 0; display: flex; align-items: flex-end; gap: 20px;
+    position: relative; overflow: hidden;
+}
+.mcu-profile-full-head::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 .mcu-profile-full-avatar {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: rgba(255,255,255,.2); border: 3px solid rgba(255,255,255,.5);
-    color: #fff; font-size: 28px; font-weight: 800;
+    position: relative; z-index: 1;
+    width: 84px; height: 84px; border-radius: 50%;
+    background: rgba(255,255,255,.18); border: 3px solid rgba(255,255,255,.5);
+    color: #fff; font-size: 30px; font-weight: 800;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Noto Serif', serif; margin-bottom: -20px; flex-shrink: 0;
+    font-family: 'Noto Serif', serif; margin-bottom: -24px; flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
 }
-.mcu-profile-full-name { color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 24px; }
-.mcu-profile-full-body { padding: 36px 28px 28px; }
+.mcu-profile-full-name { position: relative; z-index: 1; color: #fff; font-family: 'Noto Serif', serif; font-size: 20px; font-weight: 700; margin-bottom: 28px; }
+.mcu-profile-full-body { padding: 40px 32px 32px; }
 .mcu-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .mcu-profile-field label {
-    display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .6px; color: #94a3b8; margin-bottom: 6px;
+    display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .7px; color: #94a3b8; margin-bottom: 7px;
 }
 .mcu-profile-field .value {
-    font-size: 15px; color: #0f172a; font-weight: 500;
-    padding: 10px 14px; background: #f8fafc;
-    border: 1px solid #e2e8f0; border-radius: 9px;
+    font-size: 14.5px; color: var(--mcu-text); font-weight: 500;
+    padding: 10px 14px; background: #f0f4ff;
+    border: 1px solid #dde6ff; border-radius: 10px;
 }
 
-/* ══════════════ RESPONSIVE ══════════════ */
+/* ══════ RESPONSIVE ══════ */
 @media (max-width: 900px) {
     .mcu-main    { grid-template-columns: 1fr; }
     .mcu-sidebar { order: -1; display: grid; grid-template-columns: 1fr 1fr; }
     .mcu-hero-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
-    .mcu-hero-right { flex-wrap: wrap; }
+    .mcu-hero-right { grid-template-columns: repeat(4, 1fr); width: 100%; }
 }
 @media (max-width: 640px) {
-    .mcu-hero     { padding: 36px 0 64px; }
+    .mcu-hero    { padding: calc(76px + 28px) 0 72px; }
     .mcu-hero-inner { padding: 0 20px; }
-    .mcu-main     { padding: 0 16px 60px; }
-    .mcu-sidebar  { grid-template-columns: 1fr; }
+    .mcu-main    { padding: 0 16px 60px; }
+    .mcu-sidebar { grid-template-columns: 1fr; }
     .mcu-profile-grid { grid-template-columns: 1fr; }
-    .mcu-tabs-bar { flex-direction: column; }
-    .mcu-hero-stat  { min-width: 70px; padding: 12px 14px; }
-    .mcu-hero-stat strong { font-size: 22px; }
+    .mcu-tabs-bar { flex-direction: column; border-radius: 14px; }
+    .mcu-hero-right { grid-template-columns: 1fr 1fr; }
+    .mcu-hero-stat { padding: 12px 14px; }
 }
 </style>
 @endpush
@@ -364,15 +434,22 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
     <div class="mcu-hero">
         <div class="mcu-hero-blob mcu-hero-blob-1"></div>
         <div class="mcu-hero-blob mcu-hero-blob-2"></div>
+        <div class="mcu-hero-blob mcu-hero-blob-3"></div>
         <div class="mcu-hero-inner">
             <div class="mcu-hero-left">
-                <div class="mcu-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                <div class="mcu-avatar-ring">
+                    <div class="mcu-avatar">{{ strtoupper(substr($user->name, 0, 1)) }}</div>
+                </div>
                 <div class="mcu-hero-info">
                     @if (session('status'))
                         <div style="font-size:12px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:20px;color:#fff;margin-bottom:8px;display:inline-block;">
                             ✓ {{ session('status') }}
                         </div>
                     @endif
+                    <div class="mcu-hero-eyebrow">
+                        <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        Panel de Aprendizaje
+                    </div>
                     <div class="mcu-hero-name">{{ \Illuminate\Support\Str::words($user->name, 3, '') }}</div>
                     <div class="mcu-hero-sub">{{ $user->email }}</div>
                     <div class="mcu-hero-tags">
@@ -395,19 +472,31 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
             </div>
             <div class="mcu-hero-right">
                 <div class="mcu-hero-stat">
+                    <div class="mcu-stat-icon">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </div>
                     <strong>{{ $enrollments->count() }}</strong>
                     <span>Inscritos</span>
                 </div>
                 <div class="mcu-hero-stat">
+                    <div class="mcu-stat-icon">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
                     <strong>{{ $enrollments->whereIn('status', ['activo', 'completado'])->count() }}</strong>
                     <span>Pagados</span>
                 </div>
                 <div class="mcu-hero-stat">
+                    <div class="mcu-stat-icon">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
                     <strong>{{ $enrollments->where('status','completado')->count() }}</strong>
                     <span>Completados</span>
                 </div>
                 <div class="mcu-hero-stat">
-                    <strong>S/ {{ number_format($enrollments->whereIn('status', ['activo', 'completado'])->sum(function($e) { return $e->course->price ?? 0; }), 0) }}</strong>
+                    <div class="mcu-stat-icon">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <strong>S/ {{ number_format($enrollments->whereIn('status', ['activo', 'completado'])->sum(fn($e) => $e->course->price ?? 0), 0) }}</strong>
                     <span>Invertido</span>
                 </div>
             </div>
@@ -482,15 +571,15 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                                 </div>
                                 <div style="margin-top: auto;">
                                     @if(in_array($e->status, ['activo', 'completado']))
-                                        <a href="{{ route('mi-cuenta.cursos.show', $e->course->slug) }}" class="mcu-empty-btn" style="display: block; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; text-decoration: none;">
+                                        <a href="{{ route('mi-cuenta.cursos.show', $e->course->slug) }}" class="mcu-empty-btn" style="display:flex;justify-content:center;font-size:13px;padding:10px 12px;border-radius:9px;text-decoration:none;">
                                             Continuar Aprendiendo
                                         </a>
                                     @elseif($e->status === 'pendiente')
-                                        <a href="{{ route('checkout') }}" class="mcu-empty-btn" style="display: block; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; background: #d97706; text-decoration: none;">
+                                        <a href="{{ route('checkout') }}" class="mcu-empty-btn" style="display:flex;justify-content:center;font-size:13px;padding:10px 12px;border-radius:9px;background:linear-gradient(135deg,#b45309,#d97706);box-shadow:0 4px 14px rgba(180,83,9,.3);text-decoration:none;">
                                             Proceder al Pago
                                         </a>
                                     @elseif($e->status === 'suspendido')
-                                        <button disabled class="mcu-empty-btn" style="display: block; width: 100%; text-align: center; font-size: 13px; padding: 10px 12px; border-radius: 8px; background: #64748b; cursor: not-allowed; opacity: 0.75;">
+                                        <button disabled class="mcu-empty-btn" style="display:flex;justify-content:center;width:100%;font-size:13px;padding:10px 12px;border-radius:9px;background:#94a3b8;cursor:not-allowed;opacity:.8;border:none;">
                                             Acceso Suspendido
                                         </button>
                                     @endif
@@ -674,18 +763,18 @@ $progreso = ['pendiente' => 10, 'pagado' => 45, 'completado' => 100];
                         <p style="font-size:13px;color:#94a3b8;text-align:center;padding:8px 0;">Sin cursos inscritos aún.</p>
                     @else
                         <div style="margin-bottom:14px;">
-                            <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;font-weight:600;margin-bottom:5px;">
-                                <span>Cursos pagados</span><span>{{ $paid }}/{{ $total }}</span>
+                            <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#64748b;font-weight:600;margin-bottom:6px;">
+                                <span>Cursos pagados</span><span style="color:#1a3bbd;font-weight:700;">{{ $paid }}/{{ $total }}</span>
                             </div>
-                            <div style="height:6px;background:#f1f5f9;border-radius:10px;overflow:hidden;">
-                                <div style="width:{{ $total > 0 ? round($paid/$total*100) : 0 }}%;height:100%;background:linear-gradient(90deg,#2563eb,#0ea5e9);border-radius:10px;transition:width .6s;"></div>
+                            <div style="height:6px;background:#e8edff;border-radius:10px;overflow:hidden;">
+                                <div style="width:{{ $total > 0 ? round($paid/$total*100) : 0 }}%;height:100%;background:linear-gradient(90deg,#1a3bbd,#0ea5e9);border-radius:10px;transition:width .6s;"></div>
                             </div>
                         </div>
                         <div>
-                            <div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;font-weight:600;margin-bottom:5px;">
-                                <span>Cursos completados</span><span>{{ $done }}/{{ $total }}</span>
+                            <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#64748b;font-weight:600;margin-bottom:6px;">
+                                <span>Cursos completados</span><span style="color:#15803d;font-weight:700;">{{ $done }}/{{ $total }}</span>
                             </div>
-                            <div style="height:6px;background:#f1f5f9;border-radius:10px;overflow:hidden;">
+                            <div style="height:6px;background:#e8edff;border-radius:10px;overflow:hidden;">
                                 <div style="width:{{ $total > 0 ? round($done/$total*100) : 0 }}%;height:100%;background:linear-gradient(90deg,#22c55e,#86efac);border-radius:10px;transition:width .6s;"></div>
                             </div>
                         </div>

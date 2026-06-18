@@ -9,8 +9,10 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 use Tests\TestCase;
 
 class AdminDashboardAnalyticsTest extends TestCase
@@ -202,13 +204,30 @@ class AdminDashboardAnalyticsTest extends TestCase
             ]
         ]);
 
-        $response = $this->actingAs($this->student)->post(route('pago.procesar'), [
-            'card_name' => 'Omar Canchumanya',
-            'card_number' => '4444555566667777',
-            'card_exp' => '09/29',
-            'card_cvc' => '456',
-        ]);
+        // Stripe Checkout: simula sesión creada y luego confirmada como pagada
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')
+                ->andReturn('https://checkout.stripe.com/c/pay/cs_test_cache');
+            $mock->shouldReceive('retrieveSession')
+                ->andReturnUsing(function () {
+                    $sale = Sale::where('payment_status', 'pendiente')->latest('id')->first();
 
+                    return StripeCheckoutSession::constructFrom([
+                        'id' => 'cs_test_cache',
+                        'object' => 'checkout.session',
+                        'payment_status' => 'paid',
+                        'metadata' => ['sale_id' => (string) $sale->id],
+                    ]);
+                });
+        });
+
+        // 3a. process() crea la venta "pendiente" y redirige a Stripe (no limpia la caché aún)
+        $response = $this->actingAs($this->student)->post(route('pago.procesar'));
+        $response->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_cache');
+
+        // 3b. El navegador vuelve desde Stripe tras un pago exitoso: confirma la venta
+        $response = $this->actingAs($this->student)->get(route('pago.confirmar', ['session_id' => 'cs_test_cache']));
         $response->assertRedirect(route('pago.exito'));
 
         // Assert cache is now cleared

@@ -8,8 +8,8 @@
 La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en la industria alimentaria peruana. Permite a profesionales del sector inscribirse en cursos de certificación (BPM, HACCP, ISO), gestionar sus pagos y acceder a su historial académico. La empresa está ubicada en Huancayo, Junín, Perú.
 
 **Stack tecnológico:**
-- Backend: Laravel 12 (PHP) con base de datos MySQL (XAMPP); SQLite en memoria para pruebas
-- Frontend: Blade templates, CSS personalizado, JavaScript; React (chatbot), Chart.js (gráficos del dashboard), Quill (texto enriquecido) y SortableJS (reordenamiento)
+- Backend: Laravel (PHP) con base de datos SQLite
+- Frontend: Blade templates, CSS personalizado, JavaScript vanilla
 - Fuente tipográfica: Poppins (Google Fonts)
 - Hosting local: XAMPP
 
@@ -22,10 +22,8 @@ La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en
 ```
 [Inicio /]
     ├── [Nosotros /nosotros]
-    ├── [Cursos /cursos]  (catálogo dinámico: filtros por nivel, categoría y búsqueda)
-    │       ├── [Detalle de curso /cursos/{slug}]
+    ├── [Cursos /cursos]
     │       └── Agregar al carrito → [Checkout /checkout]
-    │                                       ├── Aplicar cupón de descuento
     │                                       └── [Pago Éxito /pago/exito]
     ├── [Contacto /contacto]
     ├── [Iniciar Sesión /login]
@@ -41,8 +39,6 @@ La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en
     ├── Tab: Mis Cursos     → Ver cursos inscritos con progreso
     ├── Tab: Mi Perfil      → Ver datos personales
     ├── Tab: Logros         → Ver insignias desbloqueadas
-    ├── [Aula /mi-cuenta/cursos/{slug}] → Consumir módulos y materiales,
-    │                                     marcar completados, ver progreso
     ├── [Cursos /cursos]    → Explorar y agregar nuevos cursos
     └── [Cerrar Sesión]     → Regresa a [Inicio /]
 ```
@@ -50,17 +46,13 @@ La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en
 ### 2.3 Flujo de Administrador
 
 ```
-[Admin Dashboard /admin]   (KPIs + gráficos; acceso por permiso)
-    ├── [Cursos /admin/courses]      → CRUD, publicar/despublicar, duplicar
-    │       └── Módulos y materiales (reordenar, subir/enlazar contenido)
-    ├── [Estudiantes /admin/students] → Ver, suspender, reactivar, reiniciar progreso
-    ├── [Ventas /admin/sales]        → Listado y detalle de ventas
-    ├── [Cupones /admin/coupons]     → CRUD de cupones de descuento
-    ├── [Roles /admin/roles]         → Roles y permisos asignados
-    ├── [Usuarios /admin/users]      → Gestión y asignación de roles
-    ├── [Settings /admin/settings]   → Configuración del sistema
-    ├── [Auditoría /admin/audit]     → Registro de operaciones con filtros
-    └── [Contactos /admin/contacts]  → Ver, marcar como leído, eliminar
+[Admin Dashboard /admin]
+    ├── [Usuarios /admin/users]
+    │       └── Alternar estado de administrador por usuario
+    └── [Contactos /admin/contacts]
+            ├── Ver mensajes recibidos
+            ├── Marcar como leído
+            └── Eliminar mensaje
 ```
 
 ### 2.4 Flujo de Compra (Carrito → Pago)
@@ -129,7 +121,7 @@ La plataforma **JM y JS Alimentos** es un sistema de e-learning especializado en
 | Sección | Descripción |
 |---|---|
 | Hero | Tarjeta destacada con el curso principal, nivel, duración y precio |
-| Catálogo filtrable | Grid dinámico de cursos publicados, con filtros por nivel, categoría y búsqueda |
+| Catálogo filtrable | Grid de 9 cursos con filtros por nivel |
 | Indicador de scroll | Flecha animada que invita a desplazarse |
 
 **Cursos disponibles:**
@@ -262,7 +254,7 @@ Formulario con:
 
 Lista de todos los usuarios con:
 - Avatar generado, nombre, correo y badge de rol
-- Gestión de roles del usuario (asignación de rol; el flag is_admin se sincroniza con el rol)
+- Botón para alternar estado de administrador (toggle is_admin)
 
 ---
 
@@ -316,7 +308,7 @@ Lista de mensajes del formulario de contacto con:
 **Decisión:** Tabs filtrables (Básico / Intermedio / Avanzado) en lugar de mostrar todos los cursos a la vez.
 
 **Justificación:**
-- Con un catálogo de varios cursos, mostrarlos todos simultáneamente crea **sobrecarga cognitiva**.
+- Con 9 cursos, mostrarlos todos simultáneamente crea **sobrecarga cognitiva**.
 - Los profesionales de la industria alimentaria tienen distintos niveles de experiencia; el filtro les permite ir directo a lo relevante.
 - Los tabs son más rápidos que un dropdown y visualmente más claros que un sidebar de filtros para un catálogo de este tamaño.
 
@@ -478,9 +470,9 @@ Los logros no desbloqueados se muestran en escala de grises; los desbloqueados s
 
 ### 5.8 Toggle de Estado de Administrador
 
-**Mecanismo:** asignación de roles desde `/admin/users` y `/admin/roles` (`UserController` / `RoleController`), validada por permiso `users.manage` / `roles.manage`
+**Mecanismo:** `PATCH /admin/users/{id}/toggle-admin` → `UserController@toggleAdmin`
 
-**Descripción:** Desde el panel admin se gestionan los **roles** de cada usuario (administrador, instructor, soporte, estudiante). El acceso ya no depende de un único flag: cada acción se valida por permiso mediante `PermissionMiddleware`. El método `assignRole()` mantiene el flag `is_admin` **sincronizado** con el rol por compatibilidad, y se conservan las protecciones para no dejar al sistema sin administradores.
+**Descripción:** Desde la lista de usuarios en el panel admin, cada usuario tiene un botón de alternancia. Al hacer clic, se envía una solicitud PATCH que invierte el valor del campo `is_admin` del usuario (de `true` a `false` o viceversa). El sistema tiene una protección: el administrador no puede cambiar su propio estado para evitar quedarse sin acceso.
 
 ---
 
@@ -490,7 +482,7 @@ Los logros no desbloqueados se muestran en escala de grises; los desbloqueados s
 
 **Descripción:** Antes de ejecutar cualquier controlador del panel admin, el middleware verifica que:
 1. El usuario esté autenticado
-2. El usuario tenga el permiso requerido para la acción (RBAC); el rol "administrador" los concede todos
+2. El campo `is_admin` del usuario sea `true`
 
 Si alguna condición falla, redirige automáticamente al inicio con un mensaje de error. Esto protege todas las rutas administrativas sin necesidad de validación manual en cada controlador.
 
@@ -507,8 +499,7 @@ Si alguna condición falla, redirige automáticamente al inicio con un mensaje d
 | password | string | Hash de contraseña |
 | dni | string nullable | DNI o RUC |
 | phone | string nullable | Teléfono de contacto |
-| is_admin | boolean | Flag de administrador heredado, sincronizado con el rol (default: false) |
-| roles | relación | Roles asignados al usuario vía pivote `role_user` (RBAC) |
+| is_admin | boolean | Flag de administrador (default: false) |
 | created_at / updated_at | timestamps | Auditoría |
 
 ### Tabla: `enrollments`
@@ -516,12 +507,10 @@ Si alguna condición falla, redirige automáticamente al inicio con un mensaje d
 |---|---|---|
 | id | integer | Clave primaria |
 | user_id | foreign key | Referencia a users |
-| course_id | foreign key | Referencia a courses (reemplaza el antiguo `course_name`/`level` de texto) |
-| status | enum | Estado: pendiente / activo / suspendido / completado |
-| progress | decimal | Porcentaje de avance del curso |
-| last_accessed_at | timestamp | Última vez que el estudiante accedió |
-| total_time_minutes | integer | Tiempo acumulado de estudio |
-| completed_at | timestamp | Fecha de finalización (si aplica) |
+| course_name | string | Nombre del curso |
+| level | string | Nivel (Básico/Intermedio/Avanzado) |
+| price | decimal | Precio pagado |
+| status | string | Estado: inscrito / pagado / completado |
 | enrolled_at | timestamp | Fecha de inscripción |
 
 ### Tabla: `contacts`
@@ -538,50 +527,4 @@ Si alguna condición falla, redirige automáticamente al inicio con un mensaje d
 
 ---
 
-### Otras tablas del LMS
-
-Además de las anteriores, el sistema incorpora las tablas del LMS: `roles`, `permissions`, `role_user`, `role_permission` (RBAC); `categories`, `courses`, `course_modules`, `course_materials`, `course_material_user` (catálogo y contenido); `coupons`, `sales`, `sale_items` (comercio); `audit_logs` y `settings` (operación). El detalle de su esquema está en `IMPLEMENTACION.md`.
-
----
-
-## 6. Pantallas del LMS (etapa 2)
-
-Estas pantallas se incorporaron al evolucionar la plataforma a un LMS completo.
-
-### 6.1 Catálogo dinámico (`/cursos`)
-
-El catálogo se sirve desde la base de datos (`CourseController@index`) mostrando solo cursos **publicados**. Permite filtrar por **nivel**, por **categoría** y por **término de búsqueda**. Cada tarjeta enlaza a la página de detalle del curso.
-
-### 6.2 Detalle de curso (`/cursos/{slug}`)
-
-Página dedicada por curso (`CourseController@show`) con su descripción, información comercial (precio, nivel, duración, certificación) y la estructura de módulos y materiales. Los cursos en **borrador** solo son visibles para administradores; un visitante que intente abrir un curso no publicado no puede verlo.
-
-### 6.3 Aula virtual del estudiante (`/mi-cuenta/cursos/{slug}`)
-
-Accesible solo para estudiantes con inscripción **activa** (`StudentCourseController@show`). Presenta los módulos del curso con su contenido (video por URL/embed seguro o subido, documentos, presentaciones, texto enriquecido y recursos descargables). El estudiante puede **marcar materiales como completados**, lo que actualiza su **progreso** y su última fecha de acceso. Los archivos privados se sirven mediante un endpoint controlado (`serveFile`) que valida la autorización antes de entregar el archivo.
-
-### 6.4 Gestión de cursos, módulos y materiales (admin)
-
-- **Cursos** (`/admin/courses`): tabla paginada con filtros; formularios de creación/edición con pestañas (General, Comercial, SEO); publicar/despublicar (con validación de contenido mínimo) y duplicar.
-- **Módulos**: CRUD por curso y **reordenamiento por arrastrar y soltar** (SortableJS) que persiste el orden.
-- **Materiales**: CRUD por módulo con **formulario dinámico según el tipo** (video, documento, presentación, texto enriquecido con Quill, recurso). Validación por extensión, MIME y tamaño según `config/lms.php`, y limpieza de archivos huérfanos al reemplazar o eliminar.
-
-### 6.5 Estudiantes, ventas y cupones (admin)
-
-- **Estudiantes** (`/admin/students`): listado con progreso; perfil con cursos e inscripciones; acciones de **suspender, reactivar y reiniciar progreso** (auditadas).
-- **Ventas** (`/admin/sales`): listado y detalle de las ventas registradas (`sales`/`sale_items`).
-- **Cupones** (`/admin/coupons`): CRUD con código, tipo, valor, vigencia, límite de usos y estado; el descuento se valida en el checkout.
-
-### 6.6 Roles, configuración y auditoría (admin)
-
-- **Roles** (`/admin/roles`): roles con sus permisos y usuarios asignados.
-- **Settings** (`/admin/settings`): parámetros del sistema (empresa, contacto, etc.), leídos mediante el helper `setting()` con caché.
-- **Auditoría** (`/admin/audit`): registro de operaciones sensibles (usuario, acción, entidad, valores previos/nuevos, IP, user-agent) con filtros.
-
-### 6.7 Dashboard analítico (admin)
-
-`/admin` muestra KPIs reales (cursos, estudiantes, ventas e ingresos, tasa de finalización) y **gráficos** de ventas e inscripciones mensuales (Chart.js), con caché de métricas que se invalida al registrarse una venta.
-
----
-
-*Documentación funcional — JM y JS Alimentos — Actualizada a junio de 2026 (plataforma LMS)*
+*Documentación generada para el proyecto JM y JS Alimentos — Mayo 2026*

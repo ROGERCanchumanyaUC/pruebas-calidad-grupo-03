@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Enrollment;
 use App\Models\Sale;
 use App\Models\User;
+use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -231,7 +232,7 @@ class AdminSalesAndCouponsTest extends TestCase
             ]);
     }
 
-    public function test_checkout_processes_order_with_coupon()
+    public function test_checkout_creates_pending_sale_with_coupon_discount()
     {
         $coupon = Coupon::create([
             'code' => 'SAVE30',
@@ -246,24 +247,27 @@ class AdminSalesAndCouponsTest extends TestCase
         $this->actingAs($this->student)->postJson('/cart/add', ['course_id' => $this->course->id]);
         $this->actingAs($this->student)->postJson(route('cart.coupon.apply'), ['code' => 'SAVE30']);
 
-        // 2. Process checkout payment
-        $response = $this->actingAs($this->student)->post(route('pago.procesar'), [
-            'card_name' => 'Gian Guerreros',
-            'card_number' => '4444555566667777',
-            'card_exp' => '09/29',
-            'card_cvc' => '456',
-        ]);
+        // 2. Process checkout: crea la venta "pendiente" y redirige a Stripe
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')
+                ->once()
+                ->andReturn('https://checkout.stripe.com/c/pay/cs_test_coupon');
+        });
 
-        $response->assertRedirect(route('pago.exito'));
+        $response = $this->actingAs($this->student)->post(route('pago.procesar'));
 
-        // 3. Verify Sale and SaleItem exist in DB
+        $response->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_coupon');
+
+        // 3. Verify Sale and SaleItem exist in DB as "pendiente"
         $this->assertDatabaseHas('sales', [
             'user_id' => $this->student->id,
             'coupon_id' => $coupon->id,
             'subtotal' => 150.00,
             'discount' => 30.00, // 20% of 150
             'total' => 120.00,
-            'payment_status' => 'pagado',
+            'payment_method' => 'stripe',
+            'payment_status' => 'pendiente',
         ]);
 
         $sale = Sale::where('user_id', $this->student->id)->first();
@@ -274,18 +278,11 @@ class AdminSalesAndCouponsTest extends TestCase
             'price' => 150.00,
         ]);
 
-        // 4. Verify enrollment created and active
-        $this->assertDatabaseHas('enrollments', [
-            'user_id' => $this->student->id,
-            'course_id' => $this->course->id,
-            'status' => 'activo',
-        ]);
+        // 4. El cupón aún no se contabiliza: se incrementa al confirmar el pago
+        $this->assertEquals(0, $coupon->fresh()->times_used);
 
-        // 5. Verify coupon usage count incremented
-        $this->assertEquals(1, $coupon->fresh()->times_used);
-
-        // 6. Verify session cart and coupon are empty
-        $this->assertNull(session()->get('cart'));
-        $this->assertNull(session()->get('coupon_code'));
+        // 5. El carrito y el cupón se mantienen en sesión hasta confirmar el pago
+        $this->assertNotEmpty(session()->get('cart'));
+        $this->assertEquals('SAVE30', session()->get('coupon_code'));
     }
 }

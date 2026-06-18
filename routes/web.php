@@ -40,9 +40,14 @@ Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remov
 Route::post('/cart/coupon/apply',  [CartController::class, 'applyCoupon'])->name('cart.coupon.apply');
 Route::post('/cart/coupon/remove', [CartController::class, 'removeCoupon'])->name('cart.coupon.remove');
 
+// Webhook de Stripe: público (sin sesión/auth) y exento de CSRF (ver bootstrap/app.php)
+Route::post('/stripe/webhook', [PaymentController::class, 'webhook'])->name('stripe.webhook');
+
 Route::middleware('auth')->group(function () {
     Route::get('/mi-cuenta',  [MiCuentaController::class, 'index'])->name('mi-cuenta');
     Route::post('/pago',      [PaymentController::class, 'process'])->name('pago.procesar');
+    Route::get('/pago/confirmar', [PaymentController::class, 'success'])->name('pago.confirmar');
+    Route::get('/pago/cancelado/{sale}', [PaymentController::class, 'cancel'])->name('pago.cancelado');
     Route::view('/pago/exito', 'pago-exito')->name('pago.exito');
 
     // Student Classroom & Private File Access

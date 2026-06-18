@@ -262,19 +262,20 @@
         /* Stat cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 18px;
             margin-bottom: 26px;
         }
         .stat-card {
             background: var(--white);
             border-radius: 14px;
-            padding: 20px 22px;
+            padding: 20px 22px 18px;
             border: 1px solid var(--gray-200);
             box-shadow: 0 2px 10px rgba(0,0,0,.04);
             display: flex;
-            align-items: center;
-            gap: 16px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
             position: relative;
             overflow: hidden;
             transition: transform .2s, box-shadow .2s;
@@ -292,8 +293,8 @@
         .stat-card.orange::before { background: linear-gradient(90deg, #f59e0b, #fcd34d); }
 
         .stat-icon {
-            width: 50px; height: 50px;
-            border-radius: 12px;
+            width: 44px; height: 44px;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -304,17 +305,25 @@
         .stat-icon.green  { background: #dcfce7; color: #16a34a; }
         .stat-icon.orange { background: #fef3c7; color: #d97706; }
 
-        .stat-body { flex: 1; }
-        .stat-value { font-size: 28px; font-weight: 800; color: var(--gray-800); line-height: 1; }
+        .stat-body { width: 100%; min-width: 0; }
+        .stat-value {
+            font-size: clamp(20px, 2.2vw, 26px);
+            font-weight: 800;
+            color: var(--gray-800);
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; font-weight: 500; }
         .stat-trend {
             font-size: 11px;
             font-weight: 600;
-            margin-top: 6px;
+            margin-top: 8px;
             display: inline-flex;
             align-items: center;
             gap: 3px;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 20px;
         }
         .stat-trend.up   { background: #dcfce7; color: #15803d; }

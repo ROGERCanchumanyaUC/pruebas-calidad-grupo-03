@@ -7,7 +7,7 @@
     <title>@yield('title', 'Cursos de Calidad Alimentaria') | JM y JS Alimentos</title>
     <meta name="description" content="@yield('meta_description', 'Capacitación profesional en Buenas Prácticas de Manufactura (BPM), HACCP e ISO para la industria de alimentos y bebidas.')">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
     @stack('styles')
 </head>
@@ -143,6 +143,8 @@ function applyCurtainText(selector){
 
     curtainTexts.forEach((textBlock) => {
         if (textBlock.dataset.curtainApplied === 'true') return;
+        // Skip elements that contain child HTML nodes (SVG, span, em, etc.)
+        if ([...textBlock.childNodes].some(n => n.nodeType === Node.ELEMENT_NODE)) return;
 
         const text = textBlock.textContent;
         const chars = Array.from(text);

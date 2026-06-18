@@ -23,6 +23,7 @@
 .hp-hero {
     position: relative;
     min-height: 100vh;
+    padding-top: 76px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -434,12 +435,16 @@
 
     <div class="hp-hero-inner">
         <div>
-            <span class="hp-hero-eyebrow">
-                <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                Especialistas en calidad alimentaria
-            </span>
-            <h1>Capacítate con los <span>mejores expertos</span> del sector alimentario peruano.</h1>
-            <p class="hp-hero-lead">Cursos certificados, asesorías técnicas y diagnóstico de plantas. Formación especializada en BPM, HACCP e ISO adaptada al contexto real de Huancayo y el Perú.</p>
+            <div class="rv-wrap">
+                <span class="hp-hero-eyebrow rv rv-d1">
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Especialistas en calidad alimentaria
+                </span>
+            </div>
+            <div class="rv-wrap">
+                <h1 class="rv rv-d2">Capacítate con los <span>mejores expertos</span> del sector alimentario peruano.</h1>
+            </div>
+            <p class="hp-hero-lead curtain-text">Cursos certificados, asesorías técnicas y diagnóstico de plantas. Formación especializada en BPM, HACCP e ISO adaptada al contexto real de Huancayo y el Perú.</p>
             <div class="hp-hero-actions">
                 <a href="{{ route('cursos') }}" class="hp-btn-primary">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>

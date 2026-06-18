@@ -2,23 +2,7 @@
 
 # Contexto completo del proyecto JM y JS Alimentos
 
-> **Nota de actualización (junio 2026).** Este documento consolidado conserva información **histórica del prototipo** (puede mencionar SQLite, el flag `is_admin`, un catálogo de 9 cursos estáticos o solo 3 modelos). El proyecto evolucionó a una **plataforma LMS** y varios de esos datos ya no reflejan el estado actual. Para la información vigente, consultar los documentos ya actualizados: `DOCUMENTACION_GENERAL.md`, `DOCUMENTACION_FUNCIONAL.md`, `IMPLEMENTACION.md`, `ARQUITECTURA.md`, `METODOLOGIA.md` y `PRUEBAS_CALIDAD.md`, además de `AUDITORIA_LMS_2026_06_07.md` y `KANBAN.md`. El resumen de abajo recoge los cambios clave; el resto del documento se mantiene como referencia histórica.
-
-## 0. Estado actual (plataforma LMS) — resumen de cambios
-
-Respecto a la descripción de prototipo que sigue a continuación, el sistema actual difiere en:
-
-- **Base de datos:** MySQL (XAMPP, base `jm_js_alimentos`) en desarrollo/producción local; SQLite en memoria solo para pruebas. Ya **no** se usa SQLite como motor principal.
-- **Control de acceso:** modelo de **roles y permisos (RBAC)** con los roles administrador, instructor, soporte y estudiante; el acceso se valida por permiso (`permission:*`). El flag `is_admin` se conserva sincronizado con el rol por compatibilidad.
-- **Catálogo:** dinámico desde la base de datos (tablas `categories`, `courses`, `course_modules`, `course_materials`), con filtros, página de detalle (`/cursos/{slug}`) y CRUD administrativo. Ya no es un grid estático de 9 cursos.
-- **Aula y progreso:** los estudiantes consumen materiales (video, documentos, presentaciones, texto, recursos) en un aula y registran su progreso; los archivos privados se sirven con control de acceso.
-- **Comercio:** el checkout registra ventas (`sales`/`sale_items`) e inscripciones (`enrollments` con `course_id` y progreso) y admite **cupones** de descuento.
-- **Modelos:** además de `User`, `Enrollment` y `Contact`, existen `Role`, `Permission`, `Category`, `Course`, `CourseModule`, `CourseMaterial`, `Coupon`, `Sale`, `SaleItem`, `AuditLog` y `Setting`, más una capa de **servicios** (`AuditService`, `CoursePublishingService`, `StripeService`, `VideoEmbedService`).
-- **Pagos:** la integración con **Stripe está preparada** (paquete, `config/stripe.php`, `StripeService`); el cobro real aún no está activado, el checkout opera de forma simulada.
-- **Seguridad:** rate limiting (login y chatbot), cabeceras de seguridad y registro de **auditoría**.
-- **Pruebas:** suite automatizada de PHPUnit (≈72 métodos en 14 archivos), con factories y un seeder de datos demo.
-
----
+> Nota de actualizacion 2026-06-07: este documento conserva informacion historica del prototipo y puede mencionar SQLite o modulos aun no alineados con la base LMS actual. Para el estado auditado reciente, revisar `documentacion/AUDITORIA_LMS_2026_06_07.md` y el Kanban actualizado en `documentacion/KANBAN.md`.
 
 ## 1. Resumen ejecutivo
 
