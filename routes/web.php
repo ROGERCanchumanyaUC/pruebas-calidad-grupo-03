@@ -112,6 +112,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     // Admin Audit Logs
     Route::get('/audit', [\App\Http\Controllers\Admin\AuditController::class, 'index'])->middleware('permission:audit.view')->name('audit.index');
+    Route::get('/audit/export', [\App\Http\Controllers\Admin\AuditController::class, 'export'])->middleware('permission:audit.view')->name('audit.export');
 
     // Admin Sales Management
     Route::resource('sales', SaleController::class)

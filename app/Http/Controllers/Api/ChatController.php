@@ -3,87 +3,67 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\GeminiAssistantService;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class ChatController extends Controller
 {
-    public function handleChat(Request $request)
+    public function handleChat(Request $request, GeminiAssistantService $assistant)
     {
         $validated = $request->validate([
             'message' => ['required', 'string', 'max:1000'],
+            'history' => ['sometimes', 'array', 'max:12'],
+            'history.*.role' => ['required_with:history', 'in:user,bot'],
+            'history.*.text' => ['required_with:history', 'string', 'max:1000'],
         ]);
 
-        $message = strip_tags($validated['message']);
-        $apiKey = config('services.gemini.key');
-        $model = config('services.gemini.model', 'gemini-2.5-flash');
-
-        if (! $apiKey) {
-            Log::warning('Gemini API key is not configured.');
-
-            return response()->json([
-                'reply' => 'El asistente no tiene configurada la clave de Gemini.',
-            ], 500);
-        }
-
-        $systemPrompt = "Eres el asistente virtual de 'JM y JS Alimentos', una empresa con sede en Huancayo, Perú, expertos en calidad alimentaria, BPM e ISO para el sector alimentario.
-        Ofrecen:
-        - Capacitaciones especializadas y cursos, como 'BPM en Alimentos' (duración de 8 semanas, precio S/ 350 por persona).
-        - Asesorías a empresas en Buenas Prácticas de Manufactura (BPM) e ISO (como ISO 25010).
-        - Gestión de calidad alimentaria para profesionales y PyMEs del sector.
-        
-        Tu tono debe ser profesional, amable, servicial y conciso. Responde siempre en español. No inventes precios ni cursos que no estén en tu conocimiento.";
+        $message = trim(strip_tags($validated['message']));
+        $history = $validated['history'] ?? [];
 
         try {
-            $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
-
-            $response = Http::withHeaders([
-                'x-goog-api-key' => $apiKey,
-            ])->acceptJson()->asJson()->timeout(30)->post($url, [
-                'system_instruction' => [
-                    'parts' => [
-                        ['text' => $systemPrompt]
-                    ]
-                ],
-                'contents' => [
-                    [
-                        'parts' => [
-                            ['text' => $message]
-                        ]
-                    ]
-                ],
-                'generationConfig' => [
-                    'temperature' => 0.7,
-                    'maxOutputTokens' => 500,
-                ]
+            return response()->json([
+                'reply' => $assistant->reply($message, $history),
+                'status' => 'ok',
+                'configured' => true,
             ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                $reply = data_get($data, 'candidates.0.content.parts.0.text', 'Lo siento, no pude procesar la respuesta adecuadamente.');
-                
-                return response()->json([
-                    'reply' => $reply
-                ]);
+        } catch (RuntimeException $e) {
+            if ($e->getMessage() !== 'Gemini API key is not configured.') {
+                throw $e;
             }
 
-            Log::warning('Gemini request failed.', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
+            Log::warning('Gemini chat requested without API key configured.');
 
             return response()->json([
-                'reply' => 'Hubo un error al conectar con Google Gemini. Por favor, intenta de nuevo.'
-            ], 500);
+                'reply' => 'El asistente IA aun no esta configurado. Revisa GEMINI_API_KEY en el archivo .env.',
+                'status' => 'not_configured',
+                'configured' => false,
+            ], 503);
+        } catch (RequestException $e) {
+            $status = $e->response?->status();
+            [$reply, $code] = match ($status) {
+                401, 403 => ['El asistente no pudo autenticar la clave de Gemini. Revisa GEMINI_API_KEY en el archivo .env.', 'auth_error'],
+                429 => ['Gemini esta recibiendo demasiadas solicitudes. Intenta nuevamente en unos minutos.', 'rate_limited'],
+                default => ['Hubo un error al conectar con Google Gemini. Por favor, intenta de nuevo.', 'provider_error'],
+            };
 
+            return response()->json([
+                'reply' => $reply,
+                'status' => $code,
+                'configured' => true,
+                'upstream_status' => $status,
+            ], 503);
         } catch (\Throwable $e) {
             Log::error('Unexpected Gemini chat error.', [
                 'message' => $e->getMessage(),
             ]);
 
             return response()->json([
-                'reply' => 'Ocurrió un error inesperado al procesar tu solicitud.'
+                'reply' => 'Ocurrio un error inesperado al procesar tu solicitud.',
+                'status' => 'error',
+                'configured' => (bool) config('services.gemini.key'),
             ], 500);
         }
     }

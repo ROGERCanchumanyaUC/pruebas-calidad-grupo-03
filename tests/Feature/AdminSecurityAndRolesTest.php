@@ -276,6 +276,24 @@ class AdminSecurityAndRolesTest extends TestCase
         $this->assertFalse((bool)$targetUser->fresh()->is_admin);
     }
 
+    public function test_last_admin_cannot_be_demoted()
+    {
+        $response = $this->actingAs($this->admin)->from(route('admin.users.edit', $this->admin))
+            ->put(route('admin.users.update', $this->admin), [
+                'roles' => [$this->studentRole->id],
+            ]);
+
+        $response->assertRedirect(route('admin.users.edit', $this->admin));
+        $response->assertSessionHasErrors('roles');
+
+        $this->assertTrue($this->admin->fresh()->isAdmin());
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'reject_last_admin_demotion',
+            'entity_type' => User::class,
+            'entity_id' => $this->admin->id,
+        ]);
+    }
+
     public function test_audit_logs_routes_protection_and_filters()
     {
         // Seed audit logs
@@ -295,5 +313,44 @@ class AdminSecurityAndRolesTest extends TestCase
         $response = $this->actingAs($this->admin)->get(route('admin.audit.index'));
         $response->assertStatus(200);
         $response->assertSee('test_audit_action');
+    }
+
+    public function test_audit_export_is_protected_and_respects_filters()
+    {
+        AuditLog::create([
+            'user_id' => $this->admin->id,
+            'action' => 'export_visible_action',
+            'entity_type' => User::class,
+            'entity_id' => $this->student->id,
+            'old_values' => ['role' => 'estudiante'],
+            'new_values' => ['role' => 'admin'],
+            'ip_address' => '127.0.0.1',
+            'user_agent' => '=InjectedAgent',
+        ]);
+
+        AuditLog::create([
+            'user_id' => $this->admin->id,
+            'action' => 'export_hidden_action',
+            'entity_type' => User::class,
+            'entity_id' => $this->admin->id,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'System',
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('admin.audit.export'))
+            ->assertStatus(403);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('admin.audit.export', ['action' => 'export_visible_action']));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('export_visible_action', $content);
+        $this->assertStringNotContainsString('export_hidden_action', $content);
+        $this->assertStringContainsString("'=InjectedAgent", $content);
     }
 }

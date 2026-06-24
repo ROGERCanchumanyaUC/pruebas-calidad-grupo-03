@@ -8,6 +8,8 @@ use App\Models\Role;
 use App\Services\AuditService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -28,23 +30,41 @@ class UserController extends Controller
     {
         $request->validate([
             'roles' => ['nullable', 'array'],
-            'roles.*' => ['exists:roles,id'],
+            'roles.*' => ['integer', 'distinct', 'exists:roles,id'],
         ]);
 
         $adminRole = Role::where('name', 'admin')->first();
         $adminRoleId = $adminRole ? $adminRole->id : null;
-        
-        $rolesInput = $request->input('roles', []);
-        $isAdminSelected = $adminRoleId && in_array($adminRoleId, $rolesInput);
+
+        $rolesInput = collect($request->input('roles', []))
+            ->map(fn ($roleId) => (int) $roleId)
+            ->unique()
+            ->values()
+            ->all();
+
+        $isAdminSelected = $adminRoleId && in_array((int) $adminRoleId, $rolesInput, true);
 
         $oldRoles = $user->roles->pluck('name')->toArray();
-        $oldIsAdmin = $user->is_admin;
+        $oldIsAdmin = (bool) $user->is_admin;
 
-        // Sync roles in database
-        $user->roles()->sync($rolesInput);
-        
-        // Update is_admin legacy field
-        $user->update(['is_admin' => $isAdminSelected]);
+        if ($user->isAdmin() && ! $isAdminSelected && ! $this->hasAnotherAdmin($user)) {
+            AuditService::log(
+                'reject_last_admin_demotion',
+                User::class,
+                $user->id,
+                ['roles' => $oldRoles, 'is_admin' => $oldIsAdmin],
+                ['roles' => Role::whereIn('id', $rolesInput)->pluck('name')->all(), 'is_admin' => false]
+            );
+
+            return back()
+                ->withErrors(['roles' => 'No puedes retirar el ultimo administrador activo del sistema.'])
+                ->withInput();
+        }
+
+        DB::transaction(function () use ($user, $rolesInput, $isAdminSelected): void {
+            $user->roles()->sync($rolesInput);
+            $user->update(['is_admin' => (bool) $isAdminSelected]);
+        });
 
         // Audit Log
         AuditService::log(
@@ -56,7 +76,7 @@ class UserController extends Controller
         );
 
         // Invalidate dashboard stats since role distribution might have changed
-        \Illuminate\Support\Facades\Cache::forget('admin_dashboard_stats');
+        Cache::forget('admin_dashboard_stats');
 
         return redirect()->route('admin.users')
             ->with('status', "Roles de {$user->name} actualizados correctamente.");
@@ -66,5 +86,16 @@ class UserController extends Controller
     {
         // Keep for routes compatibility, but redirect to edit roles
         return redirect()->route('admin.users.edit', $user);
+    }
+
+    private function hasAnotherAdmin(User $user): bool
+    {
+        return User::query()
+            ->whereKeyNot($user->id)
+            ->where(function ($query): void {
+                $query->where('is_admin', true)
+                    ->orWhereHas('roles', fn ($roles) => $roles->where('name', 'admin'));
+            })
+            ->exists();
     }
 }

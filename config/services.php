@@ -38,6 +38,8 @@ return [
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
         'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+        'ca_bundle' => env('GEMINI_CA_BUNDLE', storage_path('certs/cacert.pem')),
+        'verify_ssl' => env('GEMINI_VERIFY_SSL', true),
     ],
 
 ];

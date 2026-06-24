@@ -44,9 +44,12 @@
                 <input type="date" name="end_date" value="{{ request('end_date') }}" class="form-input">
             </div>
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
             <a href="{{ route('admin.audit.index') }}" style="background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-200); border-radius: 8px; text-decoration: none; padding: 8px 18px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">
                 Limpiar Filtros
+            </a>
+            <a href="{{ route('admin.audit.export', request()->query()) }}" style="background: white; color: var(--gray-700); border: 1px solid var(--gray-300); border-radius: 8px; text-decoration: none; padding: 8px 18px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center;">
+                Exportar CSV
             </a>
             <button type="submit" style="background: var(--blue-600); color: white; border: none; border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.18s; font-family: inherit;">
                 🔍 Filtrar
