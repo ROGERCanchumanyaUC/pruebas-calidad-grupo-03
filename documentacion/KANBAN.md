@@ -20,7 +20,7 @@ Conclusion de producto: el siguiente trabajo debe enfocarse en endurecimiento pr
 
 | Area | Estado | Evidencia | Riesgo |
 | --- | --- | --- | --- |
-| Laravel y PHP | OK | Laravel `12.61.1`, PHP 8.4 local validado | Mantener version productiva alineada a `composer.json` |
+| Laravel y PHP | BLOCKED en este equipo | `composer.json` exige PHP `^8.2`; el PATH actual resuelve XAMPP PHP `8.0.30` | Activar PHP 8.2+ antes de ejecutar Artisan, migraciones o tests |
 | Base de datos | OK | Migraciones LMS, ventas, auditoria, roles y matriculas | Ejecutar `migrate --force` en despliegue |
 | Storage publico/privado | OK | `public/storage` y materiales privados por controlador | Revisar permisos en produccion |
 | Cursos | OK | Catalogo dinamico, CRUD admin, modulos y materiales | Cargar contenidos finales propios |
@@ -29,7 +29,7 @@ Conclusion de producto: el siguiente trabajo debe enfocarse en endurecimiento pr
 | Roles y permisos | OK | Roles reales, permisos, legacy admin sincronizado | No se permite degradar el ultimo admin |
 | Dashboard admin | OK | KPIs, ventas, estudiantes, cache y graficos | Ajustar metricas segun operacion real |
 | Seguridad | OK | Rate limit, CSP productiva, auditoria y headers | Hacer pentest antes de produccion |
-| Tests | OK | `php artisan test`: 85 pruebas pasan en entorno local | Mantener suite verde antes de release |
+| Tests | RISK de entorno | Suite previamente documentada con 85 pruebas; en esta consola `php artisan test` queda bloqueado por PHP 8.0.30 | Repetir suite completa con PHP 8.2+ activo antes de release |
 | Git | OK local | Rama `feat_LMS_v2.0` con commits de integracion | Push/PR depende de permisos GitHub |
 
 Conteo de datos auditado:

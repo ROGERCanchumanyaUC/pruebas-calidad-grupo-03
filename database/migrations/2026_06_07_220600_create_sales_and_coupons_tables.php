@@ -30,7 +30,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->enum('payment_method', ['yape', 'plin', 'tarjeta', 'transferencia', 'paypal', 'stripe'])->default('tarjeta');
             $table->enum('payment_status', ['pendiente', 'pagado', 'fallido', 'reembolsado'])->default('pendiente');
-            $table->string('stripe_payment_id', 200)->nullable(); // TODO: Stripe integration
+            $table->string('stripe_payment_id', 200)->nullable(); // External gateway reference when Stripe is enabled.
             $table->text('notes')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->timestamps();

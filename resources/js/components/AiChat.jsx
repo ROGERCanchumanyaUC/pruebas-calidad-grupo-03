@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 export default function AiChat() {
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState("");
+    const [iconFailed, setIconFailed] = useState(false);
     const [position, setPosition] = useState(() => ({
         x: 28,
         y: typeof window === "undefined" ? 520 : window.innerHeight - 96,
@@ -27,6 +28,41 @@ export default function AiChat() {
     });
 
     const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+    const assistantIcon = "/img/ai-assistant.ico";
+    const renderAssistantIcon = (size = 30) => iconFailed ? (
+        <span style={{
+            width: `${size}px`,
+            height: `${size}px`,
+            borderRadius: "50%",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(255,255,255,0.20)",
+            color: "inherit",
+            fontSize: `${Math.max(10, Math.round(size * 0.36))}px`,
+            fontWeight: 700,
+            lineHeight: 1,
+        }}>
+            IA
+        </span>
+    ) : (
+        <img
+            src={assistantIcon}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            onError={() => setIconFailed(true)}
+            style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                borderRadius: "50%",
+                objectFit: "cover",
+                display: "block",
+                background: "rgba(255,255,255,0.18)",
+                boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.22)",
+            }}
+        />
+    );
 
     useEffect(() => {
         if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,12 +111,18 @@ export default function AiChat() {
                     "Accept": "application/json",
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.content || "",
                 },
-                body: JSON.stringify({ message: userMsg }),
+                body: JSON.stringify({
+                    message: userMsg,
+                    history: messages.slice(-8),
+                }),
             });
             const data = await response.json();
             setMessages((prev) => [
                 ...prev,
-                { role: "bot", text: data.reply || "Sin respuesta." },
+                {
+                    role: "bot",
+                    text: data.reply || (response.ok ? "Sin respuesta." : "No pude responder en este momento."),
+                },
             ]);
         } catch {
             setMessages((prev) => [
@@ -185,9 +227,7 @@ export default function AiChat() {
                 }}
             >
                 <>
-                    <svg className="ai-cloud-content" width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
-                    </svg>
+                    <span className="ai-cloud-content">{renderAssistantIcon(open ? 34 : 30)}</span>
                     {!open && (
                         <span className="ai-cloud-content" style={{
                             color: "#fff",
@@ -234,9 +274,9 @@ export default function AiChat() {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: "18px",
                             flexShrink: 0,
-                        }}>IA</div>
+                            overflow: "hidden",
+                        }}>{renderAssistantIcon(38)}</div>
                         <div>
                             <div style={{ color: "#fff", fontWeight: 500, fontSize: "15px" }}>
                                 Asistente JM y JS
@@ -267,17 +307,17 @@ export default function AiChat() {
                                         width: "28px",
                                         height: "28px",
                                         borderRadius: "50%",
-                                        background: "#DFF3FF",
+                                        background: iconFailed ? "#DFF3FF" : "#ffffff",
                                         color: "#075985",
                                         flexShrink: 0,
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        fontSize: "11px",
-                                        fontWeight: 600,
                                         marginRight: "7px",
                                         marginTop: "2px",
-                                    }}>IA</div>
+                                        overflow: "hidden",
+                                        border: "1px solid rgba(2,132,199,0.10)",
+                                    }}>{renderAssistantIcon(26)}</div>
                                 )}
                                 <div style={{
                                     maxWidth: "75%",
@@ -303,14 +343,14 @@ export default function AiChat() {
                                     width: "28px",
                                     height: "28px",
                                     borderRadius: "50%",
-                                    background: "#DFF3FF",
+                                    background: iconFailed ? "#DFF3FF" : "#ffffff",
                                     color: "#075985",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    fontSize: "11px",
-                                    fontWeight: 600,
-                                }}>IA</div>
+                                    overflow: "hidden",
+                                    border: "1px solid rgba(2,132,199,0.10)",
+                                }}>{renderAssistantIcon(26)}</div>
                                 <div style={{
                                     background: "#fff",
                                     border: "1px solid rgba(2,132,199,0.08)",
@@ -346,7 +386,7 @@ export default function AiChat() {
                         borderTop: "1px solid rgba(2,132,199,0.06)",
                         scrollbarWidth: "none",
                     }}>
-                        {["Que cursos ofrecen?", "Precios", "Contacto"].map((suggestion) => (
+                        {["Que cursos ofrecen?", "Precios", "Como me inscribo?"].map((suggestion) => (
                             <button
                                 key={suggestion}
                                 onClick={() => setMessage(suggestion)}

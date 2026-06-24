@@ -221,7 +221,7 @@ Esto permite usar `middleware('admin')` en cualquier ruta sin importar la clase 
 |---|---|---|
 | **PHP** | 8.2 | Ejecución del backend Laravel |
 | **Composer** | 2.x | Gestión de dependencias PHP |
-| **Node.js** | 18.x LTS | Ejecución de Vite y npm |
+| **Node.js** | 22.x LTS o superior | Ejecucion de Vite, npm y scripts de desarrollo |
 | **npm** | 9.x | Gestión de dependencias JavaScript |
 | **XAMPP** (o equivalente) | 8.2+ | Servidor Apache + PHP integrado |
 | **SQLite** | 3.x | Incluido en PHP; no requiere instalación separada |
@@ -325,7 +325,7 @@ Estas extensiones son estándar en XAMPP/PHP 8.2+:
 | `@vitejs/plugin-react` | ^5.2.0 | Soporte JSX y Fast Refresh para React en Vite |
 | `tailwindcss` | ^4.0.0 | Framework CSS de utilidades (disponible, uso parcial) |
 | `@tailwindcss/vite` | ^4.0.0 | Plugin de integración Tailwind con Vite |
-| `concurrently` | ^9.0.1 | Ejecución paralela de múltiples procesos (artisan + vite + queue + pail) |
+| `concurrently` | ^10.0.3 | Ejecucion paralela de multiples procesos (artisan + vite + queue + pail) |
 
 ---
 
@@ -360,7 +360,7 @@ El plan está dividido en **6 fases** ordenadas por prioridad y dependencia téc
 Paso 1: Verificar requisitos de software
     ├── php --version          → debe ser ≥ 8.2
     ├── composer --version     → debe ser ≥ 2.x
-    ├── node --version         → debe ser ≥ 18.x
+    ├── node --version         → debe ser ≥ 22.x
     └── npm --version          → debe ser ≥ 9.x
 
 Paso 2: Clonar o copiar el proyecto
@@ -596,7 +596,8 @@ php artisan route:list --path=admin  # Filtrar por prefijo
 | laravel-vite-plugin | ^2.0.0 |
 | @vitejs/plugin-react | ^5.2.0 |
 | Tailwind CSS | ^4.0.0 |
-| concurrently | ^9.0.1 |
+| concurrently | ^10.0.3 |
+| Node.js recomendado | 22.x LTS o superior |
 | Google Gemini | gemini-2.5-flash |
 | SQLite | 3.x (incluido en PHP) |
 

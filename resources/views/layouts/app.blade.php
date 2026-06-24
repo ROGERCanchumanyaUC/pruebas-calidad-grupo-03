@@ -7,6 +7,8 @@
     <title>@yield('title', 'Cursos de Calidad Alimentaria') | JM y JS Alimentos</title>
     <meta name="description" content="@yield('meta_description', 'Capacitación profesional en Buenas Prácticas de Manufactura (BPM), HACCP e ISO para la industria de alimentos y bebidas.')">
 
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
     @stack('styles')
@@ -98,6 +100,8 @@
       <h4>Empresa</h4>
       <a href="{{ route('nosotros') }}">Nosotros</a>
       <a href="{{ route('contacto') }}#contacto-formulario">Contacto</a>
+      <a href="{{ route('privacidad') }}">Privacidad</a>
+      <a href="{{ route('terminos') }}">Terminos</a>
     </div>
   </div>
 

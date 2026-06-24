@@ -252,4 +252,118 @@ class AdminCourseMaterialTest extends TestCase
         Storage::disk('local')->assertMissing($newFilePath);
         $this->assertDatabaseMissing('course_materials', ['id' => $material->id]);
     }
+
+    public function test_admin_can_update_file_material_metadata_without_reuploading_file()
+    {
+        Storage::fake('local');
+
+        $filePath = "materials/{$this->course->id}/{$this->module->id}/manual.pdf";
+        Storage::disk('local')->put($filePath, 'pdf content');
+
+        $material = CourseMaterial::create([
+            'module_id' => $this->module->id,
+            'type' => 'documento',
+            'title' => 'Manual original',
+            'file_path' => $filePath,
+            'file_type' => 'application/pdf',
+            'order' => 1,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->put(route('admin.materials.update', $material), [
+                'type' => 'documento',
+                'title' => 'Manual actualizado',
+                'description' => 'Nueva descripcion',
+            ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('course_materials', [
+            'id' => $material->id,
+            'title' => 'Manual actualizado',
+            'file_path' => $filePath,
+        ]);
+        Storage::disk('local')->assertExists($filePath);
+    }
+
+    public function test_admin_must_upload_new_file_when_switching_file_material_type()
+    {
+        Storage::fake('local');
+
+        $filePath = "materials/{$this->course->id}/{$this->module->id}/manual.pdf";
+        Storage::disk('local')->put($filePath, 'pdf content');
+
+        $material = CourseMaterial::create([
+            'module_id' => $this->module->id,
+            'type' => 'documento',
+            'title' => 'Manual original',
+            'file_path' => $filePath,
+            'file_type' => 'application/pdf',
+            'order' => 1,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->put(route('admin.materials.update', $material), [
+                'type' => 'presentacion',
+                'title' => 'Manual como presentacion',
+            ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('file');
+        $this->assertEquals('documento', $material->fresh()->type);
+        Storage::disk('local')->assertExists($filePath);
+    }
+
+    public function test_admin_validates_replacement_file_when_type_is_not_submitted()
+    {
+        Storage::fake('local');
+
+        $filePath = "materials/{$this->course->id}/{$this->module->id}/manual.pdf";
+        Storage::disk('local')->put($filePath, 'pdf content');
+
+        $material = CourseMaterial::create([
+            'module_id' => $this->module->id,
+            'type' => 'documento',
+            'title' => 'Manual original',
+            'file_path' => $filePath,
+            'file_type' => 'application/pdf',
+            'order' => 1,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->put(route('admin.materials.update', $material), [
+                'title' => 'Manual con archivo invalido',
+                'file' => UploadedFile::fake()->create('payload.exe', 10, 'application/octet-stream'),
+            ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('file');
+        $this->assertEquals('Manual original', $material->fresh()->title);
+        Storage::disk('local')->assertExists($filePath);
+    }
+
+    public function test_admin_cannot_upload_file_to_text_material()
+    {
+        Storage::fake('local');
+
+        $material = CourseMaterial::create([
+            'module_id' => $this->module->id,
+            'type' => 'texto',
+            'title' => 'Lectura original',
+            'content' => '<p>Contenido inicial</p>',
+            'order' => 1,
+        ]);
+
+        $response = $this->actingAs($this->admin)
+            ->put(route('admin.materials.update', $material), [
+                'title' => 'Lectura con archivo invalido',
+                'file' => UploadedFile::fake()->create('manual.pdf', 10, 'application/pdf'),
+            ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('file');
+        $this->assertNull($material->fresh()->file_path);
+        $this->assertEquals('Lectura original', $material->fresh()->title);
+    }
 }

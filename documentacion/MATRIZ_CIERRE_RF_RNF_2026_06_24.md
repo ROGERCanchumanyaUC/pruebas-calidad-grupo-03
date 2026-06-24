@@ -16,5 +16,6 @@ Rama: `feat_LMS_v2.0`
 
 ## Verificacion
 
-- `php artisan test`: 85 pruebas, 407 aserciones, suite completa en verde.
-- Tests nuevos o reforzados: rollback de checkout, CSP productiva, ultimo administrador, auditoria CSV y Gemini operativo.
+- Ejecucion previa con PHP compatible: `php artisan test`, 85 pruebas y 407 aserciones en verde.
+- Verificacion actual de esta consola: `php artisan test` queda bloqueado porque el PATH resuelve XAMPP PHP 8.0.30 y el proyecto requiere PHP `^8.2`.
+- Tests nuevos o reforzados: rollback de checkout, CSP productiva, ultimo administrador, auditoria CSV, Gemini operativo y validacion de reemplazo/tipo de materiales.
