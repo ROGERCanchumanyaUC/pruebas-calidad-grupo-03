@@ -59,6 +59,19 @@ class AdminSecurityAndRolesTest extends TestCase
         $response->assertHeader('Content-Security-Policy');
     }
 
+    public function test_production_csp_does_not_allow_inline_or_eval()
+    {
+        config(['app.env' => 'production']);
+
+        $response = $this->get('/');
+        $csp = $response->headers->get('Content-Security-Policy');
+
+        $this->assertNotNull($csp);
+        $this->assertStringNotContainsString("'unsafe-inline'", $csp);
+        $this->assertStringNotContainsString("'unsafe-eval'", $csp);
+        $this->assertStringContainsString("script-src 'self'", $csp);
+    }
+
     public function test_login_rate_limiting()
     {
         // Default throttle limits to 5 attempts per minute

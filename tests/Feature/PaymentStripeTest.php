@@ -110,6 +110,32 @@ class PaymentStripeTest extends TestCase
         $this->assertDatabaseCount('sales', 0);
     }
 
+    public function test_checkout_rolls_back_sale_when_sale_item_fails(): void
+    {
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')->never();
+        });
+
+        $response = $this->actingAs($this->student)
+            ->withSession([
+                'cart' => [
+                    999999 => [
+                        'course_id' => 999999,
+                        'course_name' => 'Curso inexistente',
+                        'level' => 'basico',
+                        'price' => 150.00,
+                    ],
+                ],
+            ])
+            ->post(route('pago.procesar'));
+
+        $response->assertRedirect(route('checkout'));
+        $response->assertSessionHas('status');
+        $this->assertDatabaseCount('sales', 0);
+        $this->assertDatabaseCount('sale_items', 0);
+    }
+
     public function test_success_redirect_confirms_sale_idempotently(): void
     {
         $coupon = Coupon::create([

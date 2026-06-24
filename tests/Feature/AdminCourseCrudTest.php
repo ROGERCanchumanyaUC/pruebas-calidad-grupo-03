@@ -73,7 +73,7 @@ class AdminCourseCrudTest extends TestCase
     public function test_admin_can_create_course()
     {
         Storage::fake('public');
-        $file = UploadedFile::fake()->image('cover.jpg');
+        $file = $this->fakePngUpload('cover.png');
 
         $response = $this->actingAs($this->admin)
             ->post(route('admin.courses.store'), [
@@ -319,5 +319,15 @@ class AdminCourseCrudTest extends TestCase
 
         $response->assertRedirect(route('admin.courses.index'));
         $this->assertDatabaseMissing('courses', ['id' => $course->id]);
+    }
+
+    private function fakePngUpload(string $name): UploadedFile
+    {
+        $path = tempnam(sys_get_temp_dir(), 'course-cover-');
+        file_put_contents($path, base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+        ));
+
+        return new UploadedFile($path, $name, 'image/png', null, true);
     }
 }

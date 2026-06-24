@@ -35,45 +35,55 @@ class PaymentController extends Controller
                 ->with('status', 'La pasarela de pago no esta disponible en este momento. Configura STRIPE_SECRET y STRIPE_WEBHOOK_SECRET.');
         }
 
-        $sale = DB::transaction(function () use ($cart) {
-            $subtotal = (float) collect($cart)->sum(fn ($item) => (float) $item['price']);
-            $discount = 0.0;
-            $couponId = null;
+        try {
+            $sale = DB::transaction(function () use ($cart) {
+                $subtotal = (float) collect($cart)->sum(fn ($item) => (float) $item['price']);
+                $discount = 0.0;
+                $couponId = null;
 
-            if (session()->has('coupon_code')) {
-                $coupon = Coupon::where('code', session('coupon_code'))
-                    ->lockForUpdate()
-                    ->first();
+                if (session()->has('coupon_code')) {
+                    $coupon = Coupon::where('code', session('coupon_code'))
+                        ->lockForUpdate()
+                        ->first();
 
-                if ($coupon && $coupon->is_valid && $this->couponHasAvailableReservation($coupon)) {
-                    $discount = $coupon->calculateDiscount($subtotal);
-                    $couponId = $coupon->id;
-                } else {
-                    session()->forget('coupon_code');
+                    if ($coupon && $coupon->is_valid && $this->couponHasAvailableReservation($coupon)) {
+                        $discount = $coupon->calculateDiscount($subtotal);
+                        $couponId = $coupon->id;
+                    } else {
+                        session()->forget('coupon_code');
+                    }
                 }
-            }
 
-            $sale = Sale::create([
+                $sale = Sale::create([
+                    'user_id' => auth()->id(),
+                    'coupon_id' => $couponId,
+                    'subtotal' => $subtotal,
+                    'discount' => $discount,
+                    'total' => max(0.00, $subtotal - $discount),
+                    'payment_method' => 'stripe',
+                    'payment_status' => 'pendiente',
+                    'notes' => 'Pago iniciado via Stripe Checkout.',
+                ]);
+
+                foreach ($cart as $item) {
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'course_id' => $item['course_id'],
+                        'price' => $item['price'],
+                    ]);
+                }
+
+                return $sale->load('user');
+            });
+        } catch (Throwable $exception) {
+            Log::error('Error transaccional al registrar la venta.', [
                 'user_id' => auth()->id(),
-                'coupon_id' => $couponId,
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'total' => max(0.00, $subtotal - $discount),
-                'payment_method' => 'stripe',
-                'payment_status' => 'pendiente',
-                'notes' => 'Pago iniciado via Stripe Checkout.',
+                'message' => $exception->getMessage(),
             ]);
 
-            foreach ($cart as $item) {
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'course_id' => $item['course_id'],
-                    'price' => $item['price'],
-                ]);
-            }
-
-            return $sale->load('user');
-        });
+            return redirect()->route('checkout')
+                ->with('status', 'No se pudo registrar la venta. Revisa tu carrito e intentalo nuevamente.');
+        }
 
         $successUrl = route('pago.confirmar').'?session_id={CHECKOUT_SESSION_ID}';
         $cancelUrl = route('pago.cancelado', $sale);

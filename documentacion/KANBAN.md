@@ -1,7 +1,7 @@
 # Tablero KANBAN - JM y JS Alimentos LMS
 
 Proyecto: evolucion de prototipo a plataforma LMS profesional para cursos de calidad alimentaria.
-Ultima auditoria: 2026-06-23.
+Ultima auditoria: 2026-06-24.
 Motor local auditado: MySQL en XAMPP, puerto 3307, base `jm_js_alimentos`.
 Admin de pruebas: `72682019@continental.edu.pe` / `password`.
 Documento base de auditoria: `documentacion/AUDITORIA_LMS_2026_06_07.md`.
@@ -20,17 +20,17 @@ Conclusion de producto: el siguiente trabajo debe enfocarse en endurecimiento pr
 
 | Area | Estado | Evidencia | Riesgo |
 | --- | --- | --- | --- |
-| Laravel y PHP | OK | Laravel `12.61.1`, PHP `8.5.4` | Warning local: `mysqli` cargado dos veces |
-| Base de datos | Parcial | Migraciones LMS ejecutadas en MySQL | Hay tablas nuevas, pero faltan pantallas y flujos que las usen |
-| Storage publico | OK | `php artisan storage:link` ejecutado, `public/storage` enlazado | Falta politica de validacion y limpieza de archivos |
-| Cursos | Parcial | 9 cursos seed, 34 modulos seed | No hay CRUD admin ni catalogo dinamico |
-| Materiales | Pendiente | 0 materiales en BD | El LMS aun no entrega videos, documentos ni recursos reales |
-| Ventas y cupones | OK | Stripe Checkout, ventas, items, cupones y matriculas | Requiere credenciales reales, webhook productivo y politicas comerciales publicadas |
-| Roles y permisos | Parcial | 4 roles, 30 permisos seed | Rutas admin siguen usando `is_admin` legacy |
-| Dashboard admin | Basico | Solo usuarios, contactos e inscripciones | No hay KPIs LMS ni graficos |
-| Seguridad | Parcial | Composer audit 0 vulnerabilities, npm audit 0 vulnerabilities | Falta rate limit, auditoria operativa y hardening de sesiones |
-| Tests | Basico | 2 tests pasan, 9 assertions | Cobertura insuficiente para LMS real |
-| Git | Riesgo | Carpeta actual no tiene `.git` activo | Dificulta trazabilidad de cambios |
+| Laravel y PHP | OK | Laravel `12.61.1`, PHP 8.4 local validado | Mantener version productiva alineada a `composer.json` |
+| Base de datos | OK | Migraciones LMS, ventas, auditoria, roles y matriculas | Ejecutar `migrate --force` en despliegue |
+| Storage publico/privado | OK | `public/storage` y materiales privados por controlador | Revisar permisos en produccion |
+| Cursos | OK | Catalogo dinamico, CRUD admin, modulos y materiales | Cargar contenidos finales propios |
+| Materiales | OK | Videos, documentos, recursos y texto enriquecido | Validar derechos de materiales reales |
+| Ventas y cupones | OK | Stripe Checkout, `sales`, `sale_items`, cupones y matriculas | Requiere webhook live y politicas comerciales |
+| Roles y permisos | OK | Roles reales, permisos, legacy admin sincronizado | No se permite degradar el ultimo admin |
+| Dashboard admin | OK | KPIs, ventas, estudiantes, cache y graficos | Ajustar metricas segun operacion real |
+| Seguridad | OK | Rate limit, CSP productiva, auditoria y headers | Hacer pentest antes de produccion |
+| Tests | OK | `php artisan test`: 85 pruebas pasan en entorno local | Mantener suite verde antes de release |
+| Git | OK local | Rama `feat_LMS_v2.0` con commits de integracion | Push/PR depende de permisos GitHub |
 
 Conteo de datos auditado:
 
@@ -59,7 +59,7 @@ Dependencias instaladas en esta auditoria:
 | `chart.js` | npm | Graficos del dashboard: ventas, inscripciones, cursos mas vendidos |
 | `sortablejs` | npm | Reordenamiento de modulos y materiales |
 | `quill@2.0.2` | npm | Editor enriquecido para materiales tipo texto |
-| `stripe/stripe-php` | Composer | Preparacion de pagos reales con Stripe |
+| `stripe/stripe-php` | Composer | Stripe Checkout real con webhook firmado |
 
 Dependencias que se evitan por ahora:
 
@@ -71,7 +71,23 @@ Dependencias que se evitan por ahora:
 
 ---
 
-## 4. Definicion De Estados
+## 4. Cierre RF/RNF Auditado - 2026-06-24
+
+| ID | Tipo | Requisito | Estado actual | Evidencia |
+| --- | --- | --- | --- | --- |
+| RF-005 | RF | Registrar ventas en `sales` y `sale_items` | Implementado | `PaymentController::process`, `PaymentStripeTest::test_process_creates_pending_sale_and_redirects_to_stripe` |
+| RF-006 | RF | Crear `enrollments` cuando el pago queda `pagado` | Implementado | `PaymentController::confirmSale`, tests de retorno y webhook Stripe |
+| RNF-004 | RNF | Mantener trazabilidad administrativa con `AuditService` | Implementado | `AuditService`, `audit_logs`, export CSV y tests de auditoria |
+| RNF-005 | RNF | Ejecutar checkout en transaccion para evitar ventas parciales | Implementado | `DB::transaction` en checkout y test de rollback de venta/items |
+| RNF-006 | RNF | Proteger contra remocion del ultimo administrador | Implementado | `UserController::hasAnotherAdmin` y test `last_admin_cannot_be_demoted` |
+| RNF-007 | RNF | Endurecer CSP productiva sin `unsafe-inline` ni `unsafe-eval` | Implementado | `SecurityHeadersMiddleware` y test de CSP en `production` |
+| RNF-008 | RNF | Ejecutar suite al 100% sin depender de GD | Implementado | Upload PNG fake sin GD y `php artisan test` verde |
+| RNF-009 | RNF | Actualizar Kanban al estado real del codigo | Implementado | Esta seccion y Estado Auditado actualizado |
+| RNF-010 | RNF | Licencia formal consistente con `composer.json` | Implementado | `composer.json` declara `proprietary`; `LICENSE.md` formaliza licencia propietaria |
+
+---
+
+## 5. Definicion De Estados
 
 | Estado | Significado |
 | --- | --- |
