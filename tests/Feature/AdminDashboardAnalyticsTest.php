@@ -9,8 +9,10 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 use Tests\TestCase;
 
 class AdminDashboardAnalyticsTest extends TestCase
@@ -202,14 +204,39 @@ class AdminDashboardAnalyticsTest extends TestCase
             ]
         ]);
 
-        $response = $this->actingAs($this->student)->post(route('pago.procesar'), [
-            'card_name' => 'Omar Canchumanya',
-            'card_number' => '4444555566667777',
-            'card_exp' => '09/29',
-            'card_cvc' => '456',
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')
+                ->once()
+                ->andReturn('https://checkout.stripe.com/c/pay/cs_test_dashboard');
+        });
+
+        $response = $this->actingAs($this->student)->post(route('pago.procesar'));
+
+        $response->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_dashboard');
+        $this->assertTrue(Cache::has('admin_dashboard_stats'));
+
+        $sale = Sale::where('user_id', $this->student->id)
+            ->where('payment_status', 'pendiente')
+            ->latest()
+            ->firstOrFail();
+
+        $fakeSession = StripeCheckoutSession::constructFrom([
+            'id' => 'cs_test_dashboard',
+            'object' => 'checkout.session',
+            'payment_status' => 'paid',
+            'metadata' => ['sale_id' => (string) $sale->id],
         ]);
 
-        $response->assertRedirect(route('pago.exito'));
+        $this->mock(StripeService::class, function ($mock) use ($fakeSession) {
+            $mock->shouldReceive('retrieveSession')
+                ->with('cs_test_dashboard')
+                ->andReturn($fakeSession);
+        });
+
+        $this->actingAs($this->student)
+            ->get(route('pago.confirmar', ['session_id' => 'cs_test_dashboard']))
+            ->assertRedirect(route('pago.exito'));
 
         // Assert cache is now cleared
         $this->assertFalse(Cache::has('admin_dashboard_stats'));

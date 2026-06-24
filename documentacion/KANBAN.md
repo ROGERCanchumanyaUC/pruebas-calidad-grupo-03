@@ -1,7 +1,7 @@
 # Tablero KANBAN - JM y JS Alimentos LMS
 
 Proyecto: evolucion de prototipo a plataforma LMS profesional para cursos de calidad alimentaria.
-Ultima auditoria: 2026-06-07.
+Ultima auditoria: 2026-06-23.
 Motor local auditado: MySQL en XAMPP, puerto 3307, base `jm_js_alimentos`.
 Admin de pruebas: `72682019@continental.edu.pe` / `password`.
 Documento base de auditoria: `documentacion/AUDITORIA_LMS_2026_06_07.md`.
@@ -10,9 +10,9 @@ Documento base de auditoria: `documentacion/AUDITORIA_LMS_2026_06_07.md`.
 
 ## 1. Estado Ejecutivo
 
-El proyecto ya no esta en cero: la base de datos fue extendida con tablas LMS y existen modelos para cursos, modulos, materiales, ventas, cupones, roles, permisos, auditoria y settings. Sin embargo, la aplicacion visible todavia funciona como prototipo: `/cursos` sigue siendo una vista Blade estatica y el panel admin solo expone dashboard, usuarios y contactos.
+El proyecto evoluciono a una plataforma LMS funcional: catalogo dinamico, carrito, Stripe Checkout, ventas, cupones, matriculas, aula privada, progreso, roles, permisos, auditoria, settings, asistente Gemini y documentacion de preparacion INDECOPI.
 
-Conclusion de producto: el siguiente trabajo debe convertir datos existentes en flujos reales de gestion, consumo de cursos, seguimiento y administracion.
+Conclusion de producto: el siguiente trabajo debe enfocarse en endurecimiento productivo, credenciales finales, operacion legal/comercial, monitoreo y contenidos propios verificables.
 
 ---
 
@@ -25,7 +25,7 @@ Conclusion de producto: el siguiente trabajo debe convertir datos existentes en 
 | Storage publico | OK | `php artisan storage:link` ejecutado, `public/storage` enlazado | Falta politica de validacion y limpieza de archivos |
 | Cursos | Parcial | 9 cursos seed, 34 modulos seed | No hay CRUD admin ni catalogo dinamico |
 | Materiales | Pendiente | 0 materiales en BD | El LMS aun no entrega videos, documentos ni recursos reales |
-| Ventas y cupones | Pendiente | 0 ventas, 0 cupones | Checkout sigue simulado / no hay flujo comercial trazable |
+| Ventas y cupones | OK | Stripe Checkout, ventas, items, cupones y matriculas | Requiere credenciales reales, webhook productivo y politicas comerciales publicadas |
 | Roles y permisos | Parcial | 4 roles, 30 permisos seed | Rutas admin siguen usando `is_admin` legacy |
 | Dashboard admin | Basico | Solo usuarios, contactos e inscripciones | No hay KPIs LMS ni graficos |
 | Seguridad | Parcial | Composer audit 0 vulnerabilities, npm audit 0 vulnerabilities | Falta rate limit, auditoria operativa y hardening de sesiones |
@@ -326,12 +326,12 @@ Estado general: DONE.
 | S6-02 | Crear `Admin/StudentController@show` | P1 | DONE | Perfil con cursos, progreso, ultima actividad |
 | S6-03 | Acciones suspender/reactivar/reiniciar progreso | P1 | DONE | Cada accion confirma, audita y actualiza estado |
 | S6-04 | Crear `Admin/SaleController@index/show` | P1 | DONE | Lista y detalle de ventas desde BD |
-| S6-05 | Refactorizar checkout para crear `sales` | P0 | DONE | Compra crea `sales`, `sale_items` y `enrollments` |
+| S6-05 | Refactorizar checkout para crear `sales` | P0 | DONE | Checkout crea `sales` y `sale_items`; Stripe confirmado crea `enrollments` |
 | S6-06 | Crear `Admin/CouponController` CRUD | P1 | DONE | Cupones con vigencia, limite y estado |
 | S6-07 | Aplicar cupon en checkout | P1 | DONE | Descuento valida vigencia y limite antes de pagar |
 | S6-08 | Preparar `config/stripe.php` | P2 | DONE | Variables `STRIPE_KEY`, `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET` documentadas |
-| S6-09 | Crear `StripeService` stub | P2 | DONE | Metodos para checkout session y webhook sin activar pagos reales |
-| S6-10 | Tests de ventas y cupones | P1 | DONE | Compra simulada crea registros correctos |
+| S6-09 | Crear `StripeService` | P2 | DONE | Checkout Session real, retorno seguro y webhook firmado |
+| S6-10 | Tests de ventas y cupones | P1 | DONE | Venta pendiente, confirmacion Stripe, idempotencia y cupones |
 
 ---
 
@@ -406,7 +406,7 @@ Estas tareas son valiosas, pero no deben bloquear el MVP LMS administrable.
 
 | ID | Tarea | Prioridad | Motivo |
 | --- | --- | --- | --- |
-| BL-01 | Stripe Checkout real con webhooks | P1 | Requiere credenciales y decision comercial |
+| BL-01 | Operacion Stripe produccion | P1 | Configurar credenciales live, webhook live, politicas comerciales y conciliacion |
 | BL-02 | Certificados PDF | P2 | Depende de progreso confiable |
 | BL-03 | Correos transaccionales | P2 | Depende de proveedor SMTP/SES/Resend |
 | BL-04 | Dashboard de instructor | P2 | Depende de permisos por propietario de curso |

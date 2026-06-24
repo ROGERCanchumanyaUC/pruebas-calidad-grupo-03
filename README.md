@@ -10,11 +10,12 @@ La rama `feat_LMS_v2.0` deja implementado el MVP LMS de punta a punta:
 
 - Catalogo publico dinamico con filtros.
 - Carrito seguro basado en `course_id`.
-- Checkout simulado con ventas, items de venta, cupones y matriculas.
+- Checkout Stripe real con ventas, items de venta, cupones, webhooks y matriculas.
 - Panel admin para cursos, modulos, materiales, estudiantes, ventas, cupones, usuarios, roles, settings y auditoria.
 - Aula del estudiante con acceso privado a materiales y progreso por leccion.
 - Dashboard ejecutivo con KPIs y graficos.
 - Chatbot IA con Gemini mediante `/api/chat`.
+- Politica de privacidad, terminos y paquete documental para preparacion ante INDECOPI.
 - Seguridad base: roles/permisos, rate limiting, sanitizacion de HTML y headers de seguridad.
 - Factories, seed demo, manual admin y checklist de deploy.
 
@@ -24,7 +25,7 @@ La rama `feat_LMS_v2.0` deja implementado el MVP LMS de punta a punta:
 - Base de datos: MySQL/MariaDB
 - Frontend: Blade, React, Vite
 - UI/Interaccion: Quill, SortableJS, Chart.js
-- Pagos preparados: Stripe SDK instalado y servicio base
+- Pagos: Stripe Checkout con confirmacion por retorno seguro y webhook
 - IA: Google Gemini API
 - Testing: PHPUnit Feature/Unit tests
 
@@ -69,7 +70,7 @@ La rama `feat_LMS_v2.0` deja implementado el MVP LMS de punta a punta:
 
 ### Sprint 6 - Ventas, Cupones Y Gestion Escolar
 
-- Checkout simulado que crea `sales`, `sale_items` y `enrollments`.
+- Checkout Stripe que crea `sales` y `sale_items` en estado pendiente, y activa `enrollments` al confirmar el pago.
 - Cupones con vigencia, limite de uso y estado activo.
 - Panel de estudiantes con suspension, reactivacion y reinicio de progreso.
 - Panel de ventas con listado y detalle.
@@ -144,6 +145,17 @@ Para habilitar el asistente IA:
 ```env
 GEMINI_API_KEY=tu_clave_de_google_ai_studio
 GEMINI_MODEL=gemini-2.5-flash
+GEMINI_CA_BUNDLE=storage/certs/cacert.pem
+GEMINI_VERIFY_SSL=true
+```
+
+Para habilitar Stripe Checkout:
+
+```env
+STRIPE_KEY=pk_test_xxx
+STRIPE_SECRET=sk_test_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+STRIPE_CURRENCY=pen
 ```
 
 No subas `.env` al repositorio.
@@ -204,6 +216,7 @@ php artisan optimize:clear
 - Auditoria tecnica: `documentacion/AUDITORIA_LMS_2026_06_07.md`
 - Manual admin: `documentacion/MANUAL_ADMIN_LMS.md`
 - Checklist deploy: `documentacion/CHECKLIST_DEPLOY_LMS.md`
+- Expediente INDECOPI: `documentacion/INDECOPI/README_EXPEDIENTE_INDECOPI.md`
 - Documentacion general: `documentacion/DOCUMENTACION_GENERAL.md`
 - Arquitectura: `documentacion/ARQUITECTURA.md`
 
@@ -212,5 +225,5 @@ php artisan optimize:clear
 - Las claves Gemini, Stripe, correo y BD deben vivir en `.env`.
 - Los materiales privados se sirven por controlador, no como archivos publicos directos.
 - Las rutas admin usan permisos especificos y el rol `admin` conserva bypass total.
+- Stripe Checkout procesa los datos de tarjeta fuera de la plataforma; este servidor no almacena numero de tarjeta, CVC ni expiracion.
 - El warning local `Module "mysqli" is already loaded` corresponde a configuracion PHP/XAMPP duplicada y no bloquea la app.
-

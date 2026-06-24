@@ -2,54 +2,113 @@
 
 namespace App\Services;
 
+use App\Models\Sale;
+use RuntimeException;
+use Stripe\Checkout\Session;
+use Stripe\Event;
+use Stripe\StripeClient;
+use Stripe\Webhook;
+
 class StripeService
 {
     protected string $secretKey;
     protected string $webhookSecret;
+    protected string $currency;
+    protected ?StripeClient $client = null;
 
     public function __construct()
     {
-        $this->secretKey = config('stripe.secret', '');
-        $this->webhookSecret = config('stripe.webhook_secret', '');
+        $this->secretKey = (string) config('stripe.secret', '');
+        $this->webhookSecret = (string) config('stripe.webhook_secret', '');
+        $this->currency = (string) config('stripe.currency', 'pen');
     }
 
-    /**
-     * Create a Stripe Checkout Session for the cart items.
-     *
-     * @param array $cartItems Items from the session cart
-     * @param string $successUrl Redirect URL on payment success
-     * @param string $cancelUrl Redirect URL on payment cancellation/failure
-     * @return string Checkout session URL to redirect the user to
-     */
-    public function createCheckoutSession(array $cartItems, string $successUrl, string $cancelUrl): string
+    public function isConfigured(): bool
     {
-        // TODO: Integrate actual Stripe SDK once credentials are provided
-        // Example skeleton:
-        // \Stripe\Stripe::setApiKey($this->secretKey);
-        // $session = \Stripe\Checkout\Session::create([...]);
-        // return $session->url;
-
-        return $successUrl; // Mock return success URL directly for stub
+        return $this->secretKey !== '' && $this->webhookSecret !== '';
     }
 
-    /**
-     * Handle Stripe Webhook payloads.
-     *
-     * @param string $payload Raw JSON request body
-     * @param string $signatureHeader Stripe signature header
-     * @return array Decoded event data or error status
-     */
-    public function handleWebhook(string $payload, string $signatureHeader): array
+    public function createCheckoutSession(Sale $sale, array $cartItems, string $successUrl, string $cancelUrl): string
     {
-        // TODO: Validate webhook signature using Stripe SDK
-        // Example skeleton:
-        // try {
-        //     $event = \Stripe\Webhook::constructEvent($payload, $signatureHeader, $this->webhookSecret);
-        //     return ['ok' => true, 'event' => $event];
-        // } catch (\Exception $e) {
-        //     return ['ok' => false, 'error' => $e->getMessage()];
-        // }
+        if (empty($cartItems)) {
+            throw new RuntimeException('No se puede crear una sesion de Stripe con el carrito vacio.');
+        }
 
-        return ['ok' => true, 'mock' => true];
+        $lineItems = collect($cartItems)->map(function (array $item) {
+            $amount = (int) round(((float) ($item['price'] ?? 0)) * 100);
+
+            if ($amount <= 0) {
+                throw new RuntimeException('El precio del curso debe ser mayor que cero para Stripe.');
+            }
+
+            return [
+                'price_data' => [
+                    'currency' => $this->currency,
+                    'product_data' => [
+                        'name' => (string) ($item['course_name'] ?? 'Curso'),
+                    ],
+                    'unit_amount' => $amount,
+                ],
+                'quantity' => 1,
+            ];
+        })->values()->all();
+
+        $params = [
+            'mode' => 'payment',
+            'line_items' => $lineItems,
+            'success_url' => $successUrl,
+            'cancel_url' => $cancelUrl,
+            'metadata' => [
+                'sale_id' => (string) $sale->id,
+            ],
+        ];
+
+        if ($sale->user?->email) {
+            $params['customer_email'] = $sale->user->email;
+        }
+
+        if ((float) $sale->discount > 0) {
+            $coupon = $this->client()->coupons->create([
+                'amount_off' => (int) round(((float) $sale->discount) * 100),
+                'currency' => $this->currency,
+                'duration' => 'once',
+                'name' => 'Descuento aplicado',
+            ]);
+
+            $params['discounts'] = [
+                ['coupon' => $coupon->id],
+            ];
+        }
+
+        $session = $this->client()->checkout->sessions->create($params);
+
+        if (empty($session->url)) {
+            throw new RuntimeException('Stripe no devolvio una URL de checkout.');
+        }
+
+        return (string) $session->url;
+    }
+
+    public function retrieveSession(string $sessionId): Session
+    {
+        return $this->client()->checkout->sessions->retrieve($sessionId);
+    }
+
+    public function handleWebhook(string $payload, string $signatureHeader): Event
+    {
+        if ($this->webhookSecret === '') {
+            throw new RuntimeException('STRIPE_WEBHOOK_SECRET no esta configurado.');
+        }
+
+        return Webhook::constructEvent($payload, $signatureHeader, $this->webhookSecret);
+    }
+
+    protected function client(): StripeClient
+    {
+        if ($this->secretKey === '') {
+            throw new RuntimeException('STRIPE_SECRET no esta configurado.');
+        }
+
+        return $this->client ??= new StripeClient($this->secretKey);
     }
 }

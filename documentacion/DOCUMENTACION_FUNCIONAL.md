@@ -169,11 +169,11 @@ El formulario se envía via AJAX sin recargar la página y muestra una notificac
 
 | Sección | Descripción |
 |---|---|
-| Header fijo | Logo, badge de seguridad SSL, botón cerrar |
-| Métodos de pago | Tabs: Tarjeta de crédito/débito / Billeteras digitales |
-| Formulario de tarjeta | Nombre en tarjeta, número, fecha de expiración, CVC |
+| Header fijo | Logo, indicador de pago seguro con Stripe y boton volver |
+| Metodo de pago | Tarjeta de credito/debito mediante Stripe Checkout externo |
+| Redireccion Stripe | El formulario no solicita tarjeta, fecha de expiracion ni CVC en el servidor local |
 | Resumen del carrito | Lista scrolleable de cursos, subtotal, IGV (18%), total |
-| Badges de seguridad | SSL Seguro, PCI Compliant, Pago Protegido |
+| Badges de seguridad | Stripe Checkout y sin almacenamiento de datos de tarjeta |
 
 ---
 
@@ -342,7 +342,7 @@ Lista de mensajes del formulario de contacto con:
 
 **Justificación:**
 - Es una práctica estándar de UX para **reducir distracciones** en el momento de pago.
-- El badge SSL y PCI visible en el header aumenta la **percepción de seguridad** en el momento más sensible del flujo.
+- El indicador de Stripe Checkout comunica que el pago se procesa fuera del servidor de la plataforma.
 - Eliminar la navegación evita que el usuario abandone el checkout por accidente.
 
 ---

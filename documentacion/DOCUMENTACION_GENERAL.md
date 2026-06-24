@@ -298,7 +298,7 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 
 | Área | Descripción |
 |---|---|
-| **Pasarela de pago real** | El pago es una simulación de validación de formulario. No se integra Stripe, Culqi, PayU ni ninguna pasarela real |
+| **Procesamiento local de tarjeta** | Los datos de tarjeta no se reciben ni almacenan en el servidor; el pago se deriva a Stripe Checkout |
 | **Streaming de video** | Los cursos no incluyen reproducción de contenido multimedia; la plataforma gestiona inscripciones, no la entrega del contenido |
 | **Sistema de correo electrónico** | No se envían correos de confirmación, recuperación de contraseña ni notificaciones por email (el mailer está en modo `log`) |
 | **Recuperación de contraseña** | No existe el flujo de "olvidé mi contraseña" con envío de enlace al email |
@@ -321,7 +321,7 @@ El sistema define tres actores con distintos niveles de acceso y responsabilidad
 | **De datos** | La base de datos debe ser SQLite en el entorno de desarrollo local |
 | **De entorno** | El sistema debe funcionar sobre XAMPP sin requerir Docker ni servicios adicionales |
 | **De idioma** | Toda la interfaz, mensajes de error y documentación deben estar en español |
-| **De pago** | No se procesarán pagos reales; el flujo de pago es una simulación con validación de formulario |
+| **De pago** | Los pagos se procesan en Stripe Checkout; el servidor solo registra ventas, cupones, webhooks y matriculas |
 | **De IA** | La inteligencia artificial depende de un servicio externo (Google Gemini); su disponibilidad está sujeta a la cuota gratuita de la API |
 
 ---

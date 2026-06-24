@@ -8,7 +8,9 @@ use App\Models\Coupon;
 use App\Models\Enrollment;
 use App\Models\Sale;
 use App\Models\User;
+use App\Services\StripeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Stripe\Checkout\Session as StripeCheckoutSession;
 use Tests\TestCase;
 
 class AdminSalesAndCouponsTest extends TestCase
@@ -246,24 +248,26 @@ class AdminSalesAndCouponsTest extends TestCase
         $this->actingAs($this->student)->postJson('/cart/add', ['course_id' => $this->course->id]);
         $this->actingAs($this->student)->postJson(route('cart.coupon.apply'), ['code' => 'SAVE30']);
 
-        // 2. Process checkout payment
-        $response = $this->actingAs($this->student)->post(route('pago.procesar'), [
-            'card_name' => 'Gian Guerreros',
-            'card_number' => '4444555566667777',
-            'card_exp' => '09/29',
-            'card_cvc' => '456',
-        ]);
+        $this->mock(StripeService::class, function ($mock) {
+            $mock->shouldReceive('isConfigured')->andReturn(true);
+            $mock->shouldReceive('createCheckoutSession')
+                ->once()
+                ->andReturn('https://checkout.stripe.com/c/pay/cs_test_order');
+        });
 
-        $response->assertRedirect(route('pago.exito'));
+        // 2. Start Stripe checkout
+        $response = $this->actingAs($this->student)->post(route('pago.procesar'));
 
-        // 3. Verify Sale and SaleItem exist in DB
+        $response->assertRedirect('https://checkout.stripe.com/c/pay/cs_test_order');
+
+        // 3. Verify Sale and SaleItem exist in DB as pending until Stripe confirms payment
         $this->assertDatabaseHas('sales', [
             'user_id' => $this->student->id,
             'coupon_id' => $coupon->id,
             'subtotal' => 150.00,
             'discount' => 30.00, // 20% of 150
             'total' => 120.00,
-            'payment_status' => 'pagado',
+            'payment_status' => 'pendiente',
         ]);
 
         $sale = Sale::where('user_id', $this->student->id)->first();
@@ -274,12 +278,31 @@ class AdminSalesAndCouponsTest extends TestCase
             'price' => 150.00,
         ]);
 
-        // 4. Verify enrollment created and active
+        $fakeSession = StripeCheckoutSession::constructFrom([
+            'id' => 'cs_test_order',
+            'object' => 'checkout.session',
+            'payment_status' => 'paid',
+            'metadata' => ['sale_id' => (string) $sale->id],
+        ]);
+
+        $this->mock(StripeService::class, function ($mock) use ($fakeSession) {
+            $mock->shouldReceive('retrieveSession')
+                ->with('cs_test_order')
+                ->andReturn($fakeSession);
+        });
+
+        $this->actingAs($this->student)
+            ->get(route('pago.confirmar', ['session_id' => 'cs_test_order']))
+            ->assertRedirect(route('pago.exito'));
+
+        // 4. Verify enrollment created and active after Stripe confirmation
         $this->assertDatabaseHas('enrollments', [
             'user_id' => $this->student->id,
             'course_id' => $this->course->id,
             'status' => 'activo',
         ]);
+
+        $this->assertSame('pagado', $sale->fresh()->payment_status);
 
         // 5. Verify coupon usage count incremented
         $this->assertEquals(1, $coupon->fresh()->times_used);

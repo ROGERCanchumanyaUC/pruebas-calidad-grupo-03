@@ -7,6 +7,8 @@
 - Confirmar `composer audit`.
 - Confirmar `npm audit --audit-level=moderate`.
 - Confirmar `php artisan test`.
+- Confirmar que `/privacidad` y `/terminos` estan revisados por el titular.
+- Confirmar que Stripe use credenciales correctas de prueba o produccion antes de aceptar pagos reales.
 
 ## Variables De Entorno
 
@@ -23,7 +25,12 @@ Configurar `.env`:
 - `SESSION_SAME_SITE=lax`
 - `GEMINI_API_KEY`
 - `GEMINI_MODEL=gemini-2.5-flash`
-- variables de Stripe si se activa pago real
+- `GEMINI_CA_BUNDLE=storage/certs/cacert.pem`
+- `GEMINI_VERIFY_SSL=true`
+- `STRIPE_KEY`
+- `STRIPE_SECRET`
+- `STRIPE_WEBHOOK_SECRET`
+- `STRIPE_CURRENCY=pen`
 - variables SMTP si se activan correos reales
 
 No versionar `.env`.
@@ -58,6 +65,9 @@ No versionar `.env`.
 - Confirmar rate limit en login y `/api/chat`.
 - Confirmar que roles no admin reciben 403 en areas no permitidas.
 - Confirmar que el chatbot funciona sin exponer la clave.
+- Confirmar que terminos y politica de privacidad estan publicados.
+- Confirmar que no se recopilan datos reales de tarjeta en el servidor.
+- Confirmar que `/stripe/webhook` esta configurado en Stripe y responde OK con eventos firmados.
 - Configurar backups de BD y archivos privados.
 - Configurar rotacion de logs.
 
@@ -68,8 +78,8 @@ No versionar `.env`.
 3. Iniciar sesion.
 4. Agregar curso publicado al carrito.
 5. Aplicar cupon valido.
-6. Procesar checkout.
-7. Confirmar venta, item de venta y matricula.
+6. Procesar checkout y completar pago en Stripe.
+7. Confirmar venta pagada, item de venta, webhook y matricula.
 8. Entrar a `Mi cuenta`.
 9. Abrir aula del curso comprado.
 10. Marcar material como completado.

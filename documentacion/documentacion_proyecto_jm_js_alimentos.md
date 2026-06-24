@@ -209,7 +209,7 @@ Resultado final: respuesta generada por la IA que guía al usuario sobre cursos 
 
 - Servicios de correo (Postmark/Resend/AWS SES): configurados en config/services.php pero no se encuentran implementaciones en el código; se consideran pendiente de identificar para futuros envíos de notificaciones.
 
-- Pasarelas de pago: la funcionalidad de pago está implementada de manera ficticia en PaymentController. No se integró una pasarela real (p.ej. Culqi, PayPal); se coloca como pendiente de identificar.
+- Pasarelas de pago: la funcionalidad usa Stripe Checkout desde `PaymentController` y `StripeService`; las ventas se crean pendientes y se confirman por retorno seguro o webhook firmado.
 
 - Librerías: Tailwind CSS, React, Vite y otros paquetes de Node se integran mediante package.json【53†L3-L12】. PHPUnit y Cypress se usan para pruebas automatizadas según la documentación de pruebas (no se muestran en el código).
 
